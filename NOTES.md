@@ -31,3 +31,6 @@ Some important points to address for this is:
 - make the native implementations robust (right now they are naive OCaml implementations)
 
 - ...
+
+
+It would be interesting to design an interface that allows to implement the [Neural ODE](https://arxiv.org/abs/1806.07366) idea in a natural way also in Owl.
