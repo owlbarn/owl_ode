@@ -3,7 +3,7 @@ Currently there are three options available, providing incompatible underlying r
 
 - [sundialsml](https://github.com/inria-parkas/sundialsml), providing a wrapper over Sundials
 
-- [ocaml-odepack](https://github.com/Chris00/ocaml-odepack), providing bindings for ODEPACK
+- [ocaml-odepack](https://github.com/Chris00/ocaml-odepack), providing bindings for ODEPACK (same solvers used by scipy's old interface `scipy.integrate.odeint`)
 
 - [gsl-ocaml](https://github.com/mmottl/gsl-ocaml), providing bindings for GSL, in particular the ODE integrator bindings are here [mmottl/gsl-ocaml/src/odeiv.mli](https://github.com/mmottl/gsl-ocaml/blob/master/src/odeiv.mli)
 
