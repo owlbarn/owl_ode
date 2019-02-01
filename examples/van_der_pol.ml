@@ -1,4 +1,3 @@
-open Sundials
 open Owl
 open Ode
 
@@ -6,7 +5,7 @@ let tau = 150E-3
 let f = 
   let mu = 10. in
   let lambda = 0.1 in
-  fun t y ->
+  fun _t y ->
     let y = Mat.to_array y in
     [|[| y.(1) |]; 
       [| -.y.(0) +. mu *. y.(1) *. (lambda -. Maths.sqr y.(0))|]|]

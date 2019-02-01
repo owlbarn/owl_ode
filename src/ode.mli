@@ -1,6 +1,5 @@
 open Owl
 open Bigarray
-open Sundials
 
 val wrap : 
   Mat.mat ->

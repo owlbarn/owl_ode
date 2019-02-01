@@ -1,6 +1,5 @@
 open Owl
 open Bigarray
-open Sundials
 
 let wrap x = reshape_1 x Mat.(numel x) 
 
