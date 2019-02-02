@@ -4,6 +4,10 @@ type timespan = float * float
 let steps t0 t1 dt =
   (t1 -. t0)/.dt |> Float.floor |> int_of_float
 
+(** Private function, allow to get the slices indexes for xs and ys *)
+let slices idx elts =
+  [[idx]; [0; elts/2-1]], [[idx]; [elts/2; elts-1]]
+
 (* opening Owl.Mat or Owl.Arr messes up badly all the integer operations *)
 let (.${}) = Owl.Mat.(.${})
 let (.${}<-) = Owl.Mat.(.${}<-)
@@ -17,13 +21,14 @@ let symplectic_euler ~f y0 (t0, t1) dt =
 
   sol.${[[0]]}<- y0;
   for idx = 1 to steps-1 do
-    let xs = sol.${[[idx-1]; [0; elts/2-1]]} in
-    let ps = sol.${[[idx-1]; [elts/2; elts-1]]} in
+    let xi, pi = slices (idx-1) elts in
+    let xi', pi' = slices idx elts in
+    let xs, ps = sol.${xi}, sol.${pi} in
     let t = t0 +. dt *. (float_of_int idx) in
     let fxs = f xs ps t in
-    let psnew = Owl.Mat.(ps + mul_scalar fxs dt) in
-    sol.${[[idx]; [elts/2; elts-1]]}<- psnew;
-    sol.${[[idx]; [0; elts/2-1]]}<- Owl.Mat.(xs + mul_scalar psnew dt);
+    let ps' = Owl.Mat.(ps + fxs *$ dt) in
+    sol.${pi'}<- ps';
+    sol.${xi'}<- Owl.Mat.(xs + ps' *$ dt);
   done;
   sol
 
@@ -36,14 +41,15 @@ let leapfrog ~f y0 (t0, t1) dt =
 
   sol.${[[0]]}<- y0;
   for idx = 1 to steps-1 do
-    let xs = sol.${[[idx-1]; [0; elts/2-1]]} in
-    let ps = sol.${[[idx-1]; [elts/2; elts-1]]} in
+    let xi, pi = slices (idx-1) elts in
+    let xi', pi' = slices idx elts in
+    let xs, ps = sol.${xi}, sol.${pi} in
     let t = t0 +. dt *. (float_of_int idx) in
     let fxs = f xs ps t in
-    let xsnew = Owl.Mat.(xs + mul_scalar ps dt + mul_scalar fxs (dt*.dt*.0.5)) in
-    let fxsnew = f xsnew ps (t +. dt) in
-    sol.${[[idx]; [0; elts/2-1]]}<- xsnew;
-    sol.${[[idx]; [elts/2; elts-1]]}<- Owl.Mat.(ps + mul_scalar (fxs + fxsnew) (dt*.0.5));
+    let xs' = Owl.Mat.(xs + ps *$ dt + fxs *$ (dt*.dt*.0.5)) in
+    let fxs' = f xs' ps (t +. dt) in
+    sol.${xi'}<- xs';
+    sol.${pi'}<- Owl.Mat.(ps + (fxs + fxs') *$ (dt*.0.5));
   done;
   sol
 
@@ -84,13 +90,13 @@ let leapfrog_implicit ~f y0 (t0, t1) dt =
    see Candy-Rozmus (https://www.sciencedirect.com/science/article/pii/002199919190299Z)
    and https://en.wikipedia.org/wiki/Symplectic_integrator *)
 
-let symint_step ~coeffs ~f xs0 ps0 t0 dt =
+let symint_step ~coeffs ~f xs ps t dt =
   List.fold_left (fun (xs, ps, t) (ai, bi) ->
-      let psnew = Owl.Mat.(ps + mul_scalar (f xs ps t) (dt*.bi)) in
-      let xsnew = Owl.Mat.(xs + mul_scalar psnew (dt *. ai)) in
+      let ps' = Owl.Mat.(ps + (f xs ps t) *$ (dt*.bi)) in
+      let xs' = Owl.Mat.(xs + ps' *$ (dt *. ai)) in
       let t = t +. dt*.ai in
-      (xsnew, psnew, t))
-    (xs0, ps0, t0)
+      (xs', ps', t))
+    (xs, ps, t)
     coeffs
 
 let symint ~coeffs ~f y0 (t0, t1) dt =
@@ -103,12 +109,13 @@ let symint ~coeffs ~f y0 (t0, t1) dt =
   sol.${[[0]]}<- y0;
   let t = ref t0 in
   for idx = 1 to steps-1 do
-    let xs = sol.${[[idx-1]; [0; elts/2-1]]} in
-    let ps = sol.${[[idx-1]; [elts/2; elts-1]]} in
-    let xsnew, psnew, tnew = symint_step ~coeffs ~f xs ps !t dt in
-    t := tnew;
-    sol.${[[idx]; [0; elts/2-1]]}<- xsnew;
-    sol.${[[idx]; [elts/2; elts-1]]}<- psnew;
+    let xi, pi = slices (idx-1) elts in
+    let xi', pi' = slices idx elts in
+    let xs, ps = sol.${xi}, sol.${pi} in
+    let xs', ps', t' = symint_step ~coeffs ~f xs ps !t dt in
+    t := t';
+    sol.${xi'}<- xs';
+    sol.${pi'}<- ps';
   done;
   sol
 

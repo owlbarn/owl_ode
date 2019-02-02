@@ -1,7 +1,6 @@
 let damped_noforcing a xs ps _ : Owl.Mat.mat=
   Owl.Mat.(
-    (mul_scalar xs (-1.0))
-    + (mul_scalar ps (-1.0*.a))
+    xs *$ (-1.0) + ps *$ (-1.0*.a)
   )
 
 let a = 1.0 
