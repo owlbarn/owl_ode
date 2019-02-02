@@ -86,8 +86,8 @@ let leapfrog_implicit ~f y0 (t0, t1) dt =
 
 let symint_step ~coeffs ~f xs0 ps0 t0 dt =
   List.fold_left (fun (xs, ps, t) (ai, bi) ->
-      let psnew = Owl.Mat.(mul_scalar (f xs ps t) (dt*.bi)) in
-      let xsnew = Owl.Mat.(mul_scalar ps (dt *. ai)) in
+      let psnew = Owl.Mat.(ps + mul_scalar (f xs ps t) (dt*.bi)) in
+      let xsnew = Owl.Mat.(xs + mul_scalar psnew (dt *. ai)) in
       let t = t +. dt*.ai in
       (xsnew, psnew, t))
     (xs0, ps0, t0)
