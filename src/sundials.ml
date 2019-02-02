@@ -1,5 +1,3 @@
-module Symplectic = Symplectic
-
 open Owl
 open Bigarray
 

@@ -1,5 +1,5 @@
 open Owl
-open Ode
+open Ode.Sundials
 
 let tau = 150E-3 
 let f = 
