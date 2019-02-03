@@ -6,7 +6,7 @@ let damped_noforcing a xs ps _ : Owl.Mat.mat=
 let a = 1.0 
 let dt = 0.1
 
-let plot_sol fname t sol1 sol2 =
+let plot_sol fname t sol1 sol2 sol3 =
   let open Owl in
   let h = Plot.create fname in
   let open Plot in
@@ -15,13 +15,16 @@ let plot_sol fname t sol1 sol2 =
   set_title h fname;
   plot ~h ~spec:[ RGB (0,0,255); LineStyle 1 ] t (Mat.col sol1 0);
   plot ~h ~spec:[ RGB (0,255,0); LineStyle 1 ] t (Mat.col sol2 0);
+  plot ~h ~spec:[ RGB (255,0,0); LineStyle 1 ] t (Mat.col sol3 0);
   (* XXX: I could not figure out how to make the legend black instead of red *)
-  legend_on h ~position:NorthEast [|"1st"; "2nd";|];
+  legend_on h ~position:NorthEast [|"Leapfrog"; "Ruth3"; "Symplectic Euler"|];
   output h
 
 let () =
   let y0 = Owl.Mat.of_array [|-0.25; 0.75|] 1 2 in
-  let tspan = (0.0, 15.0) in
-  let t, sol1 = Ode.Symplectic.leapfrog ~f:(damped_noforcing a) y0 tspan dt in
-  let _, sol2 = Ode.Symplectic.ruth3 ~f:(damped_noforcing a) y0 tspan dt in
-  plot_sol "damped.png" t sol1 sol2;
+  let t0, duration = 0.0, 15.0 in
+  let ndsolve algorithm = Ode.Symplectic.odeint ~algorithm ~f:(damped_noforcing a) ~y0 ~t0 ~duration ~dt in
+  let t, sol1 = ndsolve Leapfrog () in
+  let _, sol2 = ndsolve Ruth3 () in
+  let _, sol3 = ndsolve Symplectic_Euler () in
+  plot_sol "damped.png" t sol1 sol2 sol3;
