@@ -22,7 +22,6 @@ let plot_sol fname t sol1 sol2 =
 let () =
   let y0 = Owl.Mat.of_array [|-0.25; 0.75|] 1 2 in
   let tspan = (0.0, 15.0) in
-  let t = Owl.Arr.linspace 0.0 15.0 (int_of_float @@ Float.floor (15.0/.dt)) in
-  let sol1 = Ode.Symplectic.leapfrog ~f:(damped_noforcing a) y0 tspan dt in
-  let sol2 = Ode.Symplectic.ruth3 ~f:(damped_noforcing a) y0 tspan dt in
+  let t, sol1 = Ode.Symplectic.leapfrog ~f:(damped_noforcing a) y0 tspan dt in
+  let _, sol2 = Ode.Symplectic.ruth3 ~f:(damped_noforcing a) y0 tspan dt in
   plot_sol "damped.png" t sol1 sol2;

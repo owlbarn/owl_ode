@@ -85,3 +85,17 @@ let leapfrog_implicit ~f y0 (t0, t1) dt =
    done;
    sol
 *)
+
+type algorithm = Symplectic_Euler | Leapfrog | Pseudoleapfrog | Ruth3 | Ruth4
+
+let odeint ~algorithm ~f ?(t0=0.) ~y0 ~dt ~duration () =
+  let tspan = (t0, t0+.duration) in
+  let integrate =
+    match algorithm with
+    | Symplectic_Euler -> symplectic_euler
+    | Leapfrog -> leapfrog
+    | Pseudoleapfrog -> pseudoleapfrog
+    | Ruth3 -> ruth3
+    | Ruth4 -> ruth4
+  in
+  integrate ~f y0 tspan dt
