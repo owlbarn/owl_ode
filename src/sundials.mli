@@ -8,16 +8,13 @@ val unwrap :
   Owl.Mat.mat
 
 (* returns arrays of time and state *)
-val odeint :
-  ?stiff:bool ->
-  f:(float -> Owl.Mat.mat -> Owl.Mat.mat) ->
-  ?t0:float ->
-  y0:Owl.Mat.mat -> 
+val cvode :
+  stiff:bool->
+  f:(Owl.Mat.mat -> float -> Owl.Mat.mat) ->
+  tspan:float * float ->
   dt:float ->
-  duration:float -> 
+  y0:Owl.Mat.mat -> 
   unit ->
-  float array * Owl.Mat.mat array 
-
-val print_dim : Owl.Mat.mat -> unit
+  float array * Owl.Mat.mat 
 
 

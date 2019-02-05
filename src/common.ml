@@ -1,3 +1,4 @@
+open Owl
 (* TODO: update implementations of multiple order RK on the line of
  * symplectic.ml *)
 
@@ -7,30 +8,49 @@ type timespan = float * float
 let steps t0 t1 dt =
   (t1 -. t0)/.dt |> Float.floor |> int_of_float
 
-let integrate ~step y0 (t0, t1) dt =
-  (* opening Owl.Mat or Owl.Arr messes up badly all the integer operations *)
-  let (.${}) = Owl.Mat.(.${}) in
-  let (.${}<-) = Owl.Mat.(.${}<-) in
-  let (.%{}) = Owl.Arr.(.%{}) in
-  let (.%{}<-) = Owl.Arr.(.%{}<-) in
-  (* Allow to get the slices indexes for xs and ys *)
-  let slices idx elts =
-    [[idx]; [0; elts/2-1]], [[idx]; [elts/2; elts-1]]
-  in
-  let steps = steps t0 t1 dt in
-  let _, elts = Owl.Mat.shape y0 in
-  let sol = Owl.Mat.empty steps elts in
-  let tspan = Owl.Arr.empty [|steps|] in
-  sol.${[[0]]}<- y0;
-  tspan.%{[|0|]}<-t0;
-  for idx = 1 to steps-1 do
-    let xi, pi = slices (idx-1) elts in
-    let xi', pi' = slices idx elts in
-    let xs, ps = sol.${xi}, sol.${pi} in
-    let t = tspan.%{[|idx-1|]} in
-    let xs', ps', t' = step xs ps t in
-    sol.${xi'}<- xs';
-    sol.${pi'}<- ps';
-    tspan.%{[|idx|]}<-t';
+let integrate ~step ~tspan:(t0, t1) ~dt y0 =
+  let n = Mat.col_num y0 in
+  let n_steps = steps t0 t1 dt in
+  let ys = Owl.Mat.empty n_steps n in
+  let ts = ref [] in
+  let t = ref t0 in
+  let y = ref y0 in
+  for i = 0 to (pred n_steps) do
+    if i > 0 then begin
+      let y', t' = step !y !t in
+      y := y';
+      t := t'
+    end;
+    Mat.set_slice [[i]; []] ys !y;
+    ts := !t::!ts;
   done;
-  tspan, sol
+  !ts |> List.rev |> Array.of_list,
+  ys
+
+
+
+let symplectic_integrate ~step ~tspan:(t0, t1) ~dt x0 p0 =
+  let n = Mat.col_num x0 in
+  assert (n=(Mat.col_num p0));
+  let n_steps = steps t0 t1 dt in
+  let xs = Owl.Mat.empty n_steps n in
+  let ps = Owl.Mat.empty n_steps n in
+  let ts = ref [] in
+  let t = ref t0 in
+  let x = ref x0 in
+  let p = ref p0 in
+  for i = 0 to (pred n_steps) do
+    if i > 0 then begin
+      let x', p', t' = step !x !p !t in
+      x := x';
+      p := p';
+      t := t'
+    end;
+    Mat.set_slice [[i]; []] xs !x;
+    Mat.set_slice [[i]; []] ps !p;
+    ts := !t::!ts;
+  done;
+  !ts |> List.rev |> Array.of_list,
+  xs, ps 
+
+
