@@ -8,6 +8,8 @@ bug-reports: "https://github.com/owlbarn/owl_sundials/issues"
 doc: "https://owlbarn.github.io/owl_sundials/ode"
 build: [
   ["dune" "build" "-p" name "-j" jobs]
+  ["dune" "exec" "examples/van_der_pol.exe"] {with-test}
+  ["dune" "exec" "examples/damped.exe"] {with-test}
 ]
 depends: [
   "ocaml" {>= "4.02"}
