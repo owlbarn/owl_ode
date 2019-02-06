@@ -8,10 +8,22 @@ type timespan = float * float
 let steps t0 t1 dt =
   (t1 -. t0)/.dt |> Maths.floor |> int_of_float
 
+type major =
+  | Row
+  | Col
+
+let get_major y0 = 
+  let dim1, dim2 = Mat.shape y0 in
+  assert ((dim1=1)||(dim2=1));
+  if dim1=1 then Row, dim2
+  else Col, dim1
+
 let integrate ~step ~tspan:(t0, t1) ~dt y0 =
-  let n = Mat.col_num y0 in
+  let major, n = get_major y0 in
   let n_steps = steps t0 t1 dt in
-  let ys = Owl.Mat.empty n_steps n in
+  let ys = match major with
+    | Row -> Owl.Mat.empty n_steps n 
+    | Col -> Owl.Mat.empty n_steps n in
   let ts = ref [] in
   let t = ref t0 in
   let y = ref y0 in
@@ -21,7 +33,10 @@ let integrate ~step ~tspan:(t0, t1) ~dt y0 =
       y := y';
       t := t'
     end;
-    Mat.set_slice [[i]; []] ys !y;
+    begin match major with
+      | Row -> Mat.set_slice [[i]; []] ys !y
+      | Col -> Mat.set_slice [[]; [i]] ys !y
+    end;
     ts := !t::!ts;
   done;
   !ts |> List.rev |> Array.of_list,
@@ -30,11 +45,12 @@ let integrate ~step ~tspan:(t0, t1) ~dt y0 =
 
 
 let symplectic_integrate ~step ~tspan:(t0, t1) ~dt x0 p0 =
-  let n = Mat.col_num x0 in
-  assert (n=(Mat.col_num p0));
+  assert ((Mat.shape x0)=(Mat.shape p0));
+  let major, n = get_major x0 in
   let n_steps = steps t0 t1 dt in
-  let xs = Owl.Mat.empty n_steps n in
-  let ps = Owl.Mat.empty n_steps n in
+  let xs, ps = match major with
+    | Row -> Mat.empty n_steps n, Mat.empty n_steps n
+    | Col -> Mat.empty n n_steps, Mat.empty n n_steps in
   let ts = ref [] in
   let t = ref t0 in
   let x = ref x0 in
@@ -46,8 +62,10 @@ let symplectic_integrate ~step ~tspan:(t0, t1) ~dt x0 p0 =
       p := p';
       t := t'
     end;
-    Mat.set_slice [[i]; []] xs !x;
-    Mat.set_slice [[i]; []] ps !p;
+    begin match major with
+      | Row -> Mat.set_slice [[i]; []] xs !x; Mat.set_slice [[i]; []] ps !p
+      | Col -> Mat.set_slice [[]; [i]] xs !x; Mat.set_slice [[]; [i]] ps !p
+    end;
     ts := !t::!ts;
   done;
   !ts |> List.rev |> Array.of_list,
