@@ -6,18 +6,33 @@ type default_tspec_t =
 
 module type SolverT = sig
   type problem_t
-  type algorithms
+  type algorithm_t
   type tspec_t
   type output_t
   val odeint :
-    algo: algorithms ->
+    algo: algorithm_t ->
     problem: problem_t ->
     tspec: tspec_t ->
     unit ->
     output_t 
-  val make_algo : algorithms -> algorithms
 end
 
-module OdeSolver : SolverT
+module type OdeSolverT = sig
+  include SolverT
+    val cvode : ?stiff:bool -> ?relative_tol:float ->
+      ?abs_tol:float-> unit-> algorithm_t
+    val euler: algorithm_t 
+    val rk4: algorithm_t 
+end
 
-module SymplecticSolver: SolverT
+module type SymplecticSolverT = sig
+  include SolverT
+    val symplectic_euler : algorithm_t
+    val leapfrog: algorithm_t 
+    val pseudoleapfrog: algorithm_t 
+    val ruth3: algorithm_t 
+    val ruth4: algorithm_t 
+end
+
+module OdeSolver : OdeSolverT
+module SymplecticSolver: SymplecticSolverT

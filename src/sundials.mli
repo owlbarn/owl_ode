@@ -9,7 +9,9 @@ val unwrap :
 
 (* returns arrays of time and state *)
 val cvode :
-  stiff:bool->
+  stiff:bool ->
+  relative_tol:float ->
+  abs_tol:float ->
   f:(Owl.Mat.mat -> float -> Owl.Mat.mat) ->
   tspan:float * float ->
   dt:float ->
