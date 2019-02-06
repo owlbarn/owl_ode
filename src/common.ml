@@ -6,6 +6,8 @@ type timespan = float * float
 (** Representation of a time span. *)  
 
 let steps t0 t1 dt =
+  (* NOTE: switched Float.floor to Maths.floor; 
+   * Float module seems not to be only supported in ocaml 4.07.0 *)
   (t1 -. t0)/.dt |> Maths.floor |> int_of_float
 
 type major =
