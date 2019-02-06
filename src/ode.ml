@@ -20,16 +20,22 @@ module type SolverT = sig
 end
 
 module type OdeSolverT = sig
-  include SolverT
-    val cvode: ?stiff:bool -> ?relative_tol:float ->
-      ?abs_tol:float-> unit -> algorithm_t
-    val euler: algorithm_t 
-    val rk4: algorithm_t 
+  type ode_problem_t = {f: Owl.Mat.mat -> float -> Owl.Mat.mat; y0: Owl.Mat.mat}
+
+  include SolverT with type tspec_t = default_tspec_t
+                   and type output_t = float array * Owl.Mat.mat
+                   and type problem_t = ode_problem_t
+
+  val cvode : ?stiff:bool -> ?relative_tol:float ->
+    ?abs_tol:float-> unit-> algorithm_t
+  val euler: algorithm_t 
+  val rk4: algorithm_t 
 end
 
 module OdeSolver = struct
-  type problem_t = 
-    {f: Mat.mat -> float -> Mat.mat; y0: Mat.mat}
+  type ode_problem_t = {f: Owl.Mat.mat -> float -> Owl.Mat.mat; y0: Owl.Mat.mat}
+
+  type problem_t = ode_problem_t
   type tspec_t = default_tspec_t
   type output_t = float array * Mat.mat
   type algorithm_t = 
@@ -53,19 +59,24 @@ module OdeSolver = struct
         | T3 _ -> raise Owl_exception.NOT_IMPLEMENTED in
       integrate ~f ~tspan ~dt ~y0
 
-    let cvode 
-        ?(stiff=false) 
-        ?(relative_tol=1E-4) 
-        ?(abs_tol=1E-8) () = 
-      (Cvode {stiff; relative_tol; abs_tol})
-    let euler = Euler
-    let rk4 = RK4
+  let cvode 
+      ?(stiff=false) 
+      ?(relative_tol=1E-4) 
+      ?(abs_tol=1E-8) () = 
+    (Cvode {stiff; relative_tol; abs_tol})
+  let euler = Euler
+  let rk4 = RK4
 end
 
 
 module type SymplecticSolverT = sig
-  include SolverT
-  val symplectic_euler: algorithm_t
+  type hamiltonian_problem_t = {f: Owl.Mat.mat -> Owl.Mat.mat -> float -> Owl.Mat.mat; x0: Owl.Mat.mat; p0: Owl.Mat.mat}
+
+  include SolverT with type tspec_t = default_tspec_t
+                   and type output_t = float array * Owl.Mat.mat * Owl.Mat.mat
+                   and type problem_t = hamiltonian_problem_t
+
+  val symplectic_euler : algorithm_t
   val leapfrog: algorithm_t 
   val pseudoleapfrog: algorithm_t 
   val ruth3: algorithm_t 
@@ -73,8 +84,9 @@ module type SymplecticSolverT = sig
 end
 
 module SymplecticSolver = struct
-  type problem_t = 
-    {f: Mat.mat -> Mat.mat -> float -> Mat.mat; x0: Mat.mat; p0: Mat.mat}
+  type hamiltonian_problem_t = {f: Owl.Mat.mat -> Owl.Mat.mat -> float -> Owl.Mat.mat; x0: Owl.Mat.mat; p0: Owl.Mat.mat}
+
+  type problem_t = hamiltonian_problem_t
   type tspec_t = default_tspec_t
   type output_t = float array * Mat.mat * Mat.mat
   type algorithm_t = 
