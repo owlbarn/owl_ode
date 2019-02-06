@@ -5,11 +5,6 @@ type tspec_t =
   | T2 of {tspan: (float * float); dt: float}
   | T3 of float array
 
-type ode_problem_t = {f: Mat.mat -> float -> Mat.mat; y0: Mat.mat}
-
-type symplect_problem_t = {f: Mat.mat -> Mat.mat -> float -> Mat.mat; x0: Mat.mat; p0: Mat.mat} 
-
-
 module type SolverT = sig
   type t
   type output
