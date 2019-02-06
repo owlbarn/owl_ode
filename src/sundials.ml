@@ -28,6 +28,7 @@ let cvode ~stiff ~relative_tol ~abs_tol ~f ~tspan:(t0, t1) ~dt ~y0 =
   Cvode.set_stop_time session duration;
   fun () ->
     let step _y t = 
+      let t = t +. dt in
       let (t', _) = Cvode.solve_normal session t yvec in
       let y' = Mat.copy (unwrap (dim1, dim2) y) in
       y', t' in

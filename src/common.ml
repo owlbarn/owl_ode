@@ -25,7 +25,7 @@ let integrate ~step ~tspan:(t0, t1) ~dt y0 =
   let n_steps = steps t0 t1 dt in
   let ys = match major with
     | Row -> Owl.Mat.empty n_steps n 
-    | Col -> Owl.Mat.empty n_steps n in
+    | Col -> Owl.Mat.empty n n_steps in
   let ts = ref [] in
   let t = ref t0 in
   let y = ref y0 in

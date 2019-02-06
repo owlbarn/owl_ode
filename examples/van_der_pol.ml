@@ -1,5 +1,7 @@
 open Owl
 
+let () = Printexc.record_backtrace true
+
 let tau = 150E-3 
 let f = 
   let mu = 10. in
