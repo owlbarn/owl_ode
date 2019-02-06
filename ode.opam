@@ -1,6 +1,6 @@
 opam-version: "2.0"
-maintainer: ""
-authors: [ "" ]
+maintainer: "owlbarn"
+authors: [ "Marcello Seri" "Ta-Chu Calvin Kao" ]
 license: "MIT"
 homepage: "https://github.com/owlbarn/owl_sundials"
 dev-repo: "git+https://github.com/owlbarn/owl_sundials.git"
