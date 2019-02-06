@@ -8,5 +8,5 @@ env:
   global:
   - PINS="ode:."
   matrix:
-  - PACKAGE="ode" DISTRO="fedora-28" OCAML_VERSION="4.07"
-  - PACKAGE="ode" DISTRO="ubuntu-18.04" OCAML_VERSION="4.07"
+  - PACKAGE="ode" DISTRO="fedora-29" OCAML_VERSION="4.07"
+  - PACKAGE="ode" DISTRO="debian-stable" OCAML_VERSION="4.07"
