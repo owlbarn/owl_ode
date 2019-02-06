@@ -6,7 +6,7 @@ type timespan = float * float
 (** Representation of a time span. *)  
 
 let steps t0 t1 dt =
-  (t1 -. t0)/.dt |> Float.floor |> int_of_float
+  (t1 -. t0)/.dt |> Maths.floor |> int_of_float
 
 let integrate ~step ~tspan:(t0, t1) ~dt y0 =
   let n = Mat.col_num y0 in
