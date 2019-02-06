@@ -1,4 +1,4 @@
-let damped_noforcing a xs ps _ : Owl.Mat.mat=
+let damped_noforcing a xs ps _ : Owl.Mat.mat =
   Owl.Mat.(
     xs *$ (-1.0) + ps *$ (-1.0*.a)
   )
@@ -21,10 +21,16 @@ let plot_sol fname t sol1 sol2 sol3 =
   output h
 
 let () =
-  let y0 = Owl.Mat.of_array [|-0.25; 0.75|] 1 2 in
+  let x0 = Owl.Mat.of_array [|-0.25|] 1 1 in
+  let p0 = Owl.Mat.of_array [|0.75|] 1 1 in
   let t0, duration = 0.0, 15.0 in
-  let ndsolve algorithm = Ode.Symplectic.odeint ~algorithm ~f:(damped_noforcing a) ~y0 ~t0 ~duration ~dt in
-  let t, sol1 = ndsolve Leapfrog () in
-  let _, sol2 = ndsolve Ruth3 () in
-  let _, sol3 = ndsolve Symplectic_Euler () in
-  plot_sol "damped.png" t sol1 sol2 sol3;
+  let f = damped_noforcing a in
+  let open Ode.SymplecticSolver in
+  let tspec = Ode.T1 {t0; duration; dt} in
+  let problem = {f; x0; p0} in
+  let ndsolve algo = odeint ~algo ~problem ~tspec in
+  let t, sol1, _ = ndsolve leapfrog () in
+  let _, sol2, _ = ndsolve ruth3 () in
+  let _, sol3, _ = ndsolve ruth4 () in
+  (* XXX: I'd prefer t to be already an Owl array as well *)
+  plot_sol "damped.png" (Owl.Mat.of_array t 1 (Array.length t)) sol1 sol2 sol3;
