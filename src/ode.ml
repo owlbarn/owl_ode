@@ -12,7 +12,7 @@ type symplect_problem_t = {f: Mat.mat -> Mat.mat -> float -> Mat.mat; x0: Mat.ma
 module type SolverT = sig
   type t
   type output
-  val solve : ((t -> float -> Mat.mat) -> t -> tspec_t -> unit -> float array * output)
+  val solve : ((t -> float -> Mat.mat) -> t -> tspec_t -> unit -> output)
 end
 
 
@@ -32,9 +32,40 @@ let cvode ?(stiff=false) ?(relative_tol=1E-4) ?(abs_tol=1E-8) () =
       | T3 _ -> raise Owl_exception.NOT_IMPLEMENTED 
     in integrate ~f ~tspan ~dt ~y0
 
+let leapfrog =
+  let integrate = Symplectic.leapfrog in
+  fun f (x0,p0) tspec ->
+    let f x0 p0 = f (x0,p0) in
+    let tspan, dt = match tspec with
+      | T1 {t0; duration; dt} -> (t0, t0+.duration), dt
+      | T2 {tspan; dt} -> tspan, dt 
+      | T3 _ -> raise Owl_exception.NOT_IMPLEMENTED 
+    in integrate ~f ~tspan ~dt x0 p0
+
+let ruth3 =
+  let integrate = Symplectic.ruth3 in
+  fun f (x0,p0) tspec ->
+    let f x0 p0 = f (x0,p0) in
+    let tspan, dt = match tspec with
+      | T1 {t0; duration; dt} -> (t0, t0+.duration), dt
+      | T2 {tspan; dt} -> tspan, dt 
+      | T3 _ -> raise Owl_exception.NOT_IMPLEMENTED 
+    in integrate ~f ~tspan ~dt x0 p0
+
+let symplectic_euler =
+  let integrate = Symplectic.symplectic_euler in
+  fun f (x0,p0) tspec ->
+    let f x0 p0 = f (x0,p0) in
+    let tspan, dt = match tspec with
+      | T1 {t0; duration; dt} -> (t0, t0+.duration), dt
+      | T2 {tspan; dt} -> tspan, dt 
+      | T3 _ -> raise Owl_exception.NOT_IMPLEMENTED 
+    in integrate ~f ~tspan ~dt x0 p0
+
+
 module Owl_Cvode = struct
   type t = Mat.mat
-  type output = Mat.mat
+  type output = float array * Mat.mat
   let solve = cvode ~stiff:true ()
 end
 

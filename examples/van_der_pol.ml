@@ -28,7 +28,7 @@ let () =
 
 module Custom_Cvode = struct
   type t = Mat.mat
-  type output = Mat.mat
+  type output = float array * Mat.mat
   let solve = cvode ~stiff:false ~relative_tol:1E-3 ()
 end
 
@@ -38,6 +38,6 @@ let () =
   (* save ts and ys *)
   let ts = [| ts |] |> Mat.of_arrays |> Mat.transpose in
   let ys = ys |> Mat.transpose in
-  Mat.save_txt Mat.(ts @|| ys) "van_der_pol_dynamics.txt"
+  Mat.save_txt Mat.(ts @|| ys) "van_der_pol_dynamics_custom.txt"
 
 

@@ -13,7 +13,7 @@ type symplect_problem_t = {f: Mat.mat -> Mat.mat -> float -> Mat.mat; x0: Mat.ma
 module type SolverT = sig
   type t
   type output
-  val solve : ((t -> float -> Mat.mat) -> t -> tspec_t -> unit -> float array * output)
+  val solve : ((t -> float -> Mat.mat) -> t -> tspec_t -> unit -> output)
 end
 
 
@@ -23,7 +23,7 @@ val odeint :
   'b ->
   tspec_t -> 
   unit ->
-  float array * 'a
+  'a
 
 val cvode : 
   ?stiff:bool -> 
@@ -35,8 +35,32 @@ val cvode :
   tspec_t ->
   unit ->
   float array * Mat.mat
-  
-module Owl_Cvode : SolverT with type t = Mat.mat  and type output = Mat.mat
+
+val leapfrog: 
+  ((Mat.mat * Mat.mat) -> float -> Mat.mat) ->
+  (Mat.mat * Mat.mat) ->
+  tspec_t ->
+  unit ->
+  float array * Mat.mat * Mat.mat
+
+val ruth3: 
+  ((Mat.mat * Mat.mat) -> float -> Mat.mat) ->
+  (Mat.mat * Mat.mat) ->
+  tspec_t ->
+  unit ->
+  float array * Mat.mat * Mat.mat
+
+val symplectic_euler:
+  ((Mat.mat * Mat.mat) -> float -> Mat.mat) ->
+  (Mat.mat * Mat.mat) ->
+  tspec_t ->
+  unit ->
+  float array * Mat.mat * Mat.mat
+
+
+
+module Owl_Cvode : 
+  SolverT with type t = Mat.mat and type output = float array * Mat.mat
 
 
 
