@@ -42,7 +42,7 @@ let ruth4_c = let c = Owl.Maths.pow 2.0 (1.0/.3.0) in
   [ (0.5, 0.0); (0.5*.(1.0-.c), 1.0); (0.5*.(1.0-.c), -.c); (0.5, 1.0)]
   |> List.map (fun (v1,v2) -> v1 /. (2.0 -. c), (v2 /. (2.0 -. c)))
 
-let leapfrog_s' ~f ~dt = symint ~coeffs:leapfrog_c ~f ~dt
+let _leapfrog_s' ~f ~dt = symint ~coeffs:leapfrog_c ~f ~dt
 let pseudoleapfrog_s ~f ~dt = symint ~coeffs:pseudoleapfrog_c ~f ~dt 
 let ruth3_s ~f ~dt = symint ~coeffs:ruth3_c ~f ~dt
 let ruth4_s ~f ~dt = symint ~coeffs:ruth4_c ~f ~dt
