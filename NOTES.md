@@ -9,9 +9,13 @@ Currently there are three options available, providing incompatible underlying r
 
 Of course such an interface could provide additional purely OCaml functionalities, like robust native implementations of
 
-- standard ode solvers, like Euler, Midpoint, Runge-Kutta 4 and some adaptive ones, say rk2(3), and rk4(5) or [Tsit5](http://users.ntua.gr/tsitoura/RK54_new_v2.pdf)
+- [x] standard fixed-step ode solvers, like Euler, Midpoint, Runge-Kutta 4 
 
-- symplectic ode solvers, like Störmer-Verlet, Ruth3/4, Yosida
+- [ ] standard adaptive solvers, say rk2(3), and rk4(5) or [Tsit5](http://users.ntua.gr/tsitoura/RK54_new_v2.pdf)
+
+- [x] symplectic ode solvers, like Störmer-Verlet, Forest-Ruth or Yoshida
+
+- [ ] sundialsml interface (already partially implemented)
 
 and implementations leveraging Owl's specific capabilities, like an implementation of the Taylor integrator built upon Algodiff.
 Albeit relatively old and standard, a good starting point could be the two references from [TaylorSeries.jl](https://github.com/JuliaDiff/TaylorSeries.jl), namely:
@@ -39,3 +43,5 @@ It would be interesting to design an interface that allows to implement the [Neu
 ## Further comments
 
 We could provide two interfaces, one takes a stepper function and performs just a step, and can be iterated manually (like `odeint` in the current sundials implementation, or the integrators in the current ocaml implementation), and a lower level one mimicking sundials and odepack, that only performs each integration step separately.
+
+We currently cannot have implicit methods for the lack of vector-valued root finding functions. We should add implementations for those, and then introduce some implicit methods (e.g. the implicit Stoermer-Verlet is much more robust and works nicely for non-separable Hamiltonians). At least we can use Sundials for now `:-)`
