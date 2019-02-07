@@ -2,9 +2,6 @@ open Owl
 (* TODO: update implementations of multiple order RK on the line of
  * symplectic.ml *)
 
-type timespan = float * float
-(** Representation of a time span. *)  
-
 let steps t0 t1 dt =
   (* NOTE: switched Float.floor to Maths.floor; 
    * Float module seems not to be only supported in ocaml 4.07.0 *)
@@ -44,8 +41,6 @@ let integrate ~step ~tspan:(t0, t1) ~dt y0 =
   !ts |> List.rev |> Array.of_list,
   ys
 
-
-
 let symplectic_integrate ~step ~tspan:(t0, t1) ~dt x0 p0 =
   assert ((Mat.shape x0)=(Mat.shape p0));
   let major, n = get_major x0 in
@@ -72,5 +67,4 @@ let symplectic_integrate ~step ~tspan:(t0, t1) ~dt x0 p0 =
   done;
   !ts |> List.rev |> Array.of_list,
   xs, ps 
-
 

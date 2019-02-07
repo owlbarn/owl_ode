@@ -1,11 +1,11 @@
 (executable
  (name van_der_pol)
- (libraries ode)
+ (libraries owl-ode)
  (modules van_der_pol)
 )
 
 (executable
  (name damped)
- (libraries ode)
+ (libraries owl-ode)
  (modules damped)
 )

@@ -1,22 +1,10 @@
 open Owl
 
-type tspec_t = 
-  | T1 of {t0: float; duration:float; dt: float}
-  | T2 of {tspan: (float * float); dt: float}
-  | T3 of float array
-
-module type SolverT = sig
-  type t
-  type output
-  val solve : ((t -> float -> Mat.mat) -> t -> tspec_t -> unit -> output)
-end
-
-
 val odeint : 
-  (module SolverT with type output = 'a and type t = 'b) ->
+  (module Types.SolverT with type output = 'a and type t = 'b) ->
   ('b -> float -> Mat.mat) ->
   'b ->
-  tspec_t -> 
+  Types.tspec_t -> 
   unit ->
   'a
 
@@ -27,35 +15,10 @@ val cvode :
   unit -> 
   (Mat.mat -> float -> Mat.mat) ->
   Mat.mat ->
-  tspec_t ->
+  Types.tspec_t ->
   unit ->
   float array * Mat.mat
 
-val leapfrog: 
-  ((Mat.mat * Mat.mat) -> float -> Mat.mat) ->
-  (Mat.mat * Mat.mat) ->
-  tspec_t ->
-  unit ->
-  float array * Mat.mat * Mat.mat
-
-val ruth3: 
-  ((Mat.mat * Mat.mat) -> float -> Mat.mat) ->
-  (Mat.mat * Mat.mat) ->
-  tspec_t ->
-  unit ->
-  float array * Mat.mat * Mat.mat
-
-val symplectic_euler:
-  ((Mat.mat * Mat.mat) -> float -> Mat.mat) ->
-  (Mat.mat * Mat.mat) ->
-  tspec_t ->
-  unit ->
-  float array * Mat.mat * Mat.mat
-
-
-
 module Owl_Cvode : 
-  SolverT with type t = Mat.mat and type output = float array * Mat.mat
-
-
+  Types.SolverT with type t = Mat.mat and type output = float array * Mat.mat
 
