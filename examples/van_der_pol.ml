@@ -38,4 +38,16 @@ let () =
   (* save ts and ys *)
   let ts = [| ts |] |> Mat.of_arrays |> Mat.transpose in
   let ys = ys |> Mat.transpose in
-  Mat.save_txt Mat.(ts @|| ys) "van_der_pol_dynamics_custom.txt"
+  Mat.save_txt Mat.(ts @|| ys) "van_der_pol_dynamics_custom.txt";
+  let _, ys' = Ode.odeint (module Native.RK4) f y0 tspec () in
+  let ys' = Mat.transpose ys' in
+  let fname = "vdp.png" in
+  let h = Plot.create fname in
+  let open Plot in
+  set_foreground_color h 0 0 0;
+  set_background_color h 255 255 255;
+  set_title h fname;
+  plot ~h ~spec:[ RGB (0,0,255); LineStyle 1 ] (Mat.col ys 0) (Mat.col ys 1);
+  plot ~h ~spec:[ RGB (0,255,0); LineStyle 1 ] (Mat.col ys' 0) (Mat.col ys' 1);
+  legend_on h ~position:NorthEast [|"CVode"; "RK4"|];
+  output h
