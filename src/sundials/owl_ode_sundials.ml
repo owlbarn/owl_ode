@@ -1,6 +1,6 @@
 open Owl
 open Bigarray
-open Types
+open Owl_ode.Types
 
 let wrap x = reshape_1 x Mat.(numel x) 
 
@@ -43,7 +43,7 @@ let cvode ?(stiff=false) ?(relative_tol=1E-4) ?(abs_tol=1E-8) () =
     assert (dim2 = 1);
     assert ((Mat.shape (f y0 t0)) = (dim1, dim2));
     let step = cvode_s' ~f ~tspan:(t0, t1) ~y0 ~dt in
-    Common.integrate ~step ~dt ~tspan:(t0, t1) y0
+    Owl_ode.Common.integrate ~step ~dt ~tspan:(t0, t1) y0
 
 module Owl_Cvode = struct
   type t = Mat.mat

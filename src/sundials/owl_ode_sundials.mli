@@ -27,10 +27,10 @@ val cvode :
   unit -> 
   (Owl.Mat.mat -> float -> Owl.Mat.mat) ->
   Owl.Mat.mat ->
-  Types.tspec_t ->
+  Owl_ode.Types.tspec_t ->
   unit ->
   float array * Owl.Mat.mat
 
-module Owl_Cvode: Types.SolverT
+module Owl_Cvode: Owl_ode.Types.SolverT
   with type t = Owl.Mat.mat
    and type output = float array * Owl.Mat.mat
