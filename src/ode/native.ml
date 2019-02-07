@@ -8,6 +8,13 @@ let euler_s ~(f:f_t) ~dt = fun y0 t0 ->
   let t = t0 +. dt in
   y, t
 
+let midpoint_s ~(f:f_t) ~dt = fun y0 t0 ->
+  let k1 = Mat.(dt $* (f y0 t0)) in
+  let k2 = Mat.(dt $* (f (y0 + k1 *$ 0.5) (t0 +. 0.5 *. dt))) in
+  let y = Mat.(y0 + k2) in
+  let t = t0 +. dt in
+  y, t
+
 let rk4_s ~(f:f_t) ~dt = fun y0 t0 ->
   let k1 = Mat.(dt $* (f y0 t0)) in
   let k2 = Mat.(dt $* (f (y0 + k1 *$ 0.5) (t0 +. 0.5 *. dt))) in
@@ -32,6 +39,12 @@ module Euler = struct
   type t = Mat.mat
   type output = float array * Mat.mat
   let solve = prepare euler_s
+end
+
+module Midpoint = struct
+  type t = Mat.mat
+  type output = float array * Mat.mat
+  let solve = prepare midpoint_s
 end
 
 module RK4 = struct
