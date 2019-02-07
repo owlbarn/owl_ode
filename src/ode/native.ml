@@ -55,14 +55,6 @@ end
 
 
 let rk45_s ?(tol=1E-7) f y0 tspec () =
-  let (t0,t1), _ = match tspec with
-    | T1 {t0; duration; dt} -> (t0, t0+.duration), dt
-    | T2 {tspan; dt} -> tspan, dt 
-    | T3 _ -> raise Owl_exception.NOT_IMPLEMENTED 
-  in
-  let dtmax = (t1 -. t0) /. 128.0 in
-  let dt = dtmax /. 4.0 in
-
   (* Cash-Karp parameters *)
   let a = [| 0.0; 0.2; 0.3; 0.6; 1.0; 0.875 |] 
   in
@@ -79,10 +71,19 @@ let rk45_s ?(tol=1E-7) f y0 tspec () =
              c.(3)-.13525.0/.55296.0; c.(4)-.277.00/.14336.0; c.(5)-.0.25|] 
   in
 
+  let (t0,t1), _ = match tspec with
+    | T1 {t0; duration; dt} -> (t0, t0+.duration), dt
+    | T2 {tspan; dt} -> tspan, dt 
+    | T3 _ -> raise Owl_exception.NOT_IMPLEMENTED 
+  in
+  let dtmax = (t1 -. t0) /. 128.0 in
+  let dt = dtmax /. 4.0 in
+
   let rec go (ts, ys) (t0:float) y0 dt =
-    if t0 >= t1 then (ts, ys) else
+    if t0 >= t1 then (ts, ys)
+    else
       let dt = if t0 +. dt > t1 then t1 -. t0 else dt in
-      if t0 +. dt <= t0 then failwith "Singularity in ODE";
+      if t0 +. dt <= t0 then failwith "Singular ODE";
 
       (* Compute k[i] function values. *)
       let k1 = f y0 t0 in
