@@ -25,33 +25,6 @@ let rk4_s ~(f:f_t) ~dt = fun y0 t0 ->
   let t = t0 +. dt in
   y, t
 
-let prepare step f y0 tspec () =
-  let tspan, dt = match tspec with
-    | T1 {t0; duration; dt} -> (t0, t0+.duration), dt
-    | T2 {tspan; dt} -> tspan, dt 
-    | T3 _ -> raise Owl_exception.NOT_IMPLEMENTED 
-  in
-  let step = step ~f ~dt in
-  Common.integrate ~step ~tspan ~dt y0
-
-
-module Euler = struct
-  type t = Mat.mat
-  type output = float array * Mat.mat
-  let solve = prepare euler_s
-end
-
-module Midpoint = struct
-  type t = Mat.mat
-  type output = float array * Mat.mat
-  let solve = prepare midpoint_s
-end
-
-module RK4 = struct
-  type t = Mat.mat
-  type output = float array * Mat.mat
-  let solve = prepare rk4_s
-end
 
 
 let rk45_s ?(tol=1E-7) f y0 tspec () =
@@ -113,7 +86,44 @@ let rk45_s ?(tol=1E-7) f y0 tspec () =
   ts |> List.rev |> Array.of_list,
   ys |> List.rev |> Array.of_list |> Owl.Mat.of_rows
 
+
+let prepare step f y0 tspec () =
+  let tspan, dt = match tspec with
+    | T1 {t0; duration; dt} -> (t0, t0+.duration), dt
+    | T2 {tspan; dt} -> tspan, dt 
+    | T3 _ -> raise Owl_exception.NOT_IMPLEMENTED 
+  in
+  let step = step ~f ~dt in
+  Common.integrate ~step ~tspan ~dt y0
+
+module Euler = struct
+  type s = Mat.mat
+  type t = Mat.mat
+  type output = float array * Mat.mat
+  let solve = prepare euler_s
+end
+
+module Midpoint = struct
+  type s = Mat.mat
+  type t = Mat.mat
+  type output = float array * Mat.mat
+  let solve = prepare midpoint_s
+end
+
+module RK4 = struct
+  type s = Mat.mat
+  type t = Mat.mat
+  type output = float array * Mat.mat
+  let solve = prepare rk4_s
+end
+
+
+
+
+
+
 module RK45 = struct
+  type s = Mat.mat
   type t = Mat.mat
   type output = float array * Mat.mat
   let solve = rk45_s ~tol:1e-7

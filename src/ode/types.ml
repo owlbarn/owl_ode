@@ -4,7 +4,8 @@ type tspec_t =
   | T3 of float array
 
 module type SolverT = sig
+  type s
   type t
   type output
-  val solve : ((t -> float -> Owl.Mat.mat) -> t -> tspec_t -> unit -> output)
+  val solve : ((s -> float -> t) -> s -> tspec_t -> unit -> output)
 end

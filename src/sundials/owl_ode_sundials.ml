@@ -46,6 +46,7 @@ let cvode ?(stiff=false) ?(relative_tol=1E-4) ?(abs_tol=1E-8) () =
     Owl_ode.Common.integrate ~step ~dt ~tspan:(t0, t1) y0
 
 module Owl_Cvode = struct
+  type s = Mat.mat
   type t = Mat.mat
   type output = float array * Mat.mat
   let solve = cvode ~stiff:true ()

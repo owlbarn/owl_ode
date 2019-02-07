@@ -27,6 +27,7 @@ let () =
 
 (* create our own cvode integrator *)
 module Custom_Cvode = struct
+  type s = Mat.mat
   type t = Mat.mat
   type output = float array * Mat.mat
   let solve = Owl_ode_sundials.cvode ~stiff:false ~relative_tol:1E-3 ()

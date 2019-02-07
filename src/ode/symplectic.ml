@@ -92,31 +92,36 @@ let prepare step f (x0,p0) tspec () =
 
 
 module Symplectic_Euler = struct
-  type t = Mat.mat * Mat.mat
+  type s = Mat.mat * Mat.mat
+  type t = Mat.mat
   type output = float array * Mat.mat * Mat.mat
   let solve = prepare symplectic_euler_s
 end
 
 module PseudoLeapfrog = struct
-  type t = Mat.mat * Mat.mat
+  type s = Mat.mat * Mat.mat
+  type t = Mat.mat
   type output = float array * Mat.mat * Mat.mat
   let solve = prepare pseudoleapfrog_s
 end
 
 module Leapfrog = struct
-  type t = Mat.mat * Mat.mat
+  type s = Mat.mat * Mat.mat
+  type t = Mat.mat
   type output = float array * Mat.mat * Mat.mat
   let solve = prepare leapfrog_s
 end
 
 module Ruth3 = struct
-  type t = Mat.mat * Mat.mat
+  type s = Mat.mat * Mat.mat
+  type t = Mat.mat
   type output = float array * Mat.mat * Mat.mat
   let solve = prepare ruth3_s
 end
 
 module Ruth4 = struct
-  type t = Mat.mat * Mat.mat
+  type s = Mat.mat * Mat.mat
+  type t = Mat.mat
   type output = float array * Mat.mat * Mat.mat
   let solve = prepare ruth4_s
 end
