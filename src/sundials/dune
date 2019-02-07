@@ -1,0 +1,5 @@
+(library
+ (name owl_ode_sundials)
+ (public_name owl-ode-sundials)
+ (libraries bigarray owl owl-ode sundialsml)
+)

@@ -1,4 +1,0 @@
-(library
- (public_name ode)
- (libraries bigarray owl sundialsml)
-)

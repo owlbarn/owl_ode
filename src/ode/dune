@@ -1,0 +1,5 @@
+(library
+ (name owl_ode)
+ (public_name owl-ode)
+ (libraries owl)
+)
