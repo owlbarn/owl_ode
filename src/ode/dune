@@ -1,3 +1,4 @@
+(copy_files# native/*)
 (library
  (name owl_ode)
  (public_name owl-ode)

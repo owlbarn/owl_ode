@@ -40,7 +40,7 @@ let () =
   let ts = [| ts |] |> Mat.of_arrays |> Mat.transpose in
   let ys = ys |> Mat.transpose in
   Mat.save_txt Mat.(ts @|| ys) "van_der_pol_dynamics_custom.txt";
-  let _, ys' = Ode.odeint (module Native.RK4) f y0 tspec () in
+  let _, ys' = Ode.odeint (module Native.D.RK4) f y0 tspec () in
   let ys' = Mat.transpose ys' in
   let fname = "vdp.png" in
   let h = Plot.create fname in
