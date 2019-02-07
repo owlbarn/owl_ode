@@ -100,14 +100,16 @@ let rk45_s ?(tol=1E-7) f y0 tspec () =
       (* Update solution if error is OK *)
       let t = t0 +. dt in
       let y = Mat.(y0 + k1*$c.(0) + k2*$c.(1) + k3*$c.(2) + k4*$c.(3) + k5*$c.(4) + k6*$c.(5)) in
+
       (* Update step size *)
       let dt = if err > 0. then min dtmax (0.85*.dt*.(err_max/.err)**0.2) else dt in
+
       if err < err_max then
         go (t::ts, y::ys) t y dt
       else
         go (ts, ys) t0 y0 dt
   in
-  let ts, ys = go ([], []) t0 y0 dt in
+  let ts, ys = go ([t0], [y0]) t0 y0 dt in
   ts |> List.rev |> Array.of_list,
   ys |> List.rev |> Array.of_list |> Owl.Mat.of_rows
 
