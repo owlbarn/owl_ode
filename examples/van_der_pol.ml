@@ -10,11 +10,10 @@ let f =
   let lambda = 0.1 in
   fun y _t ->
     let y = Mat.to_array y in
-    [|[| y.(1) |]; 
-      [| -.y.(0) +. mu *. y.(1) *. (lambda -. Maths.sqr y.(0))|]|]
+    [|[| y.(1); -.y.(0) +. mu *. y.(1) *. (lambda -. Maths.sqr y.(0))|]|]
     |> Mat.of_arrays
 
-let y0 = Mat.of_array [|0.02; 0.03|] 2 1
+let y0 = Mat.of_array [|0.02; 0.03|] 1 2
 
 (* use Ode provided cvode integrator *)
 let () = 
@@ -22,7 +21,6 @@ let () =
   let ts, ys = Ode.odeint (module Owl_ode_sundials.Owl_Cvode) f y0 tspec () in
   (* save ts and ys *)
   let ts = [| ts |] |> Mat.of_arrays |> Mat.transpose in
-  let ys = ys |> Mat.transpose in
   Mat.save_txt Mat.(ts @|| ys) "van_der_pol_dynamics.txt"
 
 (* create our own cvode integrator *)
@@ -38,10 +36,8 @@ let () =
   let ts, ys = Ode.odeint (module Custom_Cvode) f y0 tspec () in
   (* save ts and ys *)
   let ts = [| ts |] |> Mat.of_arrays |> Mat.transpose in
-  let ys = ys |> Mat.transpose in
   Mat.save_txt Mat.(ts @|| ys) "van_der_pol_dynamics_custom.txt";
   let t', ys' = Ode.odeint (module Native.D.RK4) f y0 tspec () in
-  let ys' = Mat.transpose ys' in
   let t'', ys'' = Ode.odeint (module Native.D.RK45) f y0 tspec () in
   Printf.printf "RK4: %d; RK45: %d;\n%!" (Array.length t') (Array.length t'');
   let fname = "vdp.png" in

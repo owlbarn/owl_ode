@@ -39,9 +39,6 @@ let cvode ?(stiff=false) ?(relative_tol=1E-4) ?(abs_tol=1E-8) () =
     (* Maybe this kind of checks should go to Common -- with an odeint equivalent
        and be used everywhere. We will just pass the step function to be used in
        the integration loop: that one will take the ~f parameter. *)
-    let dim1, dim2 = Mat.shape y0 in
-    assert (dim2 = 1);
-    assert ((Mat.shape (f y0 t0)) = (dim1, dim2));
     let step = cvode_s' ~f ~tspan:(t0, t1) ~y0 ~dt in
     Owl_ode.Common.integrate ~step ~dt ~tspan:(t0, t1) y0
 

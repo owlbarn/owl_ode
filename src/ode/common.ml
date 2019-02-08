@@ -79,8 +79,8 @@ let symplectic_integrate ~step ~tspan:(t0, t1) ~dt x0 p0 =
   !ts |> List.rev |> Array.of_list,
   xs, ps 
 
-(* TODO: adapt algorithm to matrix type *)
 let adaptive_integrate ~step ~tspan:(t0, t1) ~dtmax y0 =
+  let major, _ = get_major y0 in
   let dt = dtmax /. 4.0 in
   let rec go (ts, ys) (t0:float) y0 dt =
     if t0 >= t1 then (ts, ys)
@@ -96,4 +96,12 @@ let adaptive_integrate ~step ~tspan:(t0, t1) ~dtmax y0 =
   in
   let ts, ys = go ([t0], [y0]) t0 y0 dt in
   ts |> List.rev |> Array.of_list,
-  ys |> List.rev |> Array.of_list |> M.of_cols |> M.transpose
+  match major with
+  | Row -> ys |> List.rev |> Array.of_list |> M.of_rows
+  | Col -> ys |> List.rev |> Array.of_list |> M.of_cols 
+
+
+
+
+
+
