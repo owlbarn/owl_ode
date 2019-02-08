@@ -28,14 +28,14 @@ module RK23 = struct
   type s = mat
   type t = mat
   type output = float array * mat
-  let solve = rk23_s ~tol:1e-7
+  let solve = adaptive_prepare (rk23_s ~tol:1e-7)
 end
 
 module RK45 = struct
   type s = mat
   type t = mat
   type output = float array * mat
-  let solve = rk45_s ~tol:1e-7
+  let solve = adaptive_prepare (rk45_s ~tol:1e-7)
 end
 
 

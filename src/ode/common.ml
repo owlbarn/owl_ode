@@ -79,3 +79,21 @@ let symplectic_integrate ~step ~tspan:(t0, t1) ~dt x0 p0 =
   !ts |> List.rev |> Array.of_list,
   xs, ps 
 
+(* TODO: adapt algorithm to matrix type *)
+let adaptive_integrate ~step ~tspan:(t0, t1) ~dtmax y0 =
+  let dt = dtmax /. 4.0 in
+  let rec go (ts, ys) (t0:float) y0 dt =
+    if t0 >= t1 then (ts, ys)
+    else
+      let dt = min dt (t1 -. t0) in
+      if t0 +. dt <= t0 then failwith "Singular ODE";
+      let t, y, dt, err_ok = step y0 t0 dt  in
+      if err_ok then
+        (* Update solution if error is OK *)
+        go (t::ts, y::ys) t y dt
+      else
+        go (ts, ys) t0 y0 dt
+  in
+  let ts, ys = go ([t0], [y0]) t0 y0 dt in
+  ts |> List.rev |> Array.of_list,
+  ys |> List.rev |> Array.of_list |> M.of_cols |> M.transpose
