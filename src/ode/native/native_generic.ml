@@ -56,7 +56,7 @@ let rk45_s ?(tol=1E-7) f y0 tspec () =
       let dt = if t0 +. dt > t1 then t1 -. t0 else dt in
       if t0 +. dt <= t0 then failwith "Singular ODE";
 
-      (* Compute k[i] function values. *)
+      (* Compute k_i function values. *)
       let k1 = f y0 t0 in
       let k2 = M.(f (y0 + k1 *$ (dt *. b.(1).(0))) (t0 +. a.(1) *. dt)) in
       let k3 = M.(f (y0 + k1 *$ (dt *. b.(2).(0)) + k2 *$ (dt *. b.(2).(1))) (t0 +. a.(2) *. dt)) in
@@ -65,17 +65,16 @@ let rk45_s ?(tol=1E-7) f y0 tspec () =
       let k6 = M.(f (y0 + k1 *$ (dt *. b.(5).(0)) + k2 *$ (dt *. b.(5).(1)) + k3 *$ (dt *. b.(5).(2)) + k4 *$ (dt *. b.(5).(3)) + k5 *$ (dt *. b.(5).(4))) (t0 +. a.(5) *. dt)) in
 
       (* Estimate current error and current maximum error.*)
-      let err = M.l2norm' M.(dt $* (k1*$dc.(0) + k2*$dc.(1) + k3*$dc.(2) + k4*$dc.(3) + k5*$dc.(4) + k6*$dc.(5))) in
-      let err_max = tol *. (max (M.l2norm' y0) 1.0) in
-
-      (* Update solution if error is OK *)
-      let t = t0 +. dt in
-      let y = M.(y0 + k1*$c.(0) + k2*$c.(1) + k3*$c.(2) + k4*$c.(3) + k5*$c.(4) + k6*$c.(5)) in
+      let err = M.l1norm' M.(dt $* (k1*$dc.(0) + k2*$dc.(1) + k3*$dc.(2) + k4*$dc.(3) + k5*$dc.(4) + k6*$dc.(5))) in
+      let err_max = tol *. (max (M.l1norm' y0) 1.0) in
 
       (* Update step size *)
-      let dt = if err > epsilon_float then min dtmax (0.85*.dt*.(err_max/.err)**0.2) else dt in
+      let dt = if err > 0. then min dtmax (0.85*.dt*.(err_max/.err)**0.2) else dt in
 
       if err < err_max then
+        (* Update solution if error is OK *)
+        let t = t0 +. dt in
+        let y = M.(dt $* (k1*$c.(0) + k2*$c.(1) + k3*$c.(2) + k4*$c.(3) + k5*$c.(4) + k6*$c.(5)) + y0) in
         go (t::ts, y::ys) t y dt
       else
         go (ts, ys) t0 y0 dt
@@ -93,4 +92,4 @@ let prepare step f y0 tspec () =
   in
   let step = step ~f ~dt in
   Common.integrate ~step ~tspan ~dt y0
- 
+
