@@ -42,7 +42,7 @@ let rk45_s ?(tol=1E-7) f y0 tspec () =
              c.(3)-.13525.0/.55296.0; c.(4)-.277.00/.14336.0; c.(5)-.0.25|] 
   in
 
-  let (t0,t1), _ = match tspec with
+  let (t0,t1), _dt = match tspec with
     | T1 {t0; duration; dt} -> (t0, t0+.duration), dt
     | T2 {tspan; dt} -> tspan, dt 
     | T3 _ -> raise Owl_exception.NOT_IMPLEMENTED 
@@ -74,14 +74,14 @@ let rk45_s ?(tol=1E-7) f y0 tspec () =
       if err <= err_max then
         (* Update solution if error is OK *)
         let t = t0 +. dt in
-        let y = M.(dt $* (k1*$c.(0) + k2*$c.(1) + k3*$c.(2) + k4*$c.(3) + k5*$c.(4) + k6*$c.(5)) + y0) in
+        let y = M.(y0 + k1*$(dt *. c.(0)) + k2*$(dt *. c.(1)) + k3*$(dt *. c.(2)) + k4*$(dt *. c.(3)) + k5*$(dt *. c.(4)) + k6*$(dt *. c.(5))) in
         go (t::ts, y::ys) t y dt
       else
         go (ts, ys) t0 y0 dt
   in
   let ts, ys = go ([t0], [y0]) t0 y0 dt in
   ts |> List.rev |> Array.of_list,
-  ys |> List.rev |> Array.of_list |> M.of_rows
+  ys |> List.rev |> Array.of_list |> M.of_cols |> M.transpose
 
 
 let prepare step f y0 tspec () =

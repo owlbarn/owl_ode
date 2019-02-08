@@ -40,15 +40,29 @@ let () =
   let ts = [| ts |] |> Mat.of_arrays |> Mat.transpose in
   let ys = ys |> Mat.transpose in
   Mat.save_txt Mat.(ts @|| ys) "van_der_pol_dynamics_custom.txt";
-  let _, ys' = Ode.odeint (module Native.D.RK4) f y0 tspec () in
+  let t', ys' = Ode.odeint (module Native.D.RK4) f y0 tspec () in
   let ys' = Mat.transpose ys' in
+  let t'', ys'' = Ode.odeint (module Native.D.RK45) f y0 tspec () in
+  Printf.printf "RK4: %d; RK45: %d;\n%!" (Array.length t') (Array.length t'');
   let fname = "vdp.png" in
-  let h = Plot.create fname in
+  let h = Plot.create ~n:1 ~m:2 fname in
   let open Plot in
   set_foreground_color h 0 0 0;
   set_background_color h 255 255 255;
   set_title h fname;
+  subplot h 0 0;
   plot ~h ~spec:[ RGB (0,0,255); LineStyle 1 ] (Mat.col ys 0) (Mat.col ys 1);
   plot ~h ~spec:[ RGB (0,255,0); LineStyle 1 ] (Mat.col ys' 0) (Mat.col ys' 1);
-  legend_on h ~position:NorthEast [|"CVode"; "RK4"|];
+  plot ~h ~spec:[ RGB (255,0,0); LineStyle 1 ] (Mat.col ys'' 0) (Mat.col ys'' 1);
+  legend_on h ~position:NorthEast [|"CVode"; "RK4"; "RK45"|];
+  subplot h 1 0;
+  let ts' = [| t' |] |> Mat.of_arrays |> Mat.transpose in
+  let ts'' = [| t'' |] |> Mat.of_arrays |> Mat.transpose in
+  plot ~h ~spec:[ RGB (0,0,255); LineStyle 1 ] (Mat.col ts 0) Mat.(col (0. $- ys) 1);
+  plot ~h ~spec:[ RGB (0,0,255); LineStyle 3 ] (Mat.col ts 0) Mat.(Mat.col (0. $- ys) 0);
+  plot ~h ~spec:[ RGB (0,255,0); LineStyle 1 ] (Mat.col ts' 0) (Mat.col ys' 1);
+  plot ~h ~spec:[ RGB (0,255,0); LineStyle 3 ] (Mat.col ts' 0) (Mat.col ys' 0);
+  plot ~h ~spec:[ RGB (255,0,0); LineStyle 1 ] (Mat.col ts'' 0) (Mat.col ys'' 1);
+  plot ~h ~spec:[ RGB (255,0,0); LineStyle 3 ] (Mat.col ts'' 0) (Mat.col ys'' 0);
+  legend_on h ~position:NorthEast [|"CVode"; "CVode"; "RK4"; "RK4"; "RK45"; "RK45"|];
   output h
