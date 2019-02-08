@@ -53,7 +53,7 @@ let rk45_s ?(tol=1E-7) f y0 tspec () =
   let rec go (ts, ys) (t0:float) y0 dt =
     if t0 >= t1 then (ts, ys)
     else
-      let dt = if t0 +. dt > t1 then t1 -. t0 else dt in
+      let dt = min dt (t1 -. t0) in
       if t0 +. dt <= t0 then failwith "Singular ODE";
 
       (* Compute k_i function values. *)
@@ -71,7 +71,7 @@ let rk45_s ?(tol=1E-7) f y0 tspec () =
       (* Update step size *)
       let dt = if err > 0. then min dtmax (0.85*.dt*.(err_max/.err)**0.2) else dt in
 
-      if err < err_max then
+      if err <= err_max then
         (* Update solution if error is OK *)
         let t = t0 +. dt in
         let y = M.(dt $* (k1*$c.(0) + k2*$c.(1) + k3*$c.(2) + k4*$c.(3) + k5*$c.(4) + k6*$c.(5)) + y0) in
