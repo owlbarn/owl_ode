@@ -11,7 +11,7 @@ Of course such an interface could provide additional purely OCaml functionalitie
 
 - [x] standard fixed-step ode solvers, like Euler, Midpoint, Runge-Kutta 4 
 
-- [ ] standard adaptive solvers, say rk2(3), and rk4(5) or [Tsit5](http://users.ntua.gr/tsitoura/RK54_new_v2.pdf)
+- [ ] standard adaptive solvers, say rk2(3), and rk4(5) or [Tsit5](http://users.ntua.gr/tsitoura/RK54_new_v2.pdf) (in progress)
 
 - [x] symplectic ode solvers, like Störmer-Verlet, Forest-Ruth or Yoshida
 
@@ -47,3 +47,5 @@ We could provide two interfaces, one takes a stepper function and performs just 
 We currently cannot have implicit methods for the lack of vector-valued root finding functions. We should add implementations for those, and then introduce some implicit methods (e.g. the implicit Stoermer-Verlet is much more robust and works nicely for non-separable Hamiltonians). At least we can use Sundials for now `:-)`
 
 It would also be nice to provide a function that takes the pair (t, y) and returns the interpolated function.
+
+We should make the integrators more robust and with better failure modes, we could take inspiration from the very readable scipy implementation [https://github.com/scipy/scipy/blob/v1.2.0/scipy/integrate/_ivp/rk.py#L15].

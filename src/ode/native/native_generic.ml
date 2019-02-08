@@ -27,7 +27,7 @@ let rk4_s ~(f:'a f_t) ~dt = fun y0 t0 ->
 
 
 let rk23_s ~tol ~dtmax f =
-  (* Cash-Karp parameters *)
+  (* Bogacki-Shampine parameters *)
   let a = [| 0.0; 0.5; 0.75; |] 
   in
   let b = [|[||];
