@@ -8,6 +8,8 @@ let unwrap (dim1, dim2) x =
   genarray_of_array2 (reshape_2 (genarray_of_array1 x) dim1 dim2)
 
 let cvode_s ~stiff ~relative_tol ~abs_tol ~(f:Mat.mat -> float -> Mat.mat) ~tspan:(t0, t1) ~y0 ~dt =
+  (* make a copy of y0 so we don't overwrite it*)
+  let y0 = Mat.copy y0 in
   (* rhs function that sundials understands *)
   let dim1, dim2 = Mat.shape y0 in
   let f_wrapped t y yd =
@@ -46,5 +48,5 @@ module Owl_Cvode = struct
   type s = Mat.mat
   type t = Mat.mat
   type output = float array * Mat.mat
-  let solve = cvode ~stiff:true ()
+  let solve = cvode ~stiff:false ()
 end

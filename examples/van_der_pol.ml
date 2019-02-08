@@ -2,8 +2,6 @@ open Owl
 open Owl_ode
 open Owl_ode.Types
 
-let () = Printexc.record_backtrace true
-
 let tau = 150E-3 
 let f = 
   let mu = 10. in
@@ -54,8 +52,8 @@ let () =
   subplot h 1 0;
   let ts' = [| t' |] |> Mat.of_arrays |> Mat.transpose in
   let ts'' = [| t'' |] |> Mat.of_arrays |> Mat.transpose in
-  plot ~h ~spec:[ RGB (0,0,255); LineStyle 1 ] (Mat.col ts 0) Mat.(col (0. $- ys) 1);
-  plot ~h ~spec:[ RGB (0,0,255); LineStyle 3 ] (Mat.col ts 0) Mat.(Mat.col (0. $- ys) 0);
+  plot ~h ~spec:[ RGB (0,0,255); LineStyle 1 ] (Mat.col ts 0) Mat.(col ys 1);
+  plot ~h ~spec:[ RGB (0,0,255); LineStyle 3 ] (Mat.col ts 0) Mat.(col ys 0);
   plot ~h ~spec:[ RGB (0,255,0); LineStyle 1 ] (Mat.col ts' 0) (Mat.col ys' 1);
   plot ~h ~spec:[ RGB (0,255,0); LineStyle 3 ] (Mat.col ts' 0) (Mat.col ys' 0);
   plot ~h ~spec:[ RGB (255,0,0); LineStyle 1 ] (Mat.col ts'' 0) (Mat.col ys'' 1);
