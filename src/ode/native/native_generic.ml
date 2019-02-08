@@ -25,6 +25,55 @@ let rk4_s ~(f:'a f_t) ~dt = fun y0 t0 ->
   let t = t0 +. dt in
   y, t
 
+let rk23_s ?(tol=1E-7) f y0 tspec () =
+  (* Cash-Karp parameters *)
+  let a = [| 0.0; 0.5; 0.75; |] 
+  in
+  let b = [|[||];
+            [|0.5|];
+            [|0.0; 3.0/.4.0|]|] 
+  in
+  let c  = [|2.0/.9.0; 1.0/.3.0; 4.0/.9.0|]
+  in
+  let dc = [|c.(0)-.7.0/.24.0; c.(1)-.1.0/.4.0; c.(2)-.1.0/.3.0; -1.0/.8.0|] 
+  in
+  let (t0,t1), _dt = match tspec with
+    | T1 {t0; duration; dt} -> (t0, t0+.duration), dt
+    | T2 {tspan; dt} -> tspan, dt 
+    | T3 _ -> raise Owl_exception.NOT_IMPLEMENTED 
+  in
+  let dtmax = (t1 -. t0) /. 128.0 in
+  let dt = dtmax /. 4.0 in
+
+  let rec go (ts, ys) (t0:float) y0 dt =
+    if t0 >= t1 then (ts, ys)
+    else
+      let dt = min dt (t1 -. t0) in
+      if t0 +. dt <= t0 then failwith "Singular ODE";
+      (* Compute k_i function values. *)
+      let k1 = f y0 t0 in
+      let k2 = M.(f (y0 + k1 *$ (dt *. b.(1).(0))) (t0 +. a.(1) *. dt)) in
+      let k3 = M.(f (y0 + k2 *$ (dt *. b.(2).(1))) (t0 +. a.(2) *. dt)) in
+      let t = t0 +. dt in
+      let y = M.(y0 + k1*$(dt *. c.(0)) + k2*$(dt *. c.(1)) + k3*$(dt *. c.(2))) in
+
+      let k4 = f y t in
+      (* Estimate current error and current maximum error.*)
+      let err = M.l1norm' M.(dt $* (k1*$dc.(0) + k2*$dc.(1) + k3*$dc.(2) + k4*$dc.(3))) in
+      let err_max = tol *. (max (M.l1norm' y0) 1.0) in
+
+      (* Update step size *)
+      let dt = if err > 0. then min dtmax (0.85*.dt*.(err_max/.err)**0.2) else dt in
+      if err <= err_max then
+        (* Update solution if error is OK *)
+        go (t::ts, y::ys) t y dt
+      else
+        go (ts, ys) t0 y0 dt
+  in
+  let ts, ys = go ([t0], [y0]) t0 y0 dt in
+  ts |> List.rev |> Array.of_list,
+  ys |> List.rev |> Array.of_list |> M.of_cols |> M.transpose
+
 let rk45_s ?(tol=1E-7) f y0 tspec () =
   (* Cash-Karp parameters *)
   let a = [| 0.0; 0.2; 0.3; 0.6; 1.0; 0.875 |] 

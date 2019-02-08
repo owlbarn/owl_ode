@@ -25,6 +25,13 @@ val rk4_s :
   float ->
   (float, 'a) M.t * float 
 
+val rk23_s :
+  ?tol:float ->
+  'a f_t ->
+  (float, 'a) M.t ->
+  tspec_t ->
+  unit ->
+  float array * (float, 'a) M.t
 
 val rk45_s :
   ?tol:float ->

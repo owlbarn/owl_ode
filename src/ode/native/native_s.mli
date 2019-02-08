@@ -16,6 +16,11 @@ module RK4: Types.SolverT
    and type output = float array * mat
 
 (** Default tol = 1e-7 *)
+module RK23: Types.SolverT
+  with type s = mat
+   and type t = mat
+   and type output = float array * mat  
+
 module RK45: Types.SolverT
   with type s = mat
    and type t = mat
