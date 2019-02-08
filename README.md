@@ -1,4 +1,4 @@
-# Owl-ODE - Owl's Ordinary Differential Equation Solvers
+# Owl-ODE - Ordinary Differential Equation Solvers
 
 Please refer to the [Project Page](http://ocaml.xyz/project/proposal.html#project-13-differential-equation-solvers) for details.
 
