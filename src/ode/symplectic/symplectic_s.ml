@@ -1,3 +1,11 @@
+(*
+ * OWL - OCaml Scientific and Engineering Computing
+ * OWL-ODE - Ordinary Differential Equation Solvers
+ *
+ * Copyright (c) 2019 Ta-Chu Kao <tck29@cam.ac.uk>
+ * Copyright (c) 2019 Marcello Seri <m.seri@rug.nl>
+ *)
+
 type mat = Owl_dense_matrix_s.mat
 
 include Symplectic_generic
@@ -35,4 +43,4 @@ module Ruth4 = struct
   type t = mat
   type output = float array * mat * mat
   let solve = prepare ruth4_s
-end  
+end

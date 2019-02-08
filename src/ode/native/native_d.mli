@@ -1,3 +1,11 @@
+(*
+ * OWL - OCaml Scientific and Engineering Computing
+ * OWL-ODE - Ordinary Differential Equation Solvers
+ *
+ * Copyright (c) 2019 Ta-Chu Kao <tck29@cam.ac.uk>
+ * Copyright (c) 2019 Marcello Seri <m.seri@rug.nl>
+ *)
+
 type mat = Owl_dense_matrix_d.mat
 
 module Euler: Types.SolverT
@@ -19,9 +27,9 @@ module RK4: Types.SolverT
 module RK23: Types.SolverT
   with type s = mat
    and type t = mat
-   and type output = float array * mat  
+   and type output = float array * mat
 
 module RK45: Types.SolverT
   with type s = mat
    and type t = mat
-   and type output = float array * mat 
+   and type output = float array * mat

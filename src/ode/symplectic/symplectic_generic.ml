@@ -1,3 +1,11 @@
+(*
+ * OWL - OCaml Scientific and Engineering Computing
+ * OWL-ODE - Ordinary Differential Equation Solvers
+ *
+ * Copyright (c) 2019 Ta-Chu Kao <tck29@cam.ac.uk>
+ * Copyright (c) 2019 Marcello Seri <m.seri@rug.nl>
+ *)
+
 open Common
 open Types
 
@@ -43,13 +51,13 @@ let ruth4_c = let c = Owl.Maths.pow 2.0 (1.0/.3.0) in
   |> List.map (fun (v1,v2) -> v1 /. (2.0 -. c), (v2 /. (2.0 -. c)))
 
 let _leapfrog_s' ~f ~dt = symint ~coeffs:leapfrog_c ~f ~dt
-let pseudoleapfrog_s ~f ~dt = symint ~coeffs:pseudoleapfrog_c ~f ~dt 
+let pseudoleapfrog_s ~f ~dt = symint ~coeffs:pseudoleapfrog_c ~f ~dt
 let ruth3_s ~f ~dt = symint ~coeffs:ruth3_c ~f ~dt
 let ruth4_s ~f ~dt = symint ~coeffs:ruth4_c ~f ~dt
 
 
 (*
-    (* XXX: 
+    (* XXX:
     We would like to do
 
         pint = so.fsolve(
@@ -84,10 +92,8 @@ let prepare step f (x0,p0) tspec () =
   let f x0 p0 = f (x0,p0) in
   let tspan, dt = match tspec with
     | T1 {t0; duration; dt} -> (t0, t0+.duration), dt
-    | T2 {tspan; dt} -> tspan, dt 
-    | T3 _ -> raise Owl_exception.NOT_IMPLEMENTED 
-  in 
+    | T2 {tspan; dt} -> tspan, dt
+    | T3 _ -> raise Owl_exception.NOT_IMPLEMENTED
+  in
   let step = step ~f ~dt in
   Common.symplectic_integrate ~step ~tspan ~dt x0 p0
-
- 

@@ -1,3 +1,11 @@
+(*
+ * OWL - OCaml Scientific and Engineering Computing
+ * OWL-ODE - Ordinary Differential Equation Solvers
+ *
+ * Copyright (c) 2019 Ta-Chu Kao <tck29@cam.ac.uk>
+ * Copyright (c) 2019 Marcello Seri <m.seri@rug.nl>
+ *)
+
 type mat = Owl_dense_matrix_d.mat
 
 include Native_generic
@@ -37,5 +45,3 @@ module RK45 = struct
   type output = float array * mat
   let solve = adaptive_prepare (rk45_s ~tol:1e-7)
 end
-
-

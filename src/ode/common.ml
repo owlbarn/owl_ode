@@ -1,3 +1,11 @@
+(*
+ * OWL - OCaml Scientific and Engineering Computing
+ * OWL-ODE - Ordinary Differential Equation Solvers
+ *
+ * Copyright (c) 2019 Ta-Chu Kao <tck29@cam.ac.uk>
+ * Copyright (c) 2019 Marcello Seri <m.seri@rug.nl>
+ *)
+
 (* TODO: update implementations of multiple order RK on the line of
  * symplectic.ml *)
 
@@ -12,7 +20,7 @@ end
 
 
 let steps t0 t1 dt =
-  (* NOTE: switched Float.floor to Maths.floor; 
+  (* NOTE: switched Float.floor to Maths.floor;
    * Float module seems not to be only supported in ocaml 4.07.0 *)
   (t1 -. t0)/.dt |> Owl.Maths.floor |> int_of_float
 
@@ -20,7 +28,7 @@ type major =
   | Row
   | Col
 
-let get_major y0 = 
+let get_major y0 =
   let dim1, dim2 = M.shape y0 in
   assert ((dim1=1)||(dim2=1));
   if dim1=1 then Row, dim2
@@ -31,7 +39,7 @@ let integrate ~step ~tspan:(t0, t1) ~dt y0 =
   let n_steps = steps t0 t1 dt in
   let k = M.kind y0 in
   let ys = match major with
-    | Row -> M.empty k n_steps n 
+    | Row -> M.empty k n_steps n
     | Col -> M.empty k n n_steps in
   let ts = ref [] in
   let t = ref t0 in
@@ -77,7 +85,7 @@ let symplectic_integrate ~step ~tspan:(t0, t1) ~dt x0 p0 =
     ts := !t::!ts;
   done;
   !ts |> List.rev |> Array.of_list,
-  xs, ps 
+  xs, ps
 
 let adaptive_integrate ~step ~tspan:(t0, t1) ~dtmax y0 =
   let major, _ = get_major y0 in
@@ -98,10 +106,4 @@ let adaptive_integrate ~step ~tspan:(t0, t1) ~dtmax y0 =
   ts |> List.rev |> Array.of_list,
   match major with
   | Row -> ys |> List.rev |> Array.of_list |> M.of_rows
-  | Col -> ys |> List.rev |> Array.of_list |> M.of_cols 
-
-
-
-
-
-
+  | Col -> ys |> List.rev |> Array.of_list |> M.of_cols

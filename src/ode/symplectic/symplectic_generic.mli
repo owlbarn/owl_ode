@@ -1,3 +1,11 @@
+(*
+ * OWL - OCaml Scientific and Engineering Computing
+ * OWL-ODE - Ordinary Differential Equation Solvers
+ *
+ * Copyright (c) 2019 Ta-Chu Kao <tck29@cam.ac.uk>
+ * Copyright (c) 2019 Marcello Seri <m.seri@rug.nl>
+ *)
+
 open Common
 open Types
 
@@ -5,7 +13,7 @@ type 'a f_t = (float, 'a) M.t -> (float, 'a) M.t -> float -> (float, 'a) M.t
 
 val symplectic_euler_s :
   f:'a f_t ->
-  dt:float -> 
+  dt:float ->
   (float, 'a) M.t ->
   (float, 'a) M.t ->
   float ->
@@ -13,7 +21,7 @@ val symplectic_euler_s :
 
 val leapfrog_s:
   f:'a f_t ->
-  dt:float -> 
+  dt:float ->
   (float, 'a) M.t ->
   (float, 'a) M.t ->
   float ->
@@ -21,7 +29,7 @@ val leapfrog_s:
 
 val pseudoleapfrog_s:
   f:'a f_t ->
-  dt:float -> 
+  dt:float ->
   (float, 'a) M.t ->
   (float, 'a) M.t ->
   float ->
@@ -29,7 +37,7 @@ val pseudoleapfrog_s:
 
 val ruth3_s :
   f:'a f_t ->
-  dt:float -> 
+  dt:float ->
   (float, 'a) M.t ->
   (float, 'a) M.t ->
   float ->
@@ -37,19 +45,19 @@ val ruth3_s :
 
 val ruth4_s :
   f:'a f_t ->
-  dt:float -> 
+  dt:float ->
   (float, 'a) M.t ->
   (float, 'a) M.t ->
   float ->
   (float, 'a) M.t * (float, 'a) M.t * float
 
-val prepare: 
+val prepare:
   (f:('a -> 'b -> 'c) ->
    dt:float ->
-   ('d, 'e) M.t -> 
-   ('d, 'e) M.t -> 
-   float -> 
+   ('d, 'e) M.t ->
+   ('d, 'e) M.t ->
+   float ->
    ('d, 'e) M.t * ('d, 'e) M.t * float) ->
   ('a * 'b -> 'c) ->
   ('d, 'e) M.t * ('d, 'e) M.t ->
-  tspec_t -> unit -> float array * ('d, 'e) M.t * ('d, 'e) M.t 
+  tspec_t -> unit -> float array * ('d, 'e) M.t * ('d, 'e) M.t

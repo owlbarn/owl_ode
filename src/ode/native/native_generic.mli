@@ -1,3 +1,11 @@
+(*
+ * OWL - OCaml Scientific and Engineering Computing
+ * OWL-ODE - Ordinary Differential Equation Solvers
+ *
+ * Copyright (c) 2019 Ta-Chu Kao <tck29@cam.ac.uk>
+ * Copyright (c) 2019 Marcello Seri <m.seri@rug.nl>
+ *)
+
 open Common
 open Types
 
@@ -6,28 +14,28 @@ type 'a f_t = (float, 'a) M.t -> float -> (float, 'a) M.t
 val euler_s :
   f:'a f_t ->
   dt:float->
-  (float, 'a) M.t -> 
+  (float, 'a) M.t ->
   float ->
-  (float, 'a) M.t * float 
+  (float, 'a) M.t * float
 
 val midpoint_s :
   f:'a f_t ->
   dt:float->
-  (float, 'a) M.t -> 
+  (float, 'a) M.t ->
   float ->
-  (float, 'a) M.t * float 
+  (float, 'a) M.t * float
 
 
 val rk4_s :
   f:'a f_t ->
   dt:float->
-  (float, 'a) M.t -> 
+  (float, 'a) M.t ->
   float ->
   (float, 'a) M.t * float
 
 val prepare :
-  (f: 'a -> 
-   dt: float -> 
+  (f: 'a ->
+   dt: float ->
    ('b, 'c) M.t ->
    float ->
    ('b, 'c) M.t * float) ->
@@ -37,11 +45,11 @@ val prepare :
   unit ->
   float array * ('b, 'c) M.t
 
-val adaptive_prepare : 
+val adaptive_prepare :
   (dtmax:float ->
    'a ->
    ('b, 'c) M.t ->
-   float -> 
+   float ->
    float ->
    float * ('b, 'c) M.t * float * bool) ->
   'a ->
@@ -55,7 +63,7 @@ val rk23_s :
   dtmax:float ->
   'a f_t ->
   (float, 'a) M.t ->
-  float -> 
+  float ->
   float ->
   float * (float, 'a) M.t * float * bool
 
@@ -64,6 +72,6 @@ val rk45_s :
   dtmax:float ->
   'a f_t ->
   (float, 'a) M.t ->
-  float -> 
+  float ->
   float ->
   float * (float, 'a) M.t * float * bool

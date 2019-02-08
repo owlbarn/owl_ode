@@ -1,4 +1,12 @@
-open Common 
+(*
+ * OWL - OCaml Scientific and Engineering Computing
+ * OWL-ODE - Ordinary Differential Equation Solvers
+ *
+ * Copyright (c) 2019 Ta-Chu Kao <tck29@cam.ac.uk>
+ * Copyright (c) 2019 Marcello Seri <m.seri@rug.nl>
+ *)
+
+open Common
 open Types
 
 type 'a f_t = (float, 'a) M.t -> float -> (float, 'a) M.t
@@ -28,15 +36,15 @@ let rk4_s ~(f:'a f_t) ~dt = fun y0 t0 ->
 
 let rk23_s ~tol ~dtmax f =
   (* Bogacki-Shampine parameters *)
-  let a = [| 0.0; 0.5; 0.75; |] 
+  let a = [| 0.0; 0.5; 0.75; |]
   in
   let b = [|[||];
             [|0.5|];
-            [|0.0; 3.0/.4.0|]|] 
+            [|0.0; 3.0/.4.0|]|]
   in
   let c  = [|2.0/.9.0; 1.0/.3.0; 4.0/.9.0|]
   in
-  let dc = [|c.(0)-.7.0/.24.0; c.(1)-.1.0/.4.0; c.(2)-.1.0/.3.0; -1.0/.8.0|] 
+  let dc = [|c.(0)-.7.0/.24.0; c.(1)-.1.0/.4.0; c.(2)-.1.0/.3.0; -1.0/.8.0|]
   in
   fun y0 t0 dt ->
     (* Compute k_i function values. *)
@@ -58,19 +66,19 @@ let rk23_s ~tol ~dtmax f =
 
 let rk45_s ~tol ~dtmax f  =
   (* Cash-Karp parameters *)
-  let a = [| 0.0; 0.2; 0.3; 0.6; 1.0; 0.875 |] 
+  let a = [| 0.0; 0.2; 0.3; 0.6; 1.0; 0.875 |]
   in
   let b = [|[||];
             [|0.2|];
             [|3.0/.40.0; 9.0/.40.0|];
             [|0.3; -.0.9; 1.2|];
             [|-.11.0/.54.0; 2.5; -.70.0/.27.0; 35.0/.27.0|];
-            [|1631.0/.55296.0; 175.0/.512.0; 575.0/.13824.0; 44275.0/.110592.0; 253.0/.4096.0|]|] 
+            [|1631.0/.55296.0; 175.0/.512.0; 575.0/.13824.0; 44275.0/.110592.0; 253.0/.4096.0|]|]
   in
   let c  = [|37.0/.378.0; 0.0; 250.0/.621.0; 125.0/.594.0; 0.0; 512.0/.1771.0|]
   in
   let dc = [|c.(0)-.2825.0/.27648.0; c.(1)-.0.0; c.(2)-.18575.0/.48384.0;
-             c.(3)-.13525.0/.55296.0; c.(4)-.277.00/.14336.0; c.(5)-.0.25|] 
+             c.(3)-.13525.0/.55296.0; c.(4)-.277.00/.14336.0; c.(5)-.0.25|]
   in
   fun y0 t0 dt ->
     (* Compute k_i function values. *)
@@ -95,8 +103,8 @@ let rk45_s ~tol ~dtmax f  =
 let prepare step f y0 tspec () =
   let tspan, dt = match tspec with
     | T1 {t0; duration; dt} -> (t0, t0+.duration), dt
-    | T2 {tspan; dt} -> tspan, dt 
-    | T3 _ -> raise Owl_exception.NOT_IMPLEMENTED 
+    | T2 {tspan; dt} -> tspan, dt
+    | T3 _ -> raise Owl_exception.NOT_IMPLEMENTED
   in
   let step = step ~f ~dt in
   Common.integrate ~step ~tspan ~dt y0
@@ -105,10 +113,9 @@ let prepare step f y0 tspec () =
 let adaptive_prepare step f y0 tspec () =
   let (t0,t1), _dt = match tspec with
     | T1 {t0; duration; dt} -> (t0, t0+.duration), dt
-    | T2 {tspan; dt} -> tspan, dt 
-    | T3 _ -> raise Owl_exception.NOT_IMPLEMENTED 
+    | T2 {tspan; dt} -> tspan, dt
+    | T3 _ -> raise Owl_exception.NOT_IMPLEMENTED
   in
   let dtmax = (t1 -. t0) /. 128.0 in
   let step = step ~dtmax f in
   Common.adaptive_integrate ~step ~tspan:(t0,t1) ~dtmax y0
-
