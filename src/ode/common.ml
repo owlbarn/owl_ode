@@ -27,14 +27,14 @@ type state_type =
   | Col
   | Matrix
 
-let get_major y0 =
+let get_state_t y0 =
   let dim1, dim2 = M.shape y0 in
   if dim1=1 then Row, dim2
   else if dim2=1 then Col, dim1
   else Matrix, dim1 * dim2
 
 let integrate ~step ~tspan:(t0, t1) ~dt y0 =
-  let state_t, n = get_major y0 in
+  let state_t, n = get_state_t y0 in
   let n_steps = steps t0 t1 dt in
   let k = M.kind y0 in
   let ys = match state_t with
@@ -53,7 +53,7 @@ let integrate ~step ~tspan:(t0, t1) ~dt y0 =
     begin match state_t with
       | Row -> M.set_slice [[i]; []] ys !y
       | Col -> M.set_slice [[]; [i]] ys !y
-      | Matrix -> M.set_slice [[]; [i]] ys M.(reshape !y [|1; -1|])
+      | Matrix -> M.set_slice [[i]; []] ys M.(reshape !y [|1; -1|])
     end;
     ts := !t::!ts;
   done;
@@ -65,7 +65,7 @@ let integrate ~step ~tspan:(t0, t1) ~dt y0 =
 
 let symplectic_integrate ~step ~tspan:(t0, t1) ~dt x0 p0 =
   if ((M.shape x0) <> (M.shape p0)) then raise Owl_exception.DIFFERENT_SHAPE;
-  let state_t, n = get_major x0 in
+  let state_t, n = get_state_t x0 in
   let n_steps = steps t0 t1 dt in
   let k = M.kind x0 in
   let xs, ps = match state_t with
@@ -84,9 +84,14 @@ let symplectic_integrate ~step ~tspan:(t0, t1) ~dt x0 p0 =
       t := t'
     end;
     begin match state_t with
-      | Row -> M.set_slice [[i]; []] xs !x; M.set_slice [[i]; []] ps !p
-      | Col -> M.set_slice [[]; [i]] xs !x; M.set_slice [[]; [i]] ps !p
-      | Matrix -> M.set_slice [[i]; []] xs M.(reshape !x [|1; -1|]);
+      | Row -> 
+        M.set_slice [[i]; []] xs !x; 
+        M.set_slice [[i]; []] ps !p
+      | Col -> 
+        M.set_slice [[]; [i]] xs !x; 
+        M.set_slice [[]; [i]] ps !p
+      | Matrix -> 
+        M.set_slice [[i]; []] xs M.(reshape !x [|1; -1|]);
         M.set_slice [[i]; []] ps M.(reshape !p [|1; -1|])
     end;
     ts := !t::!ts;
@@ -97,7 +102,7 @@ let symplectic_integrate ~step ~tspan:(t0, t1) ~dt x0 p0 =
   | Col -> ts, xs, ps
 
 let adaptive_integrate ~step ~tspan:(t0, t1) ~dtmax y0 =
-  let state_t, _ = get_major y0 in
+  let state_t, _ = get_state_t y0 in
   let dt = dtmax /. 4.0 in
   let rec go (ts, ys) (t0:float) y0 dt =
     if t0 >= t1 then (ts, ys)
