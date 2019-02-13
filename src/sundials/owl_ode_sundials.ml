@@ -47,6 +47,6 @@ let cvode ?(stiff=false) ?(relative_tol=1E-4) ?(abs_tol=1E-8) () =
 module Owl_Cvode = struct
   type s = Mat.mat
   type t = Mat.mat
-  type output = float array * Mat.mat
+  type output = Mat.mat * Mat.mat
   let solve = cvode ~stiff:false ()
 end

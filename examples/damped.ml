@@ -33,4 +33,4 @@ let () =
   let _, sol2, _ = Ode.odeint (module Symplectic.D.Ruth3) f (x0,p0) tspec () in
   let _, sol3, _ = Ode.odeint (module Symplectic.D.Symplectic_Euler) f (x0,p0) tspec () in
   (* XXX: I'd prefer t to be already an Owl array as well *)
-  plot_sol "damped.png" (Owl.Mat.of_array t 1 (Array.length t)) sol1 sol2 sol3;
+  plot_sol "damped.png" t sol1 sol2 sol3;

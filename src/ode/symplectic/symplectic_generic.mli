@@ -54,10 +54,10 @@ val ruth4_s :
 val prepare:
   (f:('a -> 'b -> 'c) ->
    dt:float ->
-   ('d, 'e) M.t ->
-   ('d, 'e) M.t ->
+   (float, 'd) M.t ->
+   (float, 'd) M.t ->
    float ->
-   ('d, 'e) M.t * ('d, 'e) M.t * float) ->
+   (float, 'd) M.t * (float, 'd) M.t * float) ->
   ('a * 'b -> 'c) ->
-  ('d, 'e) M.t * ('d, 'e) M.t ->
-  tspec_t -> unit -> float array * ('d, 'e) M.t * ('d, 'e) M.t
+  (float, 'd) M.t * (float, 'd) M.t ->
+  tspec_t -> unit -> (float, 'd) M.t * (float, 'd) M.t * (float, 'd) M.t

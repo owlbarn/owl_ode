@@ -36,27 +36,27 @@ val rk4_s :
 val prepare :
   (f: 'a ->
    dt: float ->
-   ('b, 'c) M.t ->
+   (float, 'b) M.t ->
    float ->
-   ('b, 'c) M.t * float) ->
+   (float, 'b) M.t * float) ->
   'a ->
-  ('b, 'c) M.t ->
+  (float, 'b) M.t ->
   tspec_t ->
   unit ->
-  float array * ('b, 'c) M.t
+  (float, 'b) M.t * (float, 'b) M.t
 
 val adaptive_prepare :
   (dtmax:float ->
    'a ->
-   ('b, 'c) M.t ->
+   (float, 'b) M.t ->
    float ->
    float ->
-   float * ('b, 'c) M.t * float * bool) ->
+   float * (float, 'b) M.t * float * bool) ->
   'a ->
-  ('b, 'c) M.t ->
+  (float, 'b) M.t ->
   tspec_t ->
   unit ->
-  float array * ('b, 'c) M.t
+  (float, 'b) M.t * (float, 'b) M.t
 
 val rk23_s :
   tol:float ->
