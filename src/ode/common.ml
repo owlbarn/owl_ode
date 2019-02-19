@@ -134,7 +134,7 @@ let to_state_array ?(axis=0) (dim1, dim2) ys =
     if axis=0 then M.to_rows
     else if axis=1 then M.to_cols
     else raise Owl_exception.INDEX_OUT_OF_BOUND in
-  let ys = ys unpack in
+  let ys = unpack ys in
   if (M.numel ys.(0)) <> dim1 * dim2 then raise Owl_exception.DIFFERENT_SHAPE;
   Array.map (fun y -> M.reshape y [|dim1; dim2|]) ys
 
