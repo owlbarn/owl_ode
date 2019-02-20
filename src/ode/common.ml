@@ -20,7 +20,7 @@ end
 let steps t0 t1 dt =
   (* NOTE: switched Float.floor to Maths.floor;
    * Float module seems not to be only supported in ocaml 4.07.0 *)
-  (t1 -. t0)/.dt |> Owl.Maths.floor |> int_of_float
+  (t1 -. t0)/.dt |> Owl.Maths.floor |> int_of_float |> succ
 
 type state_type =
   | Row
