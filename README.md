@@ -6,6 +6,8 @@ You can run the current example with `dune exec examples/van_der_pol.exe`,  `dun
 
 ## Tutorial
 
+### Overview
+
 Consider the problem of integrating a dymaical system that evolves according to `x' = f(x,t) = Ax`, 
 where `x` is the state of the system, `x'` is the time derivative of the state, and `t` is time. 
 We begin by defining f(x,t):
@@ -39,7 +41,7 @@ Putting everything together, we can now call:
 let ts, xs = Owl_ode.odeint (module Owl_ode.Native.D.RK4) f x0 tspec () 
 ```
 
-The restuls `ts` and `xs` are matrices of `t` and `x(t)` respectively,
+The results `ts` and `xs` are matrices that contain `t` and `x(t)` respectively,
 where column 0 of `xs` corresponds to x(t0) and column `2000` corresponds to `x(t0 +. duration)`
 (`ts` has dimensions `1x2001` and `xs` has dimensions `2x2001`).
 
@@ -48,7 +50,6 @@ a fixed-step, double-precision Runge-Kutta solver.
 We support a number of natively-implemented double-precision solvers in `Native.D` as well
 as single-precision ones in `Native.S.RK4`.
 
-### Overview
 
 The simple example above illustrates the basic components of defining and solving an ode problem using Owl Ode.
 The main function `Owl_ode.odeint` takes as its arguments:
