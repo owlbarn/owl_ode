@@ -4,6 +4,84 @@ Please refer to the [Project Page](http://ocaml.xyz/project/proposal.html#projec
 
 You can run the current example with `dune exec examples/van_der_pol.exe`,  `dune exec examples/damped.exe`.
 
+## Tutorial
+
+Consider the problem of integrating a dymaical system that evolves according to `x' = f(x,t) = Ax`, 
+where `x` is the state of the system, `x'` is the time derivative of the state, and `t` is time. 
+We begin by defining f(x,t):
+
+```ocaml
+open Owl
+
+let f x t = 
+   let a = [|[|1.; -1.|];
+             [|2.; -3.|]|]
+           |> Mat.of_arrays in
+   Mat.(a *@ x)
+```
+
+Next, we define the temporal specifications of the problem:
+
+```ocaml
+let tspec = Owl_ode.Types.(T1 {t0 = 0.; duration = 2.; dt=1E-3}
+```
+
+Here, we construct a record using the constructor `T1`, which specifies `t0`, `druation`, and step size `dt`.
+
+Last but not least, we define the initial state of the dynamical system `x0`: 
+
+```ocaml
+let x0 = Mat.of_array [|-1.; 1.|] 2 1
+```
+
+Putting everything together, we can now call:
+```ocaml
+let ts, xs = Owl_ode.odeint (module Owl_ode.Native.D.RK4) f x0 tspec () 
+```
+
+The restuls `ts` and `xs` are matrices of `t` and `x(t)` respectively,
+where column 0 of `xs` corresponds to x(t0) and column `2000` corresponds to `x(t0 +. duration)`
+(`ts` has dimensions `1x2001` and `xs` has dimensions `2x2001`).
+
+We choose a solver for integrating the dynamical system by specifying the module `Native.D.RK4`, 
+a fixed-step, double-precision Runge-Kutta solver. 
+We support a number of natively-implemented double-precision solvers in `Native.D` as well
+as single-precision ones in `Native.S.RK4`.
+
+### Overview
+
+The simple example above illustrates the basic components of defining and solving an ode problem using Owl Ode.
+The main function `Owl_ode.odeint` takes as its arguments:
+* a solver of module type `SolverT`, 
+* a function `f` that evolves the state,
+* an initial state `x0`, and
+* temporal spsecification `tspec`.
+
+The solver constrains the the type of the state `x` and that of the function `f` . 
+For example, the solvers in `Owl_ode.Native`, assume that `x:mat` is a matrix and `f:mat->float->mat` returns the time derivative of `x` at time `t`.
+
+### Sympletic Solvers 
+
+We have implemented a number of symplectic solvers in `Owl_ode.Symplectic`. 
+With sympletic solvers, the state of the system is a tuple `(x,p):mat * mat`, where `x` and `p` are the position and momentum of the system and
+ `f:(mat,mat)->float->mat` is the force at state `(x,p)` and time `t`.
+For a detailed example on how to use symplectic solvers, see `example/damped.ml`.
+
+
+### Sundials Cvode
+
+We have implemented a thin wrapper over Sundials Cvode (via [sundialsml's](https://github.com/inria-parkas/sundialsml)). 
+To use Cvode, one can use the `module Owl_ode_sundials.Cvode` as a solver.
+
+### Automatic inference of state dimensionality
+
+Native, sympletic and sundials solvers automatically infer the dimensionality of the state from the initial state.
+If the initial state `x0` is a row vector, the result time `t` and states `x(t)` are stacked horizontally in `ts` and `xs`.
+On the contrary, if the initial state `x0` is a column vecotr, the results will be stacked vertically.
+
+We also support integration of matrix states. By default, the states are flattened and stacked vertically in the results `xs`. 
+We have a helper function `Common.to_state_array` which can be used to "unflatten" the states into an array of matrices.
+
 
 ## NOTES
 
