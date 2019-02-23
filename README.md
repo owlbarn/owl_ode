@@ -86,7 +86,7 @@ We also support temporal integration of matrices.  That is, cases in which the s
 We can define new solver module by creating a module of type `SolverT`. For example, to create a custom Cvode solver that has a relative tolerance of 1E-7 as opposed to the default 1E-4, we can construct the following module:
 
 ```ocaml
-module Owl_Cvode = struct
+module Custom_Owl_Cvode = struct
   type s = Mat.mat
   type t = Mat.mat
   type output = Mat.mat * Mat.mat
