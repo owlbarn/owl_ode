@@ -124,6 +124,4 @@ module Make (M: Owl_types_ndarray_algodiff.Sig with type elt = float) = struct
     | Row | Matrix -> M.transpose ts, ys
     | Col -> ts, ys
 
-
-
 end 

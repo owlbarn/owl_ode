@@ -27,9 +27,14 @@ let cvode_s ~stiff ~relative_tol ~abs_tol ~(f:Mat.mat -> float -> Mat.mat) ~tspa
     | true  -> Cvode.(init BDF   Functional tolerances f_wrapped t0 yvec) in
   let duration = t1 -. t0 in
   Cvode.set_stop_time session duration;
+  let rec until t' t1 yvec =
+    if (abs_float (t1 -. t')) > 1E-10 then
+      let (t', _) = Cvode.solve_normal session t1 yvec in
+      until t' t1 yvec 
+    else t' in
   fun _y t ->
-    let t = t +. dt in
-    let (t', _) = Cvode.solve_normal session t yvec in
+    let t1 = t +. dt in
+    let t' = until t t1 yvec in
     let y' = Mat.copy (unwrap (dim1, dim2) y) in
     y', t'
 
@@ -53,3 +58,11 @@ module Owl_Cvode = struct
   type output = Mat.mat * Mat.mat
   let solve = cvode ~stiff:false ()
 end
+
+module Owl_Cvode_Stiff = struct
+  type s = Mat.mat
+  type t = Mat.mat
+  type output = Mat.mat * Mat.mat
+  let solve = cvode ~stiff:true ()
+end 
+
