@@ -1,5 +1,6 @@
 open Owl_ode
 open Owl_ode.Types
+open Owl_plot
 
 let damped_noforcing a (xs, ps) _ : Owl.Mat.mat =
   Owl.Mat.(
