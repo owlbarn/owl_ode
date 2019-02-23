@@ -1,11 +1,11 @@
 (executable
  (name van_der_pol)
- (libraries owl owl-ode-sundials owl-plplot)
+ (libraries owl owl-ode owl-ode-sundials owl-plplot)
  (modules van_der_pol)
 )
 
 (executable
  (name damped)
- (libraries owl owl-ode owl-plplot)
+ (libraries owl owl-ode owl-ode-sundials owl-plplot)
  (modules damped)
 )

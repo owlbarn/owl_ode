@@ -72,6 +72,4 @@ module Make :
         M.arr ->
         M.arr array * M.arr array
 
-
-
     end
