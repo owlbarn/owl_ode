@@ -1,4 +1,4 @@
-# Owl-ODE - Ordinary Differential Equation Solvers ![https://travis-ci.org/owlbarn/owl_ode](https://api.travis-ci.org/owlbarn/owl_ode.svg?branch=master)
+# Owl-ODE - Ordinary Differential Equation Solvers [![Build Status](https://travis-ci.org/owlbarn/owl_ode.svg?branch=master)](https://travis-ci.org/owlbarn/owl_ode)
 
 Please refer to the [Project Page](http://ocaml.xyz/project/proposal.html#project-13-differential-equation-solvers) for details.
 
