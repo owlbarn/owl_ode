@@ -8,9 +8,9 @@ You can run the current example with `dune exec examples/van_der_pol.exe`,  `dun
 
 ### Overview
 
-Consider the problem of integrating a dymaical system that evolves according to `x' = f(x,t) = Ax`, 
-where `x` is the state of the system, `x'` is the time derivative of the state, and `t` is time. 
-We begin by defining f(x,t):
+Consider the problem of integrating a linear dynamical system that evolves according to `x' = f(x,t) = Ax`, 
+where `x` is the state of the system, `x'` is the time derivative of the state, `t` is time.
+We begin by defining `f(x,t)` (and use as `A` the matrix `[[1,-1; 2,3]]`):
 
 ```ocaml
 open Owl
@@ -28,9 +28,9 @@ Next, we define the temporal specifications of the problem:
 let tspec = Owl_ode.Types.(T1 {t0 = 0.; duration = 2.; dt=1E-3}
 ```
 
-Here, we construct a record using the constructor `T1`, which specifies `t0`, `druation`, and step size `dt`.
+Here, we construct a record using the constructor `T1`, which specifies `t0`, `duration`, and step size `dt`.
 
-Last but not least, we define the initial state of the dynamical system `x0`: 
+Last but not least, we define the initial state of the dynamical system `x0` (in this example `x(0) = [-1,  1]`): 
 
 ```ocaml
 let x0 = Mat.of_array [|-1.; 1.|] 2 1
@@ -47,8 +47,8 @@ where column 0 of `xs` corresponds to x(t0) and column `2000` corresponds to `x(
 
 We choose a solver for integrating the dynamical system by specifying the module `Native.D.RK4`, 
 a fixed-step, double-precision Runge-Kutta solver. 
-We support a number of natively-implemented double-precision solvers in `Native.D` as well
-as single-precision ones in `Native.S.RK4`.
+We support a number of natively-implemented, fixed-step or adaptive, double-precision solvers in `Native.D`
+as well as single-precision ones in `Native`. 
 
 
 The simple example above illustrates the basic components of defining and solving an ode problem using Owl Ode.
@@ -56,15 +56,15 @@ The main function `Owl_ode.odeint` takes as its arguments:
 * a solver of module type `SolverT`, 
 * a function `f` that evolves the state,
 * an initial state `x0`, and
-* temporal spsecification `tspec`.
+* temporal specification `tspec`.
 
 The solver constrains the the type of the state `x` and that of the function `f` . 
 For example, the solvers in `Owl_ode.Native`, assume that `x:mat` is a matrix and `f:mat->float->mat` returns the time derivative of `x` at time `t`.
 
-### Sympletic Solvers 
+### Symplectic Solvers 
 
 We have implemented a number of symplectic solvers in `Owl_ode.Symplectic`. 
-With sympletic solvers, the state of the system is a tuple `(x,p):mat * mat`, where `x` and `p` are the position and momentum of the system and
+With symplectic solvers, the state of the system is a tuple `(x,p):mat * mat`, where `x` and `p` are the position and momentum of the system and
  `f:(mat,mat)->float->mat` is the force at state `(x,p)` and time `t`.
 For a detailed example on how to use symplectic solvers, see `example/damped.ml`.
 
@@ -76,9 +76,9 @@ To use Cvode, one can use the `module Owl_ode_sundials.Cvode` as a solver.
 
 ### Automatic inference of state dimensionality
 
-Native, sympletic and sundials solvers automatically infer the dimensionality of the state from the initial state.
+All the provided solvers automatically infer the dimensionality of the state from the initial state.
 If the initial state `x0` is a row vector, the result time `t` and states `x(t)` are stacked horizontally in `ts` and `xs`.
-On the contrary, if the initial state `x0` is a column vecotr, the results will be stacked vertically.
+On the contrary, if the initial state `x0` is a column vector, the results will be stacked vertically.
 
 We also support integration of matrix states. By default, the states are flattened and stacked vertically in the results `xs`. 
 We have a helper function `Common.to_state_array` which can be used to "unflatten" the states into an array of matrices.
@@ -114,13 +114,13 @@ Albeit relatively old and standard, a good starting point could be the two refer
 
 Some important points to address for this are:
 
-- provide a uniform type safe interface, capable of accepting pluggable new engines and dealing with the different sets of configuration options of each of them (maybe extensible types or GADTs can help in this regard more than Functors?)
+- [X] provide a uniform type safe interface, capable of accepting pluggable new engines and dealing with the different sets of configuration options of each of them (maybe extensible types or GADTs can help in this regard more than Functors?)
 
-- full Owl types interoperability
+- [X] full Owl types interoperability
 
-- ease of use (compared to JuliaDiffEq and Scipy)
+- [X] ease of use (compared to JuliaDiffEq and Scipy)
 
-- make the native implementations robust (right now they are naive OCaml implementations)
+- [ ] make the native implementations robust (right now they are naive OCaml implementations)
 
 - ...
 
@@ -132,8 +132,8 @@ It would be interesting to design an interface that allows to implement the [Neu
 
 We could provide two interfaces, one takes a stepper function and performs just a step, and can be iterated manually (like `odeint` in the current sundials implementation, or the integrators in the current ocaml implementation), and a lower level one mimicking sundials and odepack, that only performs each integration step separately.
 
-We currently cannot have implicit methods for the lack of vector-valued root finding functions. We should add implementations for those, and then introduce some implicit methods (e.g. the implicit Stoermer-Verlet is much more robust and works nicely for non-separable Hamiltonians). At least we can use Sundials for now `:-)`
+We currently cannot have implicit methods for the lack of vector-valued root finding functions. We should add implementations for those, and then introduce some implicit methods (e.g. the implicit Störmer-Verlet is much more robust and works nicely for non-separable Hamiltonians). At least we can use Sundials for now `:-)`
 
-It would also be nice to provide a function that takes the pair (t, y) and returns the interpolated function.
+It would also be nice to provide a function that takes the pair `(t, y)` and returns the interpolated function.
 
 We should make the integrators more robust and with better failure modes, we could take inspiration from the very readable scipy implementation [https://github.com/scipy/scipy/blob/v1.2.0/scipy/integrate/_ivp/rk.py#L15].
