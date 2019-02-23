@@ -9,15 +9,15 @@ val unwrap :
 
 (* returns arrays of time and state *)
 (* val cvode_s :
-  stiff:bool ->
-  relative_tol:float ->
-  abs_tol:float ->
-  f:(Owl.Mat.mat -> float -> Owl.Mat.mat) ->
-  tspan:float * float ->
-  dt:float ->
-  y0:Owl.Mat.mat -> 
-  unit ->
-  float array * Owl.Mat.mat  *)
+   stiff:bool ->
+   relative_tol:float ->
+   abs_tol:float ->
+   f:(Owl.Mat.mat -> float -> Owl.Mat.mat) ->
+   tspan:float * float ->
+   dt:float ->
+   y0:Owl.Mat.mat -> 
+   unit ->
+   float array * Owl.Mat.mat  *)
 
 
 val cvode : 
@@ -32,6 +32,12 @@ val cvode :
   Owl.Mat.mat * Owl.Mat.mat
 
 module Owl_Cvode: Owl_ode.Types.SolverT
+  with type s = Owl.Mat.mat
+   and type t = Owl.Mat.mat
+   and type output = Owl.Mat.mat * Owl.Mat.mat
+
+
+module Owl_Cvode_Stiff : Owl_ode.Types.SolverT
   with type s = Owl.Mat.mat
    and type t = Owl.Mat.mat
    and type output = Owl.Mat.mat * Owl.Mat.mat
