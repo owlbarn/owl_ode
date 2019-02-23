@@ -55,3 +55,11 @@ module Owl_Cvode = struct
   type output = Mat.mat * Mat.mat
   let solve = cvode ~stiff:false ()
 end
+
+module Owl_Cvode_Stiff = struct
+  type s = Mat.mat
+  type t = Mat.mat
+  type output = Mat.mat * Mat.mat
+  let solve = cvode ~stiff:true ()
+end 
+
