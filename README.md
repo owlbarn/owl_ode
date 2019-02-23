@@ -58,7 +58,7 @@ The main function `Owl_ode.odeint` takes as its arguments:
 - an initial state `x0`, and
 - temporal spsecification `tspec`.
 
-The solver module constrains the the type of `x0` and that of function `f` . For example, the solvers in `Owl_ode.Native`, assume that `the states are matrices (i.e. x:mat` is a matrix) and `f:mat->float->mat` returns the time derivative of `x` at time `t`.
+The solver module constrains the the type of `x0` and that of function `f` . For example, the solvers in `Owl_ode.Native`, assume that the states are matrices (i.e. `x:mat` is a matrix) and `f:mat->float->mat` returns the time derivative of `x` at time `t`.
 
 
 We have provided a number of single and double-precision symplectic solvers in `Owl_ode.Symplectic`. 
