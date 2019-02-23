@@ -29,7 +29,7 @@ let f x t =
 Next, we specify the temporal details of the problem:
 
 ```ocaml
-let tspec = Owl_ode.Types.(T1 {t0 = 0.; duration = 2.; dt=1E-3}
+let tspec = Owl_ode.Types.(T1 {t0 = 0.; duration = 2.; dt=1E-3})
 ```
 
 Here, we construct a record using the constructor `T1`, which includes information of start time `t0`, duration `duration`, and step size `dt`.
