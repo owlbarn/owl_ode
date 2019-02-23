@@ -1,6 +1,7 @@
 open Owl
 open Owl_ode
 open Owl_ode.Types
+open Owl_plplot
 
 let tau = 150E-3 
 let f = 

@@ -6,72 +6,86 @@
  * Copyright (c) 2019 Marcello Seri <m.seri@rug.nl>
  *)
 
-open Common
 open Types
 
-type 'a f_t = (float, 'a) M.t -> float -> (float, 'a) M.t
+module Make :
+  functor (M: Owl_types_ndarray_algodiff.Sig with type elt = float) 
+    -> sig
+      type f_t = M.arr -> float -> M.arr
 
-val euler_s :
-  f:'a f_t ->
-  dt:float->
-  (float, 'a) M.t ->
-  float ->
-  (float, 'a) M.t * float
+      val euler_s :
+        f:f_t ->
+        dt:float->
+        M.arr ->
+        float ->
+        M.arr * float
 
-val midpoint_s :
-  f:'a f_t ->
-  dt:float->
-  (float, 'a) M.t ->
-  float ->
-  (float, 'a) M.t * float
+      val midpoint_s :
+        f:f_t ->
+        dt:float->
+        M.arr ->
+        float ->
+        M.arr * float
 
 
-val rk4_s :
-  f:'a f_t ->
-  dt:float->
-  (float, 'a) M.t ->
-  float ->
-  (float, 'a) M.t * float
+      val rk4_s :
+        f:f_t ->
+        dt:float->
+        M.arr ->
+        float ->
+        M.arr * float
 
-val prepare :
-  (f: 'a ->
-   dt: float ->
-   (float, 'b) M.t ->
-   float ->
-   (float, 'b) M.t * float) ->
-  'a ->
-  (float, 'b) M.t ->
-  tspec_t ->
-  unit ->
-  (float, 'b) M.t * (float, 'b) M.t
+      val prepare :
+        (f: 'a ->
+         dt: float ->
+         M.arr ->
+         float ->
+         M.arr * float) ->
+        'a ->
+        M.arr ->
+        tspec_t ->
+        unit ->
+        M.arr * M.arr
 
-val adaptive_prepare :
-  (dtmax:float ->
-   'a ->
-   (float, 'b) M.t ->
-   float ->
-   float ->
-   float * (float, 'b) M.t * float * bool) ->
-  'a ->
-  (float, 'b) M.t ->
-  tspec_t ->
-  unit ->
-  (float, 'b) M.t * (float, 'b) M.t
+      val adaptive_prepare :
+        (dtmax:float ->
+         'a ->
+         M.arr ->
+         float ->
+         float ->
+         float * M.arr * float * bool) ->
+        'a ->
+        M.arr ->
+        tspec_t ->
+        unit ->
+        M.arr * M.arr
 
-val rk23_s :
-  tol:float ->
-  dtmax:float ->
-  'a f_t ->
-  (float, 'a) M.t ->
-  float ->
-  float ->
-  float * (float, 'a) M.t * float * bool
+      val rk23_s :
+        tol:float ->
+        dtmax:float ->
+        f_t ->
+        M.arr ->
+        float ->
+        float ->
+        float * M.arr * float * bool
 
-val rk45_s :
-  tol:float ->
-  dtmax:float ->
-  'a f_t ->
-  (float, 'a) M.t ->
-  float ->
-  float ->
-  float * (float, 'a) M.t * float * bool
+      val rk45_s :
+        tol:float ->
+        dtmax:float ->
+        f_t ->
+        M.arr ->
+        float ->
+        float ->
+        float * M.arr * float * bool
+
+      (* ----- helper functions ----- *)
+
+      val to_state_array : 
+        ?axis:int ->
+        int * int ->
+        M.arr ->
+        M.arr array
+
+
+
+    end

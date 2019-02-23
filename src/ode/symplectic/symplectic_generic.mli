@@ -6,58 +6,72 @@
  * Copyright (c) 2019 Marcello Seri <m.seri@rug.nl>
  *)
 
-open Common
 open Types
+module Make :
+  functor (M: Owl_types_ndarray_algodiff.Sig with type elt = float) 
+    -> sig
+      type f_t = M.arr -> M.arr -> float -> M.arr
 
-type 'a f_t = (float, 'a) M.t -> (float, 'a) M.t -> float -> (float, 'a) M.t
+      val symplectic_euler_s :
+        f:f_t ->
+        dt:float ->
+        M.arr ->
+        M.arr ->
+        float ->
+        M.arr * M.arr * float
 
-val symplectic_euler_s :
-  f:'a f_t ->
-  dt:float ->
-  (float, 'a) M.t ->
-  (float, 'a) M.t ->
-  float ->
-  (float, 'a) M.t * (float, 'a) M.t * float
+      val leapfrog_s:
+        f:f_t ->
+        dt:float ->
+        M.arr ->
+        M.arr ->
+        float ->
+        M.arr * M.arr * float
 
-val leapfrog_s:
-  f:'a f_t ->
-  dt:float ->
-  (float, 'a) M.t ->
-  (float, 'a) M.t ->
-  float ->
-  (float, 'a) M.t * (float, 'a) M.t * float
+      val pseudoleapfrog_s:
+        f:f_t ->
+        dt:float ->
+        M.arr ->
+        M.arr ->
+        float ->
+        M.arr * M.arr * float
 
-val pseudoleapfrog_s:
-  f:'a f_t ->
-  dt:float ->
-  (float, 'a) M.t ->
-  (float, 'a) M.t ->
-  float ->
-  (float, 'a) M.t * (float, 'a) M.t * float
+      val ruth3_s :
+        f:f_t ->
+        dt:float ->
+        M.arr ->
+        M.arr ->
+        float ->
+        M.arr * M.arr * float
 
-val ruth3_s :
-  f:'a f_t ->
-  dt:float ->
-  (float, 'a) M.t ->
-  (float, 'a) M.t ->
-  float ->
-  (float, 'a) M.t * (float, 'a) M.t * float
+      val ruth4_s :
+        f:f_t ->
+        dt:float ->
+        M.arr ->
+        M.arr ->
+        float ->
+        M.arr * M.arr * float
 
-val ruth4_s :
-  f:'a f_t ->
-  dt:float ->
-  (float, 'a) M.t ->
-  (float, 'a) M.t ->
-  float ->
-  (float, 'a) M.t * (float, 'a) M.t * float
+      val prepare:
+        (f:('a -> 'b -> 'c) ->
+         dt:float ->
+         M.arr ->
+         M.arr ->
+         float ->
+         M.arr * M.arr * float) ->
+        ('a * 'b -> 'c) ->
+        M.arr * M.arr ->
+        tspec_t -> unit -> M.arr * M.arr * M.arr
 
-val prepare:
-  (f:('a -> 'b -> 'c) ->
-   dt:float ->
-   (float, 'd) M.t ->
-   (float, 'd) M.t ->
-   float ->
-   (float, 'd) M.t * (float, 'd) M.t * float) ->
-  ('a * 'b -> 'c) ->
-  (float, 'd) M.t * (float, 'd) M.t ->
-  tspec_t -> unit -> (float, 'd) M.t * (float, 'd) M.t * (float, 'd) M.t
+      (* ----- helper functions ----- *)
+
+      val to_state_array : 
+        ?axis:int ->
+        int * int ->
+        M.arr ->
+        M.arr ->
+        M.arr array * M.arr array
+
+
+
+    end

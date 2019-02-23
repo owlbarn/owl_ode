@@ -8,7 +8,7 @@
 
 type mat = Owl_dense_matrix_s.mat
 
-include Symplectic_generic
+include Symplectic_generic.Make (Owl_dense_ndarray.S)
 
 module Symplectic_Euler = struct
   type s = mat * mat

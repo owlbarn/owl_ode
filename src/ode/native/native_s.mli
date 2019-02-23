@@ -33,3 +33,14 @@ module RK45: Types.SolverT
   with type s = mat
    and type t = mat
    and type output = mat * mat
+
+(* ----- helper function ----- *)
+
+val to_state_array : 
+  ?axis:int ->
+  int * int ->
+  mat ->
+  mat array
+ 
+
+

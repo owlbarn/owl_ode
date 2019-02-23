@@ -2,6 +2,9 @@ open Owl
 open Bigarray
 open Owl_ode.Types
 
+
+module C = Owl_ode.Common.Make (Owl_dense_ndarray.D)
+
 let wrap x = reshape_1 x Mat.(numel x) 
 
 let unwrap (dim1, dim2) x = 
@@ -42,7 +45,7 @@ let cvode ?(stiff=false) ?(relative_tol=1E-4) ?(abs_tol=1E-8) () =
        and be used everywhere. We will just pass the step function to be used in
        the integration loop: that one will take the ~f parameter. *)
     let step = cvode_s' ~f ~tspan:(t0, t1) ~y0 ~dt in
-    Owl_ode.Common.integrate ~step ~dt ~tspan:(t0, t1) y0
+    C.integrate ~step ~dt ~tspan:(t0, t1) y0
 
 module Owl_Cvode = struct
   type s = Mat.mat

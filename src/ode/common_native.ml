@@ -16,7 +16,7 @@ module Make (M: Owl_types_ndarray_algodiff.Sig with type elt = float) = struct
   let steps t0 t1 dt =
     (* NOTE: switched Float.floor to Maths.floor;
      * Float module seems not to be only supported in ocaml 4.07.0 *)
-    (t1 -. t0)/.dt |> Owl.Maths.floor |> int_of_float |> succ
+    (t1 -. t0)/.dt |> Owl.Maths.floor |> int_of_float
 
   type state_type =
     | Row
@@ -125,5 +125,14 @@ module Make (M: Owl_types_ndarray_algodiff.Sig with type elt = float) = struct
     | Col -> ts, ys
 
 
+  let to_state_array ?(axis=0) (dim1, dim2) ys = 
+    let unpack = 
+      if axis=0 then M.to_rows
+      (* TODO: add to_cols to types_ndarray_basic *)
+      else if axis=1 then raise Owl_exception.NOT_IMPLEMENTED
+      else raise Owl_exception.INDEX_OUT_OF_BOUND in
+    let ys = ys unpack in
+    if (M.numel ys.(0)) <> dim1 * dim2 then raise Owl_exception.DIFFERENT_SHAPE;
+    Array.map (fun y -> M.reshape y [|dim1; dim2|]) ys
 
-end 
+end

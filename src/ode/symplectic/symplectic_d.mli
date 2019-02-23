@@ -32,3 +32,15 @@ module Ruth4: Types.SolverT
   with type s = mat * mat
    and type t = mat
    and type output = mat * mat * mat
+
+
+
+(* ----- helper function ----- *)
+
+val to_state_array : 
+  ?axis:int ->
+  int * int ->
+  mat ->
+  mat ->
+  mat array * mat array
+

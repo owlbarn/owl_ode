@@ -8,7 +8,7 @@
 
 type mat = Owl_dense_matrix_d.mat
 
-include Native_generic
+include Native_generic.Make (Owl_dense_ndarray.D)
 
 module Euler = struct
   type s = mat
