@@ -79,7 +79,7 @@ All the provided solvers automatically infer the dimensionality of the state fro
 Consider Native solvers, for which the state of the system is a matrix. The initial state can be a row vector, a column vector, or a matrix, so long as it is consistent with that of `f`. 
 If the initial state `x0` is a row vector with dimensions `1xN` and we integrate the system for `T` time steps, the time and states will be stacked vertically in the output (i.e. `ts` will have dimensions `Tx1` and and `xs` will have dimensions `TxN`). On the contrary, if the initial state `x0` is a column vector with dimensions, the results will be stacked horizontally (i.e. `ts` will have dimensions `1xT` and `xs` will have dimensions `NxT`).
 
-We also support temporal integration of matrices.  That is, cases in which the state `x` is a matrix of dimensions of dimensions `NxM`. By default, in the output, we flatten and stack the states vertically (i.e., `ts` has dimensions `Tx1` and  `xs` has dimensions `TxNM`. We have a helper function `Common.to_state_array` which can be used to "unflatten" `xs` into an array of matrices.
+We also support temporal integration of matrices.  That is, cases in which the state `x` is a matrix of dimensions of dimensions `NxM`. By default, in the output, we flatten and stack the states vertically (i.e., `ts` has dimensions `Tx1` and  `xs` has dimensions `TxNM`. We have a helper function `Native.D.to_state_array` which can be used to "unflatten" `xs` into an array of matrices.
 
 ### Custom Solvers
 

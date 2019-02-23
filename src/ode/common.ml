@@ -116,7 +116,7 @@ module Make (M: Owl_types_ndarray_algodiff.Sig with type elt = float) = struct
     let ys = match state_t with
       | Row -> ys |> List.rev |> Array.of_list |> M.of_rows
       (* TODO: add of_cols to types_ndarray_basic *)
-      | Col -> ys |> List.rev |> Array.of_list |> M.concatenate ~axis:0
+      | Col -> ys |> List.rev |> Array.of_list |> M.of_cols
       | Matrix -> ys |> List.rev |> Array.of_list 
                   |> Array.map (fun y -> M.reshape y [|1; -1|]) 
                   |> M.of_rows

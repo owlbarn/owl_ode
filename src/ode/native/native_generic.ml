@@ -24,7 +24,6 @@ module Make
     let ( + ) = M.add
   end
 
-
   let euler_s ~(f:f_t) ~dt = fun y0 t0 ->
     let y = M.(y0 + (f y0 t0) *$ dt) in
     let t = t0 +. dt in
@@ -140,7 +139,7 @@ module Make
     let unpack = 
       if axis=0 then M.to_rows
       (* TODO: add to_cols to types_ndarray_basic *)
-      else if axis=1 then raise Owl_exception.NOT_IMPLEMENTED
+      else if axis=1 then M.to_cols
       else raise Owl_exception.INDEX_OUT_OF_BOUND in
     let ys = unpack ys in
     if (M.numel ys.(0)) <> dim1 * dim2 then raise Owl_exception.DIFFERENT_SHAPE;

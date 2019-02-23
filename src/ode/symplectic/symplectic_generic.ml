@@ -114,8 +114,7 @@ let leapfrog_implicit ~f y0 (t0, t1) dt =
   let to_state_array ?(axis=0) (dim1, dim2) xs ps = 
     let unpack = 
       if axis=0 then M.to_rows
-      (* TODO: add to_cols to types_ndarray_basic *)
-      else if axis=1 then raise Owl_exception.NOT_IMPLEMENTED
+      else if axis=1 then M.to_cols
       else raise Owl_exception.INDEX_OUT_OF_BOUND in
     let xs = unpack xs in
     let ps = unpack ps in
