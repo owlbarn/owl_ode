@@ -66,12 +66,12 @@ For symplectic ode problems, the state of the system is a tuple `(x,p):mat * mat
 
 ### Sundials Cvode
 
-We have implemented a thin wrapper over Sundials Cvode (via [sundialsml's](https://github.com/inria-parkas/sundialsml)). To use Cvode, one can use 
+We have implemented a thin wrapper over Sundials Cvode (via [sundialsml's](https://github.com/inria-parkas/sundialsml) own wrapper). To use Cvode, one can use 
 
 - `Owl_ode_sundials.Owl_Cvode` or 
 - `Owl_ode_sundials.Owl_Cvode_Stiff`. 
 
-Currently, we only support double-precision Sundials solvers. To use Sundials in Owl Ode, one needs to install `Sundials` and `sundialsml` (see [sundialsml's](https://github.com/inria-parkas/sundialsml) for instructions). 
+Currently, we only support double-precision Sundials solvers. To use Sundials in Owl Ode, one needs to install `Sundials` and `sundialsml` (see [sundialsml](https://github.com/inria-parkas/sundialsml) for instructions). 
 
 
 ### Automatic inference of state dimensionality
