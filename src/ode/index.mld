@@ -1,4 +1,34 @@
 {2 Library owl-ode}
 
+{!module-Owl_ode} is a lightweight package for numerically
+integrating ordinary differential equations written in the
+for of an initial value problem
+
+    ∂ₜ y = f(y, t)
+
+    y(t₀) = y₀
+
+Here t is a one-dimensional independent variable (time), y(t) is an
+n-dimensional vector-valued function (state), and the n-dimensional
+vector-valued function f(y, t) determines the differential equations.
+
+The goal is to find y(t) approximately satisfying the differential
+equations, given an initial value y(t₀)=y₀.
+
+Built on top of Owl’s numerical library, Owl_ode was designed with
+extensibility and ease of use in mind and includes a number of classic
+ode solvers (e.g. Euler and Runge-Kutta, in both adaptive and 
+fixed-step variants) and symplectic sovlers (e.g. Leapfrog), with
+more to come.
+
+This library provides a collection of solvers for the
+initial value problem for ordinary differential equation systems.
+
+A tutorial is available at the {{:Tutorial.html} Tutorial} page.
+
 The entry point of this library is the module:
 {!module-Owl_ode.Ode}.
+
+{2 Some important modules}
+
+{!modules: Owl_ode.Ode Owl_ode.Types Owl_ode.Native Owl_ode.Symplectic}

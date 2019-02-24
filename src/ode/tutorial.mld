@@ -9,7 +9,7 @@ Leapfrog), with more to come.
 This library provides a collection of solvers for the
 initial value problem for ordinary differential equation systems.
 
-You can jump to the interface of the {!module-Owl_ode.Ode.lib}.
+You can jump to the interface of the {!module-Owl_ode.Ode.odelib}.
 
 {2 Example of use}
 
