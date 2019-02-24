@@ -96,6 +96,7 @@ val odeint :
     an initial value problem for a system of ODEs given an initial value:
 
     ∂ₜ y = f(y, t)
+    
     y(t₀) = y₀
 
     Here t is a one-dimensional independent variable (time), y(t) is an
@@ -105,5 +106,14 @@ val odeint :
     The goal is to find y(t) approximately satisfying the differential
     equations, given an initial value y(t₀)=y₀. The time t₀ is passed as
     part of the timespec, that includes also the final integration time
-    and a time step. Refer to 
+    and a time step. Refer to {!Owl_ode.Types.tspec_t} for further
+    information.
+
+    The native ocaml solvers provided by Owl_ode in both single and
+    double precision can be found in {!Owl_ode.Native}, respectively
+    in the {!Owl_ode.Native.S} and {!Owl_ode.Native.D} modules. These
+    provide multiple single-step and adaptive implementations.
+
+    Symplectic methods for separable Hamiltopnian are alse available
+    and can be found in {!Owl_ode.Symplectic.S} and {!Owl_ode.Symplectic.D}. 
 *)
