@@ -6,14 +6,61 @@
  * Copyright (c) 2019 Marcello Seri <m.seri@rug.nl>
  *)
 
- type tspec_t =
+(** The Types module provides some common types for 
+    Owl_ode ODEs integrators. *)
+
+type tspec_t =
+  (** Time specification for the ODE solvers. *)
   | T1 of {t0: float; duration:float; dt: float}
+  (** The [T1] constructor allow to specify the initial
+      and final integration time, in the sense that the
+      solver starts with t=t0 and integrates until it
+      reaches t=t0+duration, and the timestep dt. 
+      This last parameter is ignored by the adaptive
+      methods. *)
   | T2 of {tspan: (float * float); dt: float}
+  (** The [T2] constructor allow to specify a tuple 
+      (t0, tf) of the initial and final integration
+      time, in the sense that the solver starts with
+      t=t0 and integrates until it reaches t=tf, and
+      the timestep dt. This last parameter is ignored
+      by the adaptive methods. *)
   | T3 of float array
+  (** The [T3] constructor is currently unsupported
+      and may change or disappear in the future. *)
+
 
 module type SolverT = sig
+  (** Any solver compatible with {!Owl_ode.Ode.odeint}
+      has to comply with the SolverT type. You can use this
+      to define completely new solvers, as done in the
+      owl-ode-sundials or ocaml-cviode libraries, or
+      to customize pre-existing solvers (see the
+      van_der_pol example for one such cases). *)
   type s
+  (** [s] is the type of the state (and thus also of
+       the initial condition) provided to {!Owl_ode.Ode.odeint}.
+       For example {!Owl.Mat.mat}. *)
   type t
+  (** [t] is type of the output of the evolution function
+      [f: s-> float ->t]. For example, in the case of 
+      sympletic solvers, [type s = Owl.Mat.(mat*mat)] and
+      [type t = Owl.Mat.mat]. *)
   type output
+  (** [output] defines the type of the output of {!Owl_ode.Ode.odeint}.
+      For example, in the case of sympletc solvers,
+      [type output = Owl.Mat.(mat * mat * mat), corresponds
+      to matrices that contain respectively the time,
+      position, and momentum coordinates of the
+      integrated solution. *)
   val solve : ((s -> float -> t) -> s -> tspec_t -> unit -> output)
+  (** [solve f y0 tspec ()] solves the initial value problem
+  
+      ∂ₜ y = f(y, t)
+      y(t₀) = y₀
+   
+      with the given evolution function f, initial condition y0, and
+      temporal specification tspec, and returns the desired outputs
+      of type output. Several such functions have already been
+      implemented in this library and can be used as reference. *)
 end
