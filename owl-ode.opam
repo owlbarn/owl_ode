@@ -13,6 +13,7 @@ build: [
 depends: [
   "ocaml" {>= "4.02"}
   "owl" {>= "0.4.0"}
+  "owl-plplot" {with-test}
   "dune" {build & >= "1.1.0"}
 ]
 synopsis: "Owl's ODE solvers"
