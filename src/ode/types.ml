@@ -38,10 +38,21 @@ type tspec_t =
     owl-ode-sundials or ocaml-cviode libraries, or
     to customize pre-existing solvers (see the
     van_der_pol example for one such cases). 
-    
-    The generic solverst in {!Owl_ode.Native_generic} and in
+
+    The native ocaml solvers provided by Owl_ode in both single and
+    double precision can be found in {!Owl_ode.Native}, respectively
+    in the {!Owl_ode.Native.S} and {!Owl_ode.Native.D} modules. These
+    provide multiple single-step and adaptive implementations.
+
+    Symplectic solvers for separable Hamiltonian systems are also
+    available and can be found in {!Owl_ode.Symplectic.S} and
+    {!Owl_ode.Symplectic.D}. Refer to the damped oscillator for an
+    example of use.
+
+    The generic solvers in {!Owl_ode.Native_generic} and in
     {!Owl_ode.Symplectic_generic} can also be used in conjunction
-    with jsoo, although how to do that is currently undocumented. *)
+    with jsoo, although how to do that is currently undocumented. 
+*)
 module type SolverT = sig
   type s
   (** [s] is the type of the state (and thus also of
