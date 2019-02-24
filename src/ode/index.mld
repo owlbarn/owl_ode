@@ -8,12 +8,12 @@ $$\frac\{dy\}\{dt\} = f(y,t)$$
 
 $$y(t_0) = y_0$$
 
-Here t is a one-dimensional independent variable (time), $y(t)$ is an
+Here t is a one-dimensional independent variable (time), \(y(t)\) is an
 n-dimensional vector-valued function (state), and the n-dimensional
-vector-valued function $f(y, t)$ determines the differential equations.
+vector-valued function \(f(y, t)\) determines the differential equations.
 
-The goal is to find $y(t)$ approximately satisfying the differential
-equations, given an initial value $y(t_0)=y_0$.
+The goal is to find \(y(t)\) approximately satisfying the differential
+equations, given an initial value \(y(t_0)=y_0\).
 
 Built on top of Owl’s numerical library, Owl_ode was designed with
 extensibility and ease of use in mind and includes a number of classic

@@ -13,11 +13,11 @@ You can jump to the interface of the {!module-Owl_ode.Ode.odelib}.
 
 {2 Example of use}
 
-Let's solve the linear initial value problem $\frac\{dy\}\{dt\} = Ay$, with
-$y(t_0) = y_0$. Say that A is the matrix ((1;-1); (2;3)), and the
+Let's solve the linear initial value problem \(\frac\{dy\}\{dt\} = Ay\), with
+\(y(t_0) = y_0\). Say that A is the matrix ((1;-1); (2;3)), and the
 initial conditions are given by y(0) = (-1;1).
 
-We begin by defining a function $f(y, t)$ that corresponds to
+We begin by defining a function \(f(y, t)\) that corresponds to
 the RHS of the differential equation
 {[
     let f y t = 
@@ -38,9 +38,9 @@ hand
 {[
     let tspec = Owl_ode.Types.(T1 {t0 = 0.; duration = 2.; dt=1E-3})
 ]}
-This in particular allows us to specify also that $t_0=0$.
+This in particular allows us to specify also that \(t_0=0\).
 Here, we construct a record using the constructor {!Owl_ode.Types.T1},
-which includes the start time t₀, the time duration for the
+which includes the start time \(t_0\), the time duration for the
 numerical solution, and a step size dt.
 
 Finally we can call
@@ -71,4 +71,5 @@ You can refer to the examples in the source repository for
 more complex examples.
 
 @version 0.1
-@author Marcello Seri and Ta-Chu Kao
+@author Marcello Seri 
+@author Ta-Chu Kao
