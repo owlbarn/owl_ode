@@ -68,10 +68,10 @@ module type SolverT = sig
   type output
   (** [output] defines the type of the output of {!Owl_ode.Ode.odeint}.
       For example, in the case of sympletc solvers,
-      [type output = Owl.Mat.(mat * mat * mat), corresponds
+      [type output = Owl.Mat.(mat * mat * mat)], corresponds
       to matrices that contain respectively the time,
       position, and momentum coordinates of the
-      integrated solution. *)
+      integrated solution *)
 
   val solve : ((s -> float -> t) -> s -> tspec_t -> unit -> output)
   (** [solve f y0 tspec ()] solves the initial value problem
