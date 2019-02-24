@@ -74,9 +74,14 @@
     Plot.output h;
     |}
 
+    You can refer to the examples in the source repository for
+    more complex examples.
+
    @version 0.1
    @author Marcello Seri and Ta-Chu Kao
  *)
+
+(* TODO: move complex examples in the documentation *)
 
 (** {2:lib Ode library} *)
 
