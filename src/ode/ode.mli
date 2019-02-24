@@ -65,6 +65,15 @@
     {!Owl_ode.Native.S}. Additional integrators are provided by
     external and third party libraries.
 
+    The solution can be easily plotted using {!Owl_plplot} or any
+    other owl-compatible plotting library, for example
+    {|
+    let open Owl_plplot in
+    let h = Plot.create "myplot.png" in
+    Plot.plot ~h ~spec:[ RGB (0,0,255); LineStyle 1 ] ts (Mat.col ys 0);
+    Plot.output h;
+    |}
+
    @version 0.1
    @author Marcello Seri and Ta-Chu Kao
  *)
