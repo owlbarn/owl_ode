@@ -37,7 +37,11 @@ type tspec_t =
     to define completely new solvers, as done in the
     owl-ode-sundials or ocaml-cviode libraries, or
     to customize pre-existing solvers (see the
-    van_der_pol example for one such cases). *)
+    van_der_pol example for one such cases). 
+    
+    The generic solverst in {!Owl_ode.Native_generic} and in
+    {!Owl_ode.Symplectic_generic} can also be used in conjunction
+    with jsoo, although how to do that is currently undocumented. *)
 module type SolverT = sig
   type s
   (** [s] is the type of the state (and thus also of

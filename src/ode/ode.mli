@@ -6,16 +6,16 @@
  * Copyright (c) 2019 Marcello Seri <m.seri@rug.nl>
  *)
 
- (** Owl_ode is a lightweight package for solving ordinary differential
+(** Owl_ode is a lightweight package for solving ordinary differential
     equations. Built on top of Owl’s numerical library, Owl_ode was
     designed with extensibility and ease of use in mind and includes a
     number of classic ode solvers (e.g. Euler and Runge-Kutta, in both
     adaptive and fixed-step variants) and symplectic sovlers (e.g.
     Leapfrog), with more to come.
- 
+
     This library provides a collection of solvers for the
     initial value problem for ordinary differential equation systems.
-    
+
     You can jump to the interface of the {!lib}.
 
     {2 Example of use}
@@ -27,29 +27,29 @@
     We begin by defining a function f(y, t) that corresponds to
     the RHS of the differential equation
     {[
-    let f y t = 
-      let a = [|[|1.; -1.|];
-               [|2.; -3.|]|]
-              |> Owl.Mat.of_arrays
-      in
-      Owl.Mat.(a *@ y)
+      let f y t = 
+        let a = [|[|1.; -1.|];
+                  [|2.; -3.|]|]
+                |> Owl.Mat.of_arrays
+        in
+        Owl.Mat.(a *@ y)
     ]}
     and the initial conditions y0
     {[
-    let y0 = Mat.of_array [|-1.; 1.|] 2 1
+      let y0 = Mat.of_array [|-1.; 1.|] 2 1
     ]}
 
     Before being able to actually call the integrating function,
     we need to define the time specification for the problem at
     hand
     {[
-    let tspec = Owl_ode.Types.(T1 {t0 = 0.; duration = 2.; dt=1E-3})
+      let tspec = Owl_ode.Types.(T1 {t0 = 0.; duration = 2.; dt=1E-3})
     ]}
     This in particular allows us to specify also that t₀=0.
     Here, we construct a record using the constructor {!Owl_ode.Types.T1},
     which includes the start time t₀, the time duration for the
     numerical solution, and a step size dt.
-    
+
     Finally we can call
     {[
       let ts, ys = Owl_ode.odeint (module Owl_ode.Native.D.RK4) f y0 tspec () 
@@ -68,18 +68,34 @@
     The solution can be easily plotted using {!Owl_plplot} or any
     other owl-compatible plotting library, for example
     {[
-    let open Owl_plplot in
-    let h = Plot.create "myplot.png" in
-    Plot.plot ~h ~spec:[ RGB (0,0,255); LineStyle 1 ] ts (Mat.col ys 0);
-    Plot.output h;
+      let open Owl_plplot in
+      let h = Plot.create "myplot.png" in
+      Plot.plot ~h ~spec:[ RGB (0,0,255); LineStyle 1 ] ts (Mat.col ys 0);
+      Plot.output h;
     ]}
 
     You can refer to the examples in the source repository for
     more complex examples.
 
-   @version 0.1
-   @author Marcello Seri and Ta-Chu Kao
- *)
+    @version 0.1
+    @author Marcello Seri and Ta-Chu Kao
+
+    {2 solvers}
+
+    The native ocaml solvers provided by Owl_ode in both single and
+    double precision can be found in {!Owl_ode.Native}, respectively
+    in the {!Owl_ode.Native.S} and {!Owl_ode.Native.D} modules. These
+    provide multiple single-step and adaptive implementations.
+
+    Symplectic solvers for separable Hamiltonian systems are also
+    available and can be found in {!Owl_ode.Symplectic.S} and
+    {!Owl_ode.Symplectic.D}. Refer to the damped oscillator for an
+    example of use.
+
+    The solvers have a common type, {!Owl_ode.Types.SolverT}, this
+    is useful to write new custom solvers or extend and customise
+    the provided ones.
+*)
 
 (* TODO: move complex examples in the documentation *)
 
@@ -96,24 +112,16 @@ val odeint :
     an initial value problem for a system of ODEs given an initial value:
 
     ∂ₜ y = f(y, t)
-    
+
     y(t₀) = y₀
 
     Here t is a one-dimensional independent variable (time), y(t) is an
     n-dimensional vector-valued function (state), and the n-dimensional
     vector-valued function f(y, t) determines the differential equations.
-    
+
     The goal is to find y(t) approximately satisfying the differential
     equations, given an initial value y(t₀)=y₀. The time t₀ is passed as
     part of the timespec, that includes also the final integration time
     and a time step. Refer to {!Owl_ode.Types.tspec_t} for further
     information.
-
-    The native ocaml solvers provided by Owl_ode in both single and
-    double precision can be found in {!Owl_ode.Native}, respectively
-    in the {!Owl_ode.Native.S} and {!Owl_ode.Native.D} modules. These
-    provide multiple single-step and adaptive implementations.
-
-    Symplectic methods for separable Hamiltopnian are alse available
-    and can be found in {!Owl_ode.Symplectic.S} and {!Owl_ode.Symplectic.D}. 
 *)
