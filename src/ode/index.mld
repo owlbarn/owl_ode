@@ -18,7 +18,7 @@ equations, given an initial value \(y(t_0)=y_0\).
 Built on top of Owl’s numerical library, Owl_ode was designed with
 extensibility and ease of use in mind and includes a number of classic
 ode solvers (e.g. Euler and Runge-Kutta, in both adaptive and 
-fixed-step variants) and symplectic sovlers (e.g. Leapfrog), with
+fixed-step variants) and symplectic solvers (e.g. Leapfrog), with
 more to come.
 
 This library provides a collection of solvers for the
