@@ -6,7 +6,7 @@ install: wget https://raw.githubusercontent.com/ocaml/ocaml-travisci-skeleton/ma
 script: bash -ex ./.travis-docker.sh
 env:
   global:
-  - PINS="owl-ode:. owl-ode-sundials:."
+  - PINS="owl-ode:. owl-ode-sundials:. owl:https://github.com/owlbarn/owl/archive/master.tar.gz owl-aeos:https://github.com/owlbarn/owl/archive/master.tar.gz owl-base:https://github.com/owlbarn/owl/archive/master.tar.gz owl-plplot:https://github.com/owlbarn/owl/archive/master.tar.gz"
   matrix:
   - PACKAGE="owl-ode" DISTRO="debian-stable" OCAML_VERSION="4.07"
   - PACKAGE="owl-ode-sundials" DISTRO="debian-stable" OCAML_VERSION="4.07"
