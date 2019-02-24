@@ -24,7 +24,7 @@ more to come.
 This library provides a collection of solvers for the
 initial value problem for ordinary differential equation systems.
 
-A tutorial is available at the {{:Tutorial.html} Tutorial} page.
+A tutorial is available at the {{:tutorial.html} Tutorial} page.
 
 The entry point of this library is the module:
 {!module-Owl_ode.Ode}.
