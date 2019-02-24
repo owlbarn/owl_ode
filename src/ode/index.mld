@@ -4,6 +4,8 @@
 integrating ordinary differential equations written in the
 for of an initial value problem
 
+$$\frac\{dy\}\{dt\} = f(y,t)$$
+
     ∂ₜ y = f(y, t)
 
     y(t₀) = y₀
