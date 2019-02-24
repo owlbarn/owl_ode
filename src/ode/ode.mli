@@ -21,30 +21,30 @@
     {2 Example of use}
 
     Let's solve the linear initial value problem ∂ₜ y = A y, with
-    y(t₀) = y₀. Say that A is the matrix {{1;-1}; {2;3}}, and the
-    initial conditions are given by y(0) = {-1;1}.
+    y(t₀) = y₀. Say that A is the matrix ((1;-1); (2;3)), and the
+    initial conditions are given by y(0) = (-1;1).
 
     We begin by defining a function f(y, t) that corresponds to
     the RHS of the differential equation
-    {|
+    {[
     let f y t = 
       let a = [|[|1.; -1.|];
                [|2.; -3.|]|]
               |> Owl.Mat.of_arrays
       in
       Owl.Mat.(a *@ y)
-    |}
+    ]}
     and the initial conditions y0
-    {|
+    {[
     let y0 = Mat.of_array [|-1.; 1.|] 2 1
-    |}
+    ]}
 
     Before being able to actually call the integrating function,
     we need to define the time specification for the problem at
     hand
-    {|
+    {[
     let tspec = Owl_ode.Types.(T1 {t0 = 0.; duration = 2.; dt=1E-3})
-    |}
+    ]}
     This in particular allows us to specify also that t₀=0.
     Here, we construct a record using the constructor {!Owl_ode.Types.T1},
     which includes the start time t₀, the time duration for the
@@ -67,12 +67,12 @@
 
     The solution can be easily plotted using {!Owl_plplot} or any
     other owl-compatible plotting library, for example
-    {|
+    {[
     let open Owl_plplot in
     let h = Plot.create "myplot.png" in
     Plot.plot ~h ~spec:[ RGB (0,0,255); LineStyle 1 ] ts (Mat.col ys 0);
     Plot.output h;
-    |}
+    ]}
 
     You can refer to the examples in the source repository for
     more complex examples.
