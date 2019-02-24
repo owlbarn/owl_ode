@@ -1,8 +1,8 @@
 # Owl-ODE - Ordinary Differential Equation Solvers [![Build Status](https://travis-ci.org/owlbarn/owl_ode.svg?branch=master)](https://travis-ci.org/owlbarn/owl_ode)
 
-Please refer to the [Project Page](http://ocaml.xyz/project/proposal.html#project-13-differential-equation-solvers) for details.
+Please refer to the [Project Page](http://ocaml.xyz/project/proposal.html#project-13-ordinary-differential-equation-solver) for details.
 
-You can run the current example with `dune exec examples/van_der_pol.exe`,  `dune exec examples/damped.exe`.
+You can run the current examples with `dune exec examples/van_der_pol.exe`,  `dune exec examples/damped.exe`.
 
 ## Tutorial
 
