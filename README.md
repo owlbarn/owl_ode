@@ -4,6 +4,8 @@ Please refer to the [Project Page](http://ocaml.xyz/project/proposal.html#projec
 
 You can run the current examples with `dune exec examples/van_der_pol.exe`,  `dune exec examples/damped.exe`.
 
+The documentation is accessible at [ocaml.xyz/owl\_ode/owl-ode](http://ocaml.xyz/owl_ode/owl-ode/) and [ocaml.xyz/apidoc/ode.html](http://ocaml.xyz/apidoc/ode.html).
+
 ## Tutorial
 
 ### Overview
