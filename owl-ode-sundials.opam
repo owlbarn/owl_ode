@@ -11,10 +11,10 @@ build: [
   ["dune" "exec" "examples/van_der_pol.exe"] {with-test}
 ]
 depends: [
-  "ocaml" {>= "4.02"}
-  "owl" {>= "0.4.0"}
+  "ocaml" {>= "4.06.0"}
+  "owl" {>= "0.5.0"}
   "dune" {build & >= "1.1.0"}
-  "owl-ode" (*{>="0.0.7"}*)
+  "owl-ode" {>="0.0.7"}
   "owl-plplot" {with-test}
   "sundialsml"
 ]
