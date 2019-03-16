@@ -41,7 +41,7 @@ module Make
     let k2 = M.(dt $* (f (y0 + k1 *$ 0.5) (t0 +. 0.5 *. dt))) in
     let k3 = M.(dt $* (f (y0 + k2 *$ 0.5) (t0 +. 0.5 *. dt))) in
     let k4 = M.(dt $* (f (y0 + k3) (t0 +. dt))) in
-    let dy = M.((k1 + k2 + k3 + k4) /$ 6.) in
+    let dy = M.((k1 + (2. $* k2) + (2. $* k3) + k4) /$ 6.) in
     let y = M.(y0 + dy) in
     let t = t0 +. dt in
     y, t
