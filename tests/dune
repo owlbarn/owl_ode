@@ -1,0 +1,7 @@
+(executable
+  (name tests)
+  (libraries alcotest owl owl-ode))
+
+(alias
+  (name runtest)
+  (action (run ./tests.exe)))
