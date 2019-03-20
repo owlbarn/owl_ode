@@ -46,25 +46,39 @@ let symplectic =
   ; Ode.odeint (module Symplectic.D.Ruth4), 4, "Ruth4"
   ;]
 
-let test_native algo tspec exact ic : float =
+let test_native algo ord tspec exact ic : int =
   let t, sol =
     algo oscillator (IC.to_initial ic) tspec ()
   in
-  Owl.Mat.map2 (fun t x -> abs_float (exact(t) -. x)) t (Owl.Mat.row sol 0)
-  |> fun m -> Owl.Mat.sum' m
+  let open Owl in
+  Mat.((row sol 0) - (map exact t))
+  |> Mat.map abs_float
+  |> Mat.max'
+  |> Maths.log10
+  |> Maths.neg
+  |> Maths.floor
+  |> int_of_float
+  |> min ord
 
-let test_symplectic algo tspec exact ic : float =
+
+let test_symplectic algo ord tspec exact ic : int =
   let t, sol, _ = 
     algo oscillator_symplectic (IC.to_symplectic_initial ic) tspec ()
   in
-  Owl. Mat.map2 (fun t x -> abs_float (exact(t) -. x)) t (Owl.Mat.col sol 0)
-  |> fun m -> Owl.Mat.sum' m
+  let open Owl in
+  Mat.((col sol 0) - (map exact t))
+  |> Mat.map abs_float
+  |> Mat.max'
+  |> Maths.log10
+  |> Maths.neg
+  |> Maths.floor
+  |> int_of_float
+  |> min ord
 
 let native test list () =
   let tester (algo, ord, name) =
-    let err = 5. *. dt ** (float_of_int ord -.1.) in
-    Alcotest.(check @@ float err) ("sin " ^ name) 0. (test algo tspec Owl.Maths.sin sin_ic);
-    Alcotest.(check @@ float err) ("cos " ^ name) 0. (test algo tspec Owl.Maths.cos cos_ic);
+    Alcotest.(check @@ int) ("sin " ^ name) ord (test algo ord tspec Owl.Maths.sin sin_ic);
+    Alcotest.(check @@ int) ("cos " ^ name) ord (test algo ord tspec Owl.Maths.cos cos_ic);
   in List.iter tester list
 
 
