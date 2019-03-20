@@ -27,7 +27,7 @@ let oscillator_symplectic:
 let sin_ic = IC.create 0.0 1.0
 let cos_ic = IC.create 1.0 0.0
 
-let dt = 0.01
+let dt = 0.1
 let tspec = Types.T1 {t0=0.0; duration=1.0; dt}
 
 let fixed =
