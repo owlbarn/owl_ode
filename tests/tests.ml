@@ -28,6 +28,7 @@ let sin_ic = IC.create 0.0 1.0
 let cos_ic = IC.create 1.0 0.0
 
 let dt = 0.1
+let dt_ord = -.Owl.Maths.log10 dt |> int_of_float
 let tspec = Types.T1 {t0=0.0; duration=1.0; dt}
 
 let fixed =
@@ -77,8 +78,8 @@ let test_symplectic algo ord tspec exact ic : int =
 
 let native test list () =
   let tester (algo, ord, name) =
-    Alcotest.(check @@ int) ("sin " ^ name) ord (test algo ord tspec Owl.Maths.sin sin_ic);
-    Alcotest.(check @@ int) ("cos " ^ name) ord (test algo ord tspec Owl.Maths.cos cos_ic);
+    Alcotest.(check @@ int) ("sin " ^ name) (ord+dt_ord) (test algo ord tspec Owl.Maths.sin sin_ic);
+    Alcotest.(check @@ int) ("cos " ^ name) (ord+dt_ord) (test algo ord tspec Owl.Maths.cos cos_ic);
   in List.iter tester list
 
 
