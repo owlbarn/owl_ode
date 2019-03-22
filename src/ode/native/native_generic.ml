@@ -113,6 +113,7 @@ module Make
       let y = M.(y0 + k1*$(dt *. c.(0)) + k2*$(dt *. c.(1)) + k3*$(dt *. c.(2)) + k4*$(dt *. c.(3)) + k5*$(dt *. c.(4)) + k6*$(dt *. c.(5))) in
       t, y, dt, err<=err_max
 
+
   let prepare step f y0 tspec () =
     let tspan, dt = match tspec with
       | T1 {t0; duration; dt} -> (t0, t0+.duration), dt
