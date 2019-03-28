@@ -13,10 +13,10 @@ The documentation is accessible at [ocaml.xyz/owl\_ode/owl-ode](http://ocaml.xyz
 Consider the problem of integrating a linear dymaical system that evolves according to 
 
 ```latex
-x' = f(x,t) = Ax,
+dx/dt = f(x,t) = Ax      x(t0) = x0,
 ``` 
 
-where `x` is the state of the system, `x'` is the time derivative of the state, and `t` is time. 
+where `x` is the state of the system, `dx/dt` is the time derivative of the state, and `t` is time. 
 
 We begin by defining `f(x,t)` (and use as `A` the matrix `[[1,-1; 2,3]]`):
 
@@ -36,7 +36,7 @@ let tspec = Owl_ode.Types.(T1 {t0 = 0.; duration = 2.; dt=1E-3})
 
 Here, we construct a record using the constructor `T1`, which includes information of start time `t0`, duration `duration`, and step size `dt`.
 
-We then provide the initial state of the dynamical system `x0` (in this example `x(0) = [-1; 1]`: 
+We then provide the initial state of the dynamical system `x0` (in this example `x0 = [-1; 1]`: 
 
 ```ocaml
 let x0 = Mat.of_array [|-1.; 1.|] 2 1
