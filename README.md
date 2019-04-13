@@ -18,7 +18,7 @@ dx/dt = f(x,t) = Ax      x(t0) = x0,
 
 where `x` is the state of the system, `dx/dt` is the time derivative of the state, and `t` is time. 
 
-We begin by defining `f(x,t)` (and use as `A` the matrix `[[1,-1; 2,3]]`):
+We begin by defining `f(x,t)` (and use as `A` the matrix `[[1,-1; 2,-3]]`):
 
 ```ocaml
 let f x t = 
