@@ -198,10 +198,10 @@ We use [`ocamlformat`](https://github.com/ocaml-ppx/ocamlformat) to format out c
 With dune, it is super simple to reformat the entire code base. Once you have [`ocamlformat`](https://github.com/ocaml-ppx/ocamlformat) installed, 
 all you have to do in the project directory is do
 
-``sh 
+```sh 
 dune build @fmt
 dune promote
-``
+```
 
 
 
