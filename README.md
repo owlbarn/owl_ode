@@ -190,3 +190,18 @@ We currently cannot have implicit methods for the lack of vector-valued root fin
 It would also be nice to provide a function that takes the pair `(t, y)` and returns the interpolated function.
 
 We should make the integrators more robust and with better failure modes, we could take inspiration from the very readable scipy implementation [https://github.com/scipy/scipy/blob/v1.2.0/scipy/integrate/_ivp/rk.py#L15].
+
+
+## Contributing
+
+We use [`ocamlformat`](https://github.com/ocaml-ppx/ocamlformat) to format out code. Our preferred ocamlformat setup is specified in `.ocamlformat`.
+With dune, it is super simple to reformat the entire code base. Once you have [`ocamlformat`](https://github.com/ocaml-ppx/ocamlformat) installed, 
+all you have to do in the project directory is do
+
+``sh 
+dune build @fmt
+dune promote
+``
+
+
+
