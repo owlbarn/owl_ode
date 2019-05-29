@@ -11,26 +11,23 @@
 
 (** Time specification for the ODE solvers. *)
 type tspec_t =
-  | T1 of {t0: float; duration:float; dt: float}
-  (** The [T1] constructor allow to specify the initial
+  | T1 of { t0 : float; duration : float; dt : float }
+      (** The [T1] constructor allow to specify the initial
       and final integration time, in the sense that the
       solver starts with t=t0 and integrates until it
       reaches t=t0+duration, and the timestep dt. 
       This last parameter is ignored by the adaptive
       methods. *)
-
-  | T2 of {tspan: (float * float); dt: float}
-  (** The [T2] constructor allow to specify a tuple 
+  | T2 of { tspan : float * float; dt : float }
+      (** The [T2] constructor allow to specify a tuple 
       (t0, tf) of the initial and final integration
       time, in the sense that the solver starts with
       t=t0 and integrates until it reaches t=tf, and
       the timestep dt. This last parameter is ignored
       by the adaptive methods. *)
-
   | T3 of float array
-  (** The [T3] constructor is currently unsupported
+      (** The [T3] constructor is currently unsupported
       and may change or disappear in the future. *)
-
 
 (** Any solver compatible with {!Owl_ode.Ode.odeint}
     has to comply with the SolverT type. You can use this
@@ -54,26 +51,25 @@ type tspec_t =
     with jsoo, although how to do that is currently undocumented. 
 *)
 module type SolverT = sig
-  type s
   (** [s] is the type of the state (and thus also of
        the initial condition) provided to {!Owl_ode.Ode.odeint}.
        For example {!Owl.Mat.mat}. *)
+  type s
 
-  type t
   (** [t] is type of the output of the evolution function
       [f: s-> float ->t]. For example, in the case of 
       sympletic solvers, [type s = Owl.Mat.(mat*mat)] and
       [type t = Owl.Mat.mat]. *)
+  type t
 
-  type output
   (** [output] defines the type of the output of {!Owl_ode.Ode.odeint}.
       For example, in the case of sympletc solvers,
       [type output = Owl.Mat.(mat * mat * mat)], corresponds
       to matrices that contain respectively the time,
       position, and momentum coordinates of the
       integrated solution *)
+  type output
 
-  val solve : ((s -> float -> t) -> s -> tspec_t -> unit -> output)
   (** [solve f y0 tspec ()] solves the initial value problem
 
       ∂ₜ y = f(y, t)
@@ -83,4 +79,5 @@ module type SolverT = sig
       temporal specification tspec, and returns the desired outputs
       of type output. Several such functions have already been
       implemented in this library and can be used as reference. *)
+  val solve : (s -> float -> t) -> s -> tspec_t -> unit -> output
 end

@@ -7,9 +7,7 @@
  *)
 
 module S = struct
-
   include Native_s
-
 end
 
 module D = struct

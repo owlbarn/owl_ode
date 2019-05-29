@@ -1,27 +1,21 @@
 (executable
  (name damped)
  (libraries owl owl-ode owl-plplot)
- (modules damped)
-)
+ (modules damped))
 
 (alias
  (name runtest)
  (action
-  (run ./damped.exe)
- )
- (package owl-ode)
-)
+  (run ./damped.exe))
+ (package owl-ode))
 
 (executable
  (name van_der_pol)
  (libraries owl owl-ode owl-ode-sundials owl-plplot)
- (modules van_der_pol)
-)
+ (modules van_der_pol))
 
 (alias
  (name runtest)
  (action
-  (run ./van_der_pol.exe)
- )
- (package owl-ode-sundials)
-)
+  (run ./van_der_pol.exe))
+ (package owl-ode-sundials))
