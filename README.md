@@ -45,6 +45,8 @@ let x0 = Mat.of_array [|-1.; 1.|] 2 1
 and putting everything together, we call:
 ```ocaml
 let ts, xs = Owl_ode.odeint (module Owl_ode.Native.D.RK4) f x0 tspec () 
+(* or equivalently *)
+let ts, xs = Owl_ode.odeint (Owl_ode.Native.D.rk4) f x0 tspec ()
 ```
 
 The results of `odeint` in this example are two matrices `ts` and `xs`, which contain the times `t`s and states `x(t)`s in their respective columns. Column 0 of `xs` contains x(t0) and column `2000` contains `x(t0 +. duration)`.
@@ -88,15 +90,16 @@ We also support temporal integration of matrices.  That is, cases in which the s
 We can define new solver module by creating a module of type `SolverT`. For example, to create a custom Cvode solver that has a relative tolerance of 1E-7 as opposed to the default 1E-4, we can construct the following module:
 
 ```ocaml
-module Custom_Owl_Cvode = struct
-  type s = Mat.mat
-  type t = Mat.mat
-  type output = Mat.mat * Mat.mat
-  let solve = cvode ~relative_tol:1E-7
-end
+module Custom_Owl_Cvode = (val Owl_ode_sundials.cvode ~stiff:false ~relative_tol:1E-7 ~abs_tol:1E-4 :
+                              Types.SolverT with
+                               type s = Mat.mat
+                               and type t = Mat.mat
+                               and type output = Mat.mat * Mat.mat)
+(* usage *)
+let ts, xs = Owl_ode.odeint (Custom_Owl_Cvode) f x0 tspec ()
 ```
 
-In constructing this module, we need to define three types:
+Here, we use the `cvode` function conveniently defined in `src/sundials/owl_ode_sundials.ml` to construct a solver module `Custom_Owl_Cvode`. This function takes the parameters (`stiff`, `relative_tol`, and `abs_tol`) and returns a solver module of type `SolverT`. In defining this module, we also need to provide three types:
 
 - `type s` is the type of state and thus also the initial condition (e.g. `x0`) provided to `odeint`.
 
@@ -104,9 +107,15 @@ In constructing this module, we need to define three types:
 
 - `type output` defines the output of `odeint`. In the case of sympletc solvers, `type output= Mat.mat * Mat.mat * Mat.mat`, which corresponds to matrices that contain the time, position, and momentum coordinates of the integration (see `examples/dampled.ml`).
 
-Last but not least, we need to define a `solve` function which given the function `f`, initial condition, and temporal specification `tspec` solves the problem and returns the desired outputs (`type output`).
-Several such functions have already been implemented. 
-In this example, we simply call the `cvode` function conveniently defined in `src/sundials/owl_ode_sundials.ml`.  Similar helper functions have been also defined for native and symplectic solvers.
+These types only have to be provided when we want to construct a solver module. For using with `odeint`, we can simply do
+
+```ocaml
+let ts, xs = Owl_ode.odeint (Owl_ode_sundials.cvode ~stiff:false ~relative_tol:1E-7 ~abs_tol:1E-4) f x0 tspec ()
+```
+
+Similar helper functions like `cvode` have been also defined for native and symplectic solvers.
+
+
 
  
 ## Supported Solvers
@@ -118,7 +127,7 @@ In this example, we simply call the `cvode` function conveniently defined in `sr
 - RK23 
 - RK45 
 
-example usage: `Owl_ode.Native.D.Euler`, `Owl_ode.Native.S.Euler` 
+example usage: `Owl_ode.Native.D.Euler` (or `Owl_ode.Native.D.euler`), `Owl_ode.Native.S.Euler` (or `Owl_ode.Native.S.euler`)
 
 ### Symplectic
 - Symplectic_Euler
