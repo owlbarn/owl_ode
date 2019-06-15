@@ -29,8 +29,10 @@ let f x t =
            |> Owl.Mat.of_arrays in
    Owl.Mat.(a *@ x)
 
-(* temporal specification *)
-(* construct a record using the constructor T1 and includes information of start time, duration, and step size.*)
+(* temporal specification:
+   construct a record using the constructor T1 and 
+   includes information of start time, duration, 
+   and step size.*)
 let tspec = Owl_ode.Types.(T1 {t0 = 0.; duration = 2.; dt=1E-3})
 
 (* initial state of the system *)
