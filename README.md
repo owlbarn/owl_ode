@@ -46,7 +46,7 @@ and putting everything together, we call:
 ```ocaml
 let ts, xs = Owl_ode.odeint (module Owl_ode.Native.D.RK4) f x0 tspec () 
 (* or equivalently *)
-let ts, xs = Owl_ode.odeint (Owl_ode.Native.D.rk4) f x0 tspec ()
+let ts, xs = Owl_ode.odeint Owl_ode.Native.D.rk4 f x0 tspec ()
 ```
 
 The results of `odeint` in this example are two matrices `ts` and `xs`, which contain the times `t`s and states `x(t)`s in their respective columns. Column 0 of `xs` contains x(t0) and column `2000` contains `x(t0 +. duration)`.
