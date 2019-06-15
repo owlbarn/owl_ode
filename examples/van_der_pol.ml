@@ -29,18 +29,17 @@ let () =
   Mat.save_txt Mat.(ts @|| ys) "van_der_pol_dynamics.txt"
 
 
-(* create our own cvode integrator *)
-module Custom_Cvode = struct
-  type s = Mat.mat
-  type t = Mat.mat
-  type output = Mat.mat * Mat.mat
-
-  let solve = Owl_ode_sundials.cvode ~stiff:false ~relative_tol:1E-3 ()
-end
-
+(*(* create our own cvode integrator *)*)
 let () =
   let tspec = T1 { t0 = 0.0; dt = 1E-2; duration = 30.0 } in
-  let ts, ys = Ode.odeint (module Custom_Cvode) f y0 tspec () in
+  let ts, ys =
+    Ode.odeint
+      (Owl_ode_sundials.cvode ~stiff:false ~relative_tol:1E-3 ~abs_tol:1E-8)
+      f
+      y0
+      tspec
+      ()
+  in
   (* save ts and ys *)
   Mat.save_txt Mat.(ts @|| ys) "van_der_pol_dynamics_custom.txt";
   let t', ys' = Ode.odeint (module Native.D.RK4) f y0 tspec () in

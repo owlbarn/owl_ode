@@ -23,6 +23,33 @@ module RK23 :
 module RK45 :
   Types.SolverT with type s = mat and type t = mat and type output = mat * mat
 
+val euler
+  : (module Types.SolverT with type s = mat
+                           and type t = mat
+                           and type output = mat * mat)
+
+val midpoint
+  : (module Types.SolverT with type s = mat
+                           and type t = mat
+                           and type output = mat * mat)
+
+val rk4
+  : (module Types.SolverT with type s = mat
+                           and type t = mat
+                           and type output = mat * mat)
+
+val rk23
+  :  tol:float
+  -> (module Types.SolverT with type s = mat
+                            and type t = mat
+                            and type output = mat * mat)
+
+val rk45
+  :  tol:float
+  -> (module Types.SolverT with type s = mat
+                            and type t = mat
+                            and type output = mat * mat)
+
 (* ----- helper function ----- *)
 
 val to_state_array : ?axis:int -> int * int -> mat -> mat array

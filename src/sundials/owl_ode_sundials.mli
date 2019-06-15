@@ -20,15 +20,13 @@ val unwrap
    float array * Owl.Mat.mat  *)
 
 val cvode
-  :  ?stiff:bool
-  -> ?relative_tol:float
-  -> ?abs_tol:float
-  -> unit
-  -> (Owl.Mat.mat -> float -> Owl.Mat.mat)
-  -> Owl.Mat.mat
-  -> Owl_ode.Types.tspec_t
-  -> unit
-  -> Owl.Mat.mat * Owl.Mat.mat
+  :  stiff:bool
+  -> relative_tol:float
+  -> abs_tol:float
+  -> (module Owl_ode.Types.SolverT
+        with type s = Owl.Mat.mat
+         and type t = Owl.Mat.mat
+         and type output = Owl.Mat.mat * Owl.Mat.mat)
 
 module Owl_Cvode :
   Owl_ode.Types.SolverT

@@ -31,7 +31,7 @@ let () =
   let f = damped_noforcing a in
   let tspec = T1 { t0; duration; dt } in
   let t, sol1, _ = Ode.odeint (module Symplectic.D.Leapfrog) f (x0, p0) tspec () in
-  let _, sol2, _ = Ode.odeint (module Symplectic.D.Ruth3) f (x0, p0) tspec () in
+  let _, sol2, _ = Ode.odeint Symplectic.D.ruth3 f (x0, p0) tspec () in
   let _, sol3, _ =
     Ode.odeint (module Symplectic.D.Symplectic_Euler) f (x0, p0) tspec ()
   in

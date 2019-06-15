@@ -38,6 +38,36 @@ module Ruth4 :
    and type t = mat
    and type output = mat * mat * mat
 
+val symplectic_euler
+  : (module Types.SolverT
+       with type s = mat * mat
+        and type t = mat
+        and type output = mat * mat * mat)
+
+val leapfrog
+  : (module Types.SolverT
+       with type s = mat * mat
+        and type t = mat
+        and type output = mat * mat * mat)
+
+val pseudoleapfrog
+  : (module Types.SolverT
+       with type s = mat * mat
+        and type t = mat
+        and type output = mat * mat * mat)
+
+val ruth3
+  : (module Types.SolverT
+       with type s = mat * mat
+        and type t = mat
+        and type output = mat * mat * mat)
+
+val ruth4
+  : (module Types.SolverT
+       with type s = mat * mat
+        and type t = mat
+        and type output = mat * mat * mat)
+
 (* ----- helper function ----- *)
 
 val to_state_array : ?axis:int -> int * int -> mat -> mat -> mat array * mat array

@@ -21,12 +21,38 @@ module Make (M : Owl_types_ndarray_algodiff.Sig with type elt = float) = struct
     let ( + ) = M.add
   end
 
+  let prepare step f (x0, p0) tspec () =
+    let f x0 p0 = f (x0, p0) in
+    let tspan, dt =
+      match tspec with
+      | T1 { t0; duration; dt } -> (t0, t0 +. duration), dt
+      | T2 { tspan; dt } -> tspan, dt
+      | T3 _ -> raise Owl_exception.NOT_IMPLEMENTED
+    in
+    let step = step ~f ~dt in
+    C.symplectic_integrate ~step ~tspan ~dt x0 p0
+
+
   let symplectic_euler_s ~(f : f_t) ~dt xs ps t0 =
     let t = t0 +. dt in
     let fxs = f xs ps t in
     let ps' = M.(ps + (fxs *$ dt)) in
     let xs' = M.(xs + (ps' *$ dt)) in
     xs', ps', t
+
+
+  let symplectic_euler =
+    (module struct
+      type s = M.arr * M.arr
+      type t = M.arr
+      type output = M.arr * M.arr * M.arr
+
+      let solve = prepare symplectic_euler_s
+    end
+    : SolverT
+      with type s = M.arr * M.arr
+       and type t = M.arr
+       and type output = M.arr * M.arr * M.arr)
 
 
   let leapfrog_s ~(f : f_t) ~dt xs ps t0 =
@@ -36,6 +62,20 @@ module Make (M : Owl_types_ndarray_algodiff.Sig with type elt = float) = struct
     let fxs' = f xs' ps (t +. dt) in
     let ps' = M.(ps + ((fxs + fxs') *$ (dt *. 0.5))) in
     xs', ps', t
+
+
+  let leapfrog =
+    (module struct
+      type s = M.arr * M.arr
+      type t = M.arr
+      type output = M.arr * M.arr * M.arr
+
+      let solve = prepare leapfrog_s
+    end
+    : SolverT
+      with type s = M.arr * M.arr
+       and type t = M.arr
+       and type output = M.arr * M.arr * M.arr)
 
 
   (* For the values used in the implementations below
@@ -67,8 +107,52 @@ module Make (M : Owl_types_ndarray_algodiff.Sig with type elt = float) = struct
 
   let _leapfrog_s' ~f ~dt = symint ~coeffs:leapfrog_c ~f ~dt
   let pseudoleapfrog_s ~f ~dt = symint ~coeffs:pseudoleapfrog_c ~f ~dt
+
+  let pseudoleapfrog =
+    (module struct
+      type s = M.arr * M.arr
+      type t = M.arr
+      type output = M.arr * M.arr * M.arr
+
+      let solve = prepare pseudoleapfrog_s
+    end
+    : SolverT
+      with type s = M.arr * M.arr
+       and type t = M.arr
+       and type output = M.arr * M.arr * M.arr)
+
+
   let ruth3_s ~f ~dt = symint ~coeffs:ruth3_c ~f ~dt
+
+  let ruth3 =
+    (module struct
+      type s = M.arr * M.arr
+      type t = M.arr
+      type output = M.arr * M.arr * M.arr
+
+      let solve = prepare ruth3_s
+    end
+    : SolverT
+      with type s = M.arr * M.arr
+       and type t = M.arr
+       and type output = M.arr * M.arr * M.arr)
+
+
   let ruth4_s ~f ~dt = symint ~coeffs:ruth4_c ~f ~dt
+
+  let ruth4 =
+    (module struct
+      type s = M.arr * M.arr
+      type t = M.arr
+      type output = M.arr * M.arr * M.arr
+
+      let solve = prepare ruth4_s
+    end
+    : SolverT
+      with type s = M.arr * M.arr
+       and type t = M.arr
+       and type output = M.arr * M.arr * M.arr)
+
 
   (*
     (* XXX:
@@ -82,7 +166,7 @@ module Make (M : Owl_types_ndarray_algodiff.Sig with type elt = float) = struct
         pnew = pint + 0.5*h*acc(xnew, pint, t0+(i+1)*h)
         sol[i+1] = np.array((pnew, xnew))
 
-    but http://ocaml.xyz/apidoc/owl_maths_root.html does not seem
+    but http://ocaml.xyz/apidoc/owl_M.arrhs_root.html does not seem
     powerful enough for that in general.
     *)
 
@@ -100,18 +184,6 @@ let leapfrog_implicit ~f y0 (t0, t1) dt =
          done;
          sol
   *)
-
-  let prepare step f (x0, p0) tspec () =
-    let f x0 p0 = f (x0, p0) in
-    let tspan, dt =
-      match tspec with
-      | T1 { t0; duration; dt } -> (t0, t0 +. duration), dt
-      | T2 { tspan; dt } -> tspan, dt
-      | T3 _ -> raise Owl_exception.NOT_IMPLEMENTED
-    in
-    let step = step ~f ~dt in
-    C.symplectic_integrate ~step ~tspan ~dt x0 p0
-
 
   (* ----- helper functions ----- *)
 

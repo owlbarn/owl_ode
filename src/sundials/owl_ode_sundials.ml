@@ -9,6 +9,20 @@ let unwrap (dim1, dim2) x =
   genarray_of_array2 (reshape_2 (genarray_of_array1 x) dim1 dim2)
 
 
+let integrate step f y0 tspec () =
+  let (t0, t1), dt =
+    match tspec with
+    | T1 { t0; duration; dt } -> (t0, t0 +. duration), dt
+    | T2 { tspan; dt } -> tspan, dt
+    | T3 _ -> raise Owl_exception.NOT_IMPLEMENTED
+  in
+  (* TODO: Maybe this kind of checks should go to Common -- with an odeint equivalent
+       and be used everywhere. We will just pass the step function to be used in
+       the integration loop: that one will take the ~f parameter. *)
+  let step = step ~f ~tspan:(t0, t1) ~y0 ~dt in
+  C.integrate ~step ~dt ~tspan:(t0, t1) y0
+
+
 let cvode_s
     ~stiff
     ~relative_tol
@@ -51,20 +65,18 @@ let cvode_s
     y', t'
 
 
-let cvode ?(stiff = false) ?(relative_tol = 1E-4) ?(abs_tol = 1E-8) () =
-  let cvode_s' = cvode_s ~stiff ~relative_tol ~abs_tol in
-  fun f y0 tspec () ->
-    let (t0, t1), dt =
-      match tspec with
-      | T1 { t0; duration; dt } -> (t0, t0 +. duration), dt
-      | T2 { tspan; dt } -> tspan, dt
-      | T3 _ -> raise Owl_exception.NOT_IMPLEMENTED
-    in
-    (* Maybe this kind of checks should go to Common -- with an odeint equivalent
-       and be used everywhere. We will just pass the step function to be used in
-       the integration loop: that one will take the ~f parameter. *)
-    let step = cvode_s' ~f ~tspan:(t0, t1) ~y0 ~dt in
-    C.integrate ~step ~dt ~tspan:(t0, t1) y0
+let cvode ~stiff ~relative_tol ~abs_tol =
+  (module struct
+    type s = Mat.mat
+    type t = Mat.mat
+    type output = Mat.mat * Mat.mat
+
+    let solve = integrate (cvode_s ~stiff ~relative_tol ~abs_tol)
+  end
+  : SolverT
+    with type s = Owl.Mat.mat
+     and type t = Owl.Mat.mat
+     and type output = Owl.Mat.mat * Owl.Mat.mat)
 
 
 module Owl_Cvode = struct
@@ -72,7 +84,7 @@ module Owl_Cvode = struct
   type t = Mat.mat
   type output = Mat.mat * Mat.mat
 
-  let solve = cvode ~stiff:false ()
+  let solve = integrate (cvode_s ~stiff:true ~relative_tol:1E-4 ~abs_tol:1E-8)
 end
 
 module Owl_Cvode_Stiff = struct
@@ -80,5 +92,5 @@ module Owl_Cvode_Stiff = struct
   type t = Mat.mat
   type output = Mat.mat * Mat.mat
 
-  let solve = cvode ~stiff:true ()
+  let solve = integrate (cvode_s ~stiff:false ~relative_tol:1E-4 ~abs_tol:1E-8)
 end

@@ -23,10 +23,47 @@ module Make (M : Owl_types_ndarray_algodiff.Sig with type elt = float) = struct
     let ( + ) = M.add
   end
 
+  let prepare step f y0 tspec () =
+    let tspan, dt =
+      match tspec with
+      | T1 { t0; duration; dt } -> (t0, t0 +. duration), dt
+      | T2 { tspan; dt } -> tspan, dt
+      | T3 _ -> raise Owl_exception.NOT_IMPLEMENTED
+    in
+    let step = step ~f ~dt in
+    C.integrate ~step ~tspan ~dt y0
+
+
+  let adaptive_prepare step f y0 tspec () =
+    let (t0, t1), _dt =
+      match tspec with
+      | T1 { t0; duration; dt } -> (t0, t0 +. duration), dt
+      | T2 { tspan; dt } -> tspan, dt
+      | T3 _ -> raise Owl_exception.NOT_IMPLEMENTED
+    in
+    let dtmax = (t1 -. t0) /. 128.0 in
+    let step = step ~dtmax f in
+    C.adaptive_integrate ~step ~tspan:(t0, t1) ~dtmax y0
+
+
   let euler_s ~(f : f_t) ~dt y0 t0 =
     let y = M.(y0 + (f y0 t0 *$ dt)) in
     let t = t0 +. dt in
     y, t
+
+
+  let euler =
+    (module struct
+      type s = M.arr
+      type t = M.arr
+      type output = M.arr * M.arr
+
+      let solve = prepare euler_s
+    end
+    : SolverT
+      with type s = M.arr
+       and type t = M.arr
+       and type output = M.arr * M.arr)
 
 
   let midpoint_s ~(f : f_t) ~dt y0 t0 =
@@ -35,6 +72,20 @@ module Make (M : Owl_types_ndarray_algodiff.Sig with type elt = float) = struct
     let y = M.(y0 + k2) in
     let t = t0 +. dt in
     y, t
+
+
+  let midpoint =
+    (module struct
+      type s = M.arr
+      type t = M.arr
+      type output = M.arr * M.arr
+
+      let solve = prepare midpoint_s
+    end
+    : SolverT
+      with type s = M.arr
+       and type t = M.arr
+       and type output = M.arr * M.arr)
 
 
   let rk4_s ~(f : f_t) ~dt y0 t0 =
@@ -46,6 +97,20 @@ module Make (M : Owl_types_ndarray_algodiff.Sig with type elt = float) = struct
     let y = M.(y0 + dy) in
     let t = t0 +. dt in
     y, t
+
+
+  let rk4 =
+    (module struct
+      type s = M.arr
+      type t = M.arr
+      type output = M.arr * M.arr
+
+      let solve = prepare rk4_s
+    end
+    : SolverT
+      with type s = M.arr
+       and type t = M.arr
+       and type output = M.arr * M.arr)
 
 
   let rk23_s ~tol ~dtmax f =
@@ -81,6 +146,20 @@ module Make (M : Owl_types_ndarray_algodiff.Sig with type elt = float) = struct
         if err > 0. then min dtmax (0.85 *. dt *. ((err_max /. err) ** 0.2)) else dt
       in
       t, y, dt, err <= err_max
+
+
+  let rk23 ~tol =
+    (module struct
+      type s = M.arr
+      type t = M.arr
+      type output = M.arr * M.arr
+
+      let solve = adaptive_prepare (rk23_s ~tol)
+    end
+    : SolverT
+      with type s = M.arr
+       and type t = M.arr
+       and type output = M.arr * M.arr)
 
 
   let rk45_s ~tol ~dtmax f =
@@ -183,27 +262,18 @@ module Make (M : Owl_types_ndarray_algodiff.Sig with type elt = float) = struct
       t, y, dt, err <= err_max
 
 
-  let prepare step f y0 tspec () =
-    let tspan, dt =
-      match tspec with
-      | T1 { t0; duration; dt } -> (t0, t0 +. duration), dt
-      | T2 { tspan; dt } -> tspan, dt
-      | T3 _ -> raise Owl_exception.NOT_IMPLEMENTED
-    in
-    let step = step ~f ~dt in
-    C.integrate ~step ~tspan ~dt y0
+  let rk45 ~tol =
+    (module struct
+      type s = M.arr
+      type t = M.arr
+      type output = M.arr * M.arr
 
-
-  let adaptive_prepare step f y0 tspec () =
-    let (t0, t1), _dt =
-      match tspec with
-      | T1 { t0; duration; dt } -> (t0, t0 +. duration), dt
-      | T2 { tspan; dt } -> tspan, dt
-      | T3 _ -> raise Owl_exception.NOT_IMPLEMENTED
-    in
-    let dtmax = (t1 -. t0) /. 128.0 in
-    let step = step ~dtmax f in
-    C.adaptive_integrate ~step ~tspan:(t0, t1) ~dtmax y0
+      let solve = adaptive_prepare (rk45_s ~tol)
+    end
+    : SolverT
+      with type s = M.arr
+       and type t = M.arr
+       and type output = M.arr * M.arr)
 
 
   (* ----- helper functions ----- *)

@@ -49,6 +49,38 @@ module Make (M : Owl_types_ndarray_algodiff.Sig with type elt = float) : sig
     -> float
     -> float * M.arr * float * bool
 
+  val euler
+    : (module Types.SolverT
+         with type s = M.arr
+          and type t = M.arr
+          and type output = M.arr * M.arr)
+
+  val midpoint
+    : (module Types.SolverT
+         with type s = M.arr
+          and type t = M.arr
+          and type output = M.arr * M.arr)
+
+  val rk4
+    : (module Types.SolverT
+         with type s = M.arr
+          and type t = M.arr
+          and type output = M.arr * M.arr)
+
+  val rk23
+    :  tol:float
+    -> (module Types.SolverT
+          with type s = M.arr
+           and type t = M.arr
+           and type output = M.arr * M.arr)
+
+  val rk45
+    :  tol:float
+    -> (module SolverT
+          with type s = M.arr
+           and type t = M.arr
+           and type output = M.arr * M.arr)
+
   (* ----- helper functions ----- *)
 
   val to_state_array : ?axis:int -> int * int -> M.arr -> M.arr array

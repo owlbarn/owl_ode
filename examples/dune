@@ -1,7 +1,7 @@
-(executable
- (name damped)
+(executables
+ (names damped custom_rk45)
  (libraries owl owl-ode owl-plplot)
- (modules damped))
+ (modules damped custom_rk45))
 
 (alias
  (name runtest)
