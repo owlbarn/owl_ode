@@ -87,30 +87,21 @@ We also support temporal integration of matrices.  That is, cases in which the s
 
 ### Custom Solvers
 
-We can define new solver module by creating a module of type `SolverT`. For example, to create a custom Cvode solver that has a relative tolerance of 1E-7 as opposed to the default 1E-4, we can construct the following module:
+We can define new solver module by creating a module of type `SolverT`. For example, to create a custom Cvode solver that has a relative tolerance of 1E-7 as opposed to the default 1E-4, we can define and use `custom_cvode` as follows:
 
 ```ocaml
-module Custom_Owl_Cvode = (val Owl_ode_sundials.cvode ~stiff:false ~relative_tol:1E-7 ~abs_tol:1E-4 :
-                              Types.SolverT with
-                               type s = Mat.mat
-                               and type t = Mat.mat
-                               and type output = Mat.mat * Mat.mat)
+let custom_cvode = Owl_ode_sundials.cvode ~stiff:false ~relative_tol:1E-7 ~abs_tol:1E-4 
 (* usage *)
-let ts, xs = Owl_ode.odeint (module Custom_Owl_Cvode) f x0 tspec ()
+let ts, xs = Owl_ode.odeint custom_cvode f x0 tspec ()
 ```
 
-Here, we use the `cvode` function conveniently defined in `src/sundials/owl_ode_sundials.ml` to construct a solver module `Custom_Owl_Cvode`. This function takes the parameters (`stiff`, `relative_tol`, and `abs_tol`) and returns a solver module of type `SolverT`. In defining this module, we also need to provide three types:
-
-- `type s` is the type of state and thus also the initial condition (e.g. `x0`) provided to `odeint`.
-
-- `type t` is type of the output of the evolution function `f:s->float->t`. (e.g. in the case of sympletic solvers, `type s = (Mat.mat, Mat.mat)` and `type t = Mat.mat`.)
-
-- `type output` defines the output of `odeint`. In the case of sympletc solvers, `type output= Mat.mat * Mat.mat * Mat.mat`, which corresponds to matrices that contain the time, position, and momentum coordinates of the integration (see `examples/dampled.ml`).
-
-These types only have to be provided when we want to construct a solver module. For using with `odeint`, we can simply do
+Here, we use the `cvode` function construct a solver module `Custom_Owl_Cvode`. This function is conveniently defined in `src/sundials/owl_ode_sundials.ml`. It takes the parameters (`stiff`, `relative_tol`, and `abs_tol`) and returns a solver module of type 
 
 ```ocaml
-let ts, xs = Owl_ode.odeint (Owl_ode_sundials.cvode ~stiff:false ~relative_tol:1E-7 ~abs_tol:1E-4) f x0 tspec ()
+val custom_cvode : (module SolverT with 
+                     type s = Mat.mat
+                     and type t = Mat.mat
+                     and type output = Mat.mat * Mat.mat)
 ```
 
 Similar helper functions like `cvode` have been also defined for native and symplectic solvers.
