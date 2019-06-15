@@ -16,43 +16,38 @@ Consider the problem of integrating a linear dymaical system that evolves accord
 dx/dt = f(x,t) = Ax      x(t0) = x0,
 ``` 
 
-where `x` is the state of the system, `dx/dt` is the time derivative of the state, and `t` is time. 
-
-We begin by defining `f(x,t)` (and use as `A` the matrix `[[1,-1; 2,-3]]`):
+where `x` is the state of the system, `dx/dt` is the time derivative of the state, and `t` is time.
+Our system `A` is the matrix `[[1,-1; 2,-3]]` and the system's initial state `x0` is at `[[-1]; [1]]`. 
+We want to integrate for 2 seconds with a step size of 1 millisecond. Here is how you would solve this 
+problem using OwlDE:
 
 ```ocaml
+(* f(x,t) *)
 let f x t = 
    let a = [|[|1.; -1.|];
              [|2.; -3.|]|]
            |> Owl.Mat.of_arrays in
    Owl.Mat.(a *@ x)
-```
 
-Next, we specify the temporal details of the problem:
-
-```ocaml
+(* temporal specification *)
+(* construct a record using the constructor T1 and includes information of start time, duration, and step size.*)
 let tspec = Owl_ode.Types.(T1 {t0 = 0.; duration = 2.; dt=1E-3})
-```
 
-Here, we construct a record using the constructor `T1`, which includes information of start time `t0`, duration `duration`, and step size `dt`.
-
-We then provide the initial state of the dynamical system `x0` (in this example `x0 = [-1; 1]`: 
-
-```ocaml
+(* initial state of the system *)
 let x0 = Mat.of_array [|-1.; 1.|] 2 1
-```
 
-and putting everything together, we call:
-```ocaml
+(* putting everything together *)
 let ts, xs = Owl_ode.odeint (module Owl_ode.Native.D.RK4) f x0 tspec () 
+
 (* or equivalently *)
 let ts, xs = Owl_ode.odeint Owl_ode.Native.D.rk4 f x0 tspec ()
 ```
 
-The results of `odeint` in this example are two matrices `ts` and `xs`, which contain the times `t`s and states `x(t)`s in their respective columns. Column 0 of `xs` contains x(t0) and column `2000` contains `x(t0 +. duration)`.
+The results of `odeint` in this example are two matrices `xs` and `ts`, which contain the value of the state `x` at each time `t`. More specifically, column 0 of the matrix `xs` contains x(t0), while column `2000` contains `x(t0 +. duration)`.
 
+Here, we integrated the dynamical system with `Native.D.RK4`, a fixed-step, double-precision Runge-Kutta solver. 
 
-Here, we integrated the dynamical system with `Native.D.RK4`, a fixed-step, double-precision Runge-Kutta solver. In Owl Ode, We support a number of natively-implemented double-precision solvers in `Native.D` and single-precision ones in `Native.S`.
+In Owl Ode, We support a number of natively-implemented double-precision solvers in `Native.D` and single-precision ones in `Native.S`.
 
 The simple example above illustrates the basic components of defining and solving an ode problem using Owl Ode.
 The main function `Owl_ode.odeint` takes as its arguments:
