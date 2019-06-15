@@ -32,14 +32,10 @@ let () =
 (*(* create our own cvode integrator *)*)
 let () =
   let tspec = T1 { t0 = 0.0; dt = 1E-2; duration = 30.0 } in
-  let ts, ys =
-    Ode.odeint
-      (Owl_ode_sundials.cvode ~stiff:false ~relative_tol:1E-3 ~abs_tol:1E-8)
-      f
-      y0
-      tspec
-      ()
+  let custom_cvode =
+    Owl_ode_sundials.cvode ~stiff:false ~relative_tol:1E-3 ~abs_tol:1E-8
   in
+  let ts, ys = Ode.odeint custom_cvode f y0 tspec () in
   (* save ts and ys *)
   Mat.save_txt Mat.(ts @|| ys) "van_der_pol_dynamics_custom.txt";
   let t', ys' = Ode.odeint (module Native.D.RK4) f y0 tspec () in

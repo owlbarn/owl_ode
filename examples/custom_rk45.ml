@@ -29,8 +29,4 @@ let () =
 
 
 (* Equivalent you can define the solver as follows *)
-module Custom_RK45 = (val Native.D.rk45 ~tol:1E-9
-                         : SolverT
-                         with type s = Mat.mat
-                          and type t = Mat.mat
-                          and type output = Mat.mat * Mat.mat)
+let custom_rk45 = Native.D.rk45 ~tol:1E-9
