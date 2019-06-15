@@ -96,7 +96,7 @@ module Custom_Owl_Cvode = (val Owl_ode_sundials.cvode ~stiff:false ~relative_tol
                                and type t = Mat.mat
                                and type output = Mat.mat * Mat.mat)
 (* usage *)
-let ts, xs = Owl_ode.odeint (Custom_Owl_Cvode) f x0 tspec ()
+let ts, xs = Owl_ode.odeint (module Custom_Owl_Cvode) f x0 tspec ()
 ```
 
 Here, we use the `cvode` function conveniently defined in `src/sundials/owl_ode_sundials.ml` to construct a solver module `Custom_Owl_Cvode`. This function takes the parameters (`stiff`, `relative_tol`, and `abs_tol`) and returns a solver module of type `SolverT`. In defining this module, we also need to provide three types:
