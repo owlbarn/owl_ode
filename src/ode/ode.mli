@@ -9,7 +9,8 @@
 (** {2:odelib Ode library} *)
 
 (** [step (module Solver) f dt y0 t0 ()] takes one step with the evolution
-    funfcion f(y,t) starting  at time t0 with a step size of dt
+    function f(y,t) starting  at time t0 with a step size of dt and returns
+    output of type step_output.
 *)
 val step
   :  (module Types.SolverT
