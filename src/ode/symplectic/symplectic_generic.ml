@@ -11,7 +11,7 @@ open Types
 module Make (M : Owl_types_ndarray_algodiff.Sig with type elt = float) = struct
   module C = Common.Make (M)
 
-  type f_t = M.arr -> M.arr -> float -> M.arr
+  type f_t = M.arr * M.arr -> float -> M.arr
 
   module M = struct
     include M
@@ -22,77 +22,82 @@ module Make (M : Owl_types_ndarray_algodiff.Sig with type elt = float) = struct
   end
 
   let prepare step f (x0, p0) tspec () =
-    let f x0 p0 = f (x0, p0) in
     let tspan, dt =
       match tspec with
       | T1 { t0; duration; dt } -> (t0, t0 +. duration), dt
       | T2 { tspan; dt } -> tspan, dt
       | T3 _ -> raise Owl_exception.NOT_IMPLEMENTED
     in
-    let step = step ~f ~dt in
-    C.symplectic_integrate ~step ~tspan ~dt x0 p0
+    let step = step f ~dt in
+    C.symplectic_integrate ~step ~tspan ~dt (x0, p0)
 
 
-  let symplectic_euler_s ~(f : f_t) ~dt xs ps t0 =
+  let symplectic_euler_s (f : f_t) ~dt (xs, ps) t0 =
     let t = t0 +. dt in
-    let fxs = f xs ps t in
+    let fxs = f (xs, ps) t in
     let ps' = M.(ps + (fxs *$ dt)) in
     let xs' = M.(xs + (ps' *$ dt)) in
-    xs', ps', t
+    (xs', ps'), t
 
 
   let symplectic_euler =
     (module struct
       type s = M.arr * M.arr
       type t = M.arr
+      type step_output = (M.arr * M.arr) * float
       type output = M.arr * M.arr * M.arr
 
-      let solve = prepare symplectic_euler_s
+      let step = symplectic_euler_s
+      let solve = prepare step
     end
     : SolverT
       with type s = M.arr * M.arr
        and type t = M.arr
+       and type step_output = (M.arr * M.arr) * float
        and type output = M.arr * M.arr * M.arr)
 
 
-  let leapfrog_s ~(f : f_t) ~dt xs ps t0 =
+  let leapfrog_s (f : f_t) ~dt (xs, ps) t0 =
     let t = t0 +. dt in
-    let fxs = f xs ps t in
+    let fxs = f (xs, ps) t in
     let xs' = M.(xs + (ps *$ dt) + (fxs *$ (dt *. dt *. 0.5))) in
-    let fxs' = f xs' ps (t +. dt) in
+    let fxs' = f (xs', ps) (t +. dt) in
     let ps' = M.(ps + ((fxs + fxs') *$ (dt *. 0.5))) in
-    xs', ps', t
+    (xs', ps'), t
 
 
   let leapfrog =
     (module struct
       type s = M.arr * M.arr
       type t = M.arr
+      type step_output = (M.arr * M.arr) * float
       type output = M.arr * M.arr * M.arr
 
-      let solve = prepare leapfrog_s
+      let step = leapfrog_s
+      let solve = prepare step
     end
     : SolverT
       with type s = M.arr * M.arr
        and type t = M.arr
+       and type step_output = (M.arr * M.arr) * float
        and type output = M.arr * M.arr * M.arr)
 
 
   (* For the values used in the implementations below
      see Candy-Rozmus (https://www.sciencedirect.com/science/article/pii/002199919190299Z)
      and https://en.wikipedia.org/wiki/Symplectic_integrator *)
-  let symint ~coeffs ~(f : f_t) ~dt =
-    let symint_step ~coeffs ~f xs ps t dt =
+  let symint ~coeffs (f : f_t) ~dt =
+    let symint_step ~coeffs f (xs, ps) t dt =
       List.fold_left
-        (fun (xs, ps, t) (ai, bi) ->
-          let ps' = M.(ps + (f xs ps t *$ (dt *. bi))) in
+        (fun ((xs, ps), t) (ai, bi) ->
+          let ps' = M.(ps + (f (xs, ps) t *$ (dt *. bi))) in
           let xs' = M.(xs + (ps' *$ (dt *. ai))) in
           let t = t +. (dt *. ai) in
-          xs', ps', t)
-        (xs, ps, t)
+          (xs', ps'), t)
+        ((xs, ps), t)
         coeffs
     in
-    fun xs ps t -> symint_step ~coeffs ~f xs ps t dt
+    fun (xs, ps) t -> symint_step ~coeffs f (xs, ps) t dt
 
 
   let leapfrog_c = [ 0.5, 0.0; 0.5, 1.0 ]
@@ -105,52 +110,61 @@ module Make (M : Owl_types_ndarray_algodiff.Sig with type elt = float) = struct
     |> List.map (fun (v1, v2) -> v1 /. (2.0 -. c), v2 /. (2.0 -. c))
 
 
-  let _leapfrog_s' ~f ~dt = symint ~coeffs:leapfrog_c ~f ~dt
-  let pseudoleapfrog_s ~f ~dt = symint ~coeffs:pseudoleapfrog_c ~f ~dt
+  let _leapfrog_s' f ~dt = symint ~coeffs:leapfrog_c f ~dt
+  let pseudoleapfrog_s f ~dt = symint ~coeffs:pseudoleapfrog_c f ~dt
 
   let pseudoleapfrog =
     (module struct
       type s = M.arr * M.arr
       type t = M.arr
+      type step_output = (M.arr * M.arr) * float
       type output = M.arr * M.arr * M.arr
 
-      let solve = prepare pseudoleapfrog_s
+      let step = pseudoleapfrog_s
+      let solve = prepare step
     end
     : SolverT
       with type s = M.arr * M.arr
        and type t = M.arr
+       and type step_output = (M.arr * M.arr) * float
        and type output = M.arr * M.arr * M.arr)
 
 
-  let ruth3_s ~f ~dt = symint ~coeffs:ruth3_c ~f ~dt
+  let ruth3_s f ~dt = symint ~coeffs:ruth3_c f ~dt
 
   let ruth3 =
     (module struct
       type s = M.arr * M.arr
       type t = M.arr
+      type step_output = (M.arr * M.arr) * float
       type output = M.arr * M.arr * M.arr
 
-      let solve = prepare ruth3_s
+      let step = ruth3_s
+      let solve = prepare step
     end
     : SolverT
       with type s = M.arr * M.arr
        and type t = M.arr
+       and type step_output = (M.arr * M.arr) * float
        and type output = M.arr * M.arr * M.arr)
 
 
-  let ruth4_s ~f ~dt = symint ~coeffs:ruth4_c ~f ~dt
+  let ruth4_s f ~dt = symint ~coeffs:ruth4_c f ~dt
 
   let ruth4 =
     (module struct
       type s = M.arr * M.arr
       type t = M.arr
+      type step_output = (M.arr * M.arr) * float
       type output = M.arr * M.arr * M.arr
 
-      let solve = prepare ruth4_s
+      let step = ruth4_s
+      let solve = prepare step
     end
     : SolverT
       with type s = M.arr * M.arr
        and type t = M.arr
+       and type step_output = (M.arr * M.arr) * float
        and type output = M.arr * M.arr * M.arr)
 
 

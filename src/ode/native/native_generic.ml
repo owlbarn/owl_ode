@@ -30,7 +30,7 @@ module Make (M : Owl_types_ndarray_algodiff.Sig with type elt = float) = struct
       | T2 { tspan; dt } -> tspan, dt
       | T3 _ -> raise Owl_exception.NOT_IMPLEMENTED
     in
-    let step = step ~f ~dt in
+    let step = step f ~dt in
     C.integrate ~step ~tspan ~dt y0
 
 
@@ -46,7 +46,7 @@ module Make (M : Owl_types_ndarray_algodiff.Sig with type elt = float) = struct
     C.adaptive_integrate ~step ~tspan:(t0, t1) ~dtmax y0
 
 
-  let euler_s ~(f : f_t) ~dt y0 t0 =
+  let euler_s (f : f_t) ~dt y0 t0 =
     let y = M.(y0 + (f y0 t0 *$ dt)) in
     let t = t0 +. dt in
     y, t
@@ -56,17 +56,20 @@ module Make (M : Owl_types_ndarray_algodiff.Sig with type elt = float) = struct
     (module struct
       type s = M.arr
       type t = M.arr
+      type step_output = M.arr * float
       type output = M.arr * M.arr
 
-      let solve = prepare euler_s
+      let step = euler_s
+      let solve = prepare step
     end
     : SolverT
       with type s = M.arr
        and type t = M.arr
+       and type step_output = M.arr * float
        and type output = M.arr * M.arr)
 
 
-  let midpoint_s ~(f : f_t) ~dt y0 t0 =
+  let midpoint_s (f : f_t) ~dt y0 t0 =
     let k1 = M.(dt $* f y0 t0) in
     let k2 = M.(dt $* f (y0 + (k1 *$ 0.5)) (t0 +. (0.5 *. dt))) in
     let y = M.(y0 + k2) in
@@ -78,17 +81,20 @@ module Make (M : Owl_types_ndarray_algodiff.Sig with type elt = float) = struct
     (module struct
       type s = M.arr
       type t = M.arr
+      type step_output = M.arr * float
       type output = M.arr * M.arr
 
-      let solve = prepare midpoint_s
+      let step = midpoint_s
+      let solve = prepare step
     end
     : SolverT
       with type s = M.arr
        and type t = M.arr
+       and type step_output = M.arr * float
        and type output = M.arr * M.arr)
 
 
-  let rk4_s ~(f : f_t) ~dt y0 t0 =
+  let rk4_s (f : f_t) ~dt y0 t0 =
     let k1 = M.(dt $* f y0 t0) in
     let k2 = M.(dt $* f (y0 + (k1 *$ 0.5)) (t0 +. (0.5 *. dt))) in
     let k3 = M.(dt $* f (y0 + (k2 *$ 0.5)) (t0 +. (0.5 *. dt))) in
@@ -103,13 +109,16 @@ module Make (M : Owl_types_ndarray_algodiff.Sig with type elt = float) = struct
     (module struct
       type s = M.arr
       type t = M.arr
+      type step_output = M.arr * float
       type output = M.arr * M.arr
 
-      let solve = prepare rk4_s
+      let step = rk4_s
+      let solve = prepare step
     end
     : SolverT
       with type s = M.arr
        and type t = M.arr
+       and type step_output = M.arr * float
        and type output = M.arr * M.arr)
 
 
@@ -125,7 +134,7 @@ module Make (M : Owl_types_ndarray_algodiff.Sig with type elt = float) = struct
        ; -1.0 /. 8.0
       |]
     in
-    fun y0 t0 dt ->
+    fun ~dt y0 t0 ->
       (* Compute k_i function values. *)
       let k1 = f y0 t0 in
       let k2 = M.(f (y0 + (k1 *$ (dt *. b.(1).(0)))) (t0 +. (a.(1) *. dt))) in
@@ -145,20 +154,23 @@ module Make (M : Owl_types_ndarray_algodiff.Sig with type elt = float) = struct
       let dt =
         if err > 0. then min dtmax (0.85 *. dt *. ((err_max /. err) ** 0.2)) else dt
       in
-      t, y, dt, err <= err_max
+      y, t, dt, err <= err_max
 
 
-  let rk23 ~tol =
+  let rk23 ~tol ~dtmax =
     (module struct
       type s = M.arr
       type t = M.arr
+      type step_output = M.arr * float * float * bool
       type output = M.arr * M.arr
 
+      let step = rk23_s ~tol ~dtmax
       let solve = adaptive_prepare (rk23_s ~tol)
     end
     : SolverT
       with type s = M.arr
        and type t = M.arr
+       and type step_output = M.arr * float * float * bool
        and type output = M.arr * M.arr)
 
 
@@ -191,7 +203,7 @@ module Make (M : Owl_types_ndarray_algodiff.Sig with type elt = float) = struct
        ; c.(5) -. 0.25
       |]
     in
-    fun y0 t0 dt ->
+    fun ~dt y0 t0 ->
       (* Compute k_i function values. *)
       let k1 = f y0 t0 in
       let k2 = M.(f (y0 + (k1 *$ (dt *. b.(1).(0)))) (t0 +. (a.(1) *. dt))) in
@@ -259,20 +271,23 @@ module Make (M : Owl_types_ndarray_algodiff.Sig with type elt = float) = struct
           + (k5 *$ (dt *. c.(4)))
           + (k6 *$ (dt *. c.(5))))
       in
-      t, y, dt, err <= err_max
+      y, t, dt, err <= err_max
 
 
-  let rk45 ~tol =
+  let rk45 ~tol ~dtmax =
     (module struct
       type s = M.arr
       type t = M.arr
+      type step_output = M.arr * float * float * bool
       type output = M.arr * M.arr
 
+      let step = rk45_s ~tol ~dtmax
       let solve = adaptive_prepare (rk45_s ~tol)
     end
     : SolverT
       with type s = M.arr
        and type t = M.arr
+       and type step_output = M.arr * float * float * bool
        and type output = M.arr * M.arr)
 
 

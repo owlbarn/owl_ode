@@ -59,7 +59,7 @@ module Make (M : Owl_types_ndarray_algodiff.Sig with type elt = float) = struct
     | Col -> ts, ys
 
 
-  let symplectic_integrate ~step ~tspan:(t0, t1) ~dt x0 p0 =
+  let symplectic_integrate ~step ~tspan:(t0, t1) ~dt (x0, p0) =
     if M.shape x0 <> M.shape p0 then raise Owl_exception.DIFFERENT_SHAPE;
     let state_t, n = get_state_t x0 in
     let n_steps = steps t0 t1 dt in
@@ -76,7 +76,7 @@ module Make (M : Owl_types_ndarray_algodiff.Sig with type elt = float) = struct
     for i = 0 to pred n_steps do
       if i > 0
       then (
-        let x', p', t' = step !x !p !t in
+        let (x', p'), t' = step (!x, !p) !t in
         x := x';
         p := p';
         t := t');
@@ -107,7 +107,7 @@ module Make (M : Owl_types_ndarray_algodiff.Sig with type elt = float) = struct
       else (
         let dt = min dt (t1 -. t0) in
         if t0 +. dt <= t0 then failwith "Singular ODE";
-        let t, y, dt, err_ok = step y0 t0 dt in
+        let y, t, dt, err_ok = step ~dt y0 t0 in
         if err_ok
         then (* Update solution if error is OK *)
           go (t :: ts, y :: ys) t y dt

@@ -13,39 +13,49 @@ include Native_generic.Make (Owl_dense_ndarray.S)
 module Euler = struct
   type s = mat
   type t = mat
+  type step_output = mat * float
   type output = mat * mat
 
-  let solve = prepare euler_s
+  let step = euler_s
+  let solve = prepare step
 end
 
 module Midpoint = struct
   type s = mat
   type t = mat
+  type step_output = mat * float
   type output = mat * mat
 
-  let solve = prepare midpoint_s
+  let step = midpoint_s
+  let solve = prepare step
 end
 
 module RK4 = struct
   type s = mat
   type t = mat
+  type step_output = mat * float
   type output = mat * mat
 
-  let solve = prepare rk4_s
+  let step = rk4_s
+  let solve = prepare step
 end
 
 module RK23 = struct
   type s = mat
   type t = mat
+  type step_output = mat * float * float * bool
   type output = mat * mat
 
-  let solve = adaptive_prepare (rk23_s ~tol:1e-7)
+  let step = rk23_s ~tol:1E-7 ~dtmax:1E-4
+  let solve = adaptive_prepare (rk23_s ~tol:1E-7)
 end
 
 module RK45 = struct
   type s = mat
   type t = mat
+  type step_output = mat * float * float * bool
   type output = mat * mat
 
-  let solve = adaptive_prepare (rk45_s ~tol:1e-7)
+  let step = rk45_s ~tol:1e-7 ~dtmax:1E-4
+  let solve = adaptive_prepare (rk45_s ~tol:1E-7)
 end

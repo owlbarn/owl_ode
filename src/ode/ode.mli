@@ -8,6 +8,21 @@
 
 (** {2:odelib Ode library} *)
 
+(** [step (module Solver) f dt y0 t0 ()] takes one step with the evolution
+    funfcion f(y,t) starting  at time t0 with a step size of dt
+*)
+val step
+  :  (module Types.SolverT
+        with type output = 'a
+         and type s = 'b
+         and type step_output = 'c
+         and type t = 'd)
+  -> ('b -> float -> 'd)
+  -> dt:float
+  -> 'b
+  -> float
+  -> 'c
+
 (** [odeint (module Solver) f y0 timespec ()] numerically integrates
     an initial value problem for a system of ODEs given an initial value:
 
@@ -33,8 +48,12 @@
     for further information.
 *)
 val odeint
-  :  (module Types.SolverT with type output = 'a and type s = 'b and type t = 'c)
-  -> ('b -> float -> 'c)
+  :  (module Types.SolverT
+        with type output = 'a
+         and type s = 'b
+         and type step_output = 'c
+         and type t = 'd)
+  -> ('b -> float -> 'd)
   -> 'b
   -> Types.tspec_t
   -> unit
