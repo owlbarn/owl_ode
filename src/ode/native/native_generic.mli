@@ -15,7 +15,7 @@ module Make (M : Owl_types_ndarray_algodiff.Sig with type elt = float) : sig
     :  ('a -> dt:float -> M.arr -> float -> M.arr * float)
     -> 'a
     -> M.arr
-    -> tspec_t
+    -> tspec
     -> unit
     -> M.arr * M.arr
 
@@ -23,7 +23,7 @@ module Make (M : Owl_types_ndarray_algodiff.Sig with type elt = float) : sig
     :  (dtmax:float -> 'a -> dt:float -> M.arr -> float -> M.arr * float * float * bool)
     -> 'a
     -> M.arr
-    -> tspec_t
+    -> tspec
     -> unit
     -> M.arr * M.arr
 
@@ -50,43 +50,43 @@ module Make (M : Owl_types_ndarray_algodiff.Sig with type elt = float) : sig
     -> M.arr * float * float * bool
 
   val euler
-    : (module Types.SolverT
-         with type s = M.arr
-          and type t = M.arr
+    : (module Types.Solver
+         with type state = M.arr
+          and type f = M.arr -> float -> M.arr
           and type step_output = M.arr * float
-          and type output = M.arr * M.arr)
+          and type solve_output = M.arr * M.arr)
 
   val midpoint
-    : (module Types.SolverT
-         with type s = M.arr
-          and type t = M.arr
+    : (module Types.Solver
+         with type state = M.arr
+          and type f = M.arr -> float -> M.arr
           and type step_output = M.arr * float
-          and type output = M.arr * M.arr)
+          and type solve_output = M.arr * M.arr)
 
   val rk4
-    : (module Types.SolverT
-         with type s = M.arr
-          and type t = M.arr
+    : (module Types.Solver
+         with type state = M.arr
+          and type f = M.arr -> float -> M.arr
           and type step_output = M.arr * float
-          and type output = M.arr * M.arr)
+          and type solve_output = M.arr * M.arr)
 
   val rk23
     :  tol:float
     -> dtmax:float
-    -> (module Types.SolverT
-          with type s = M.arr
-           and type t = M.arr
+    -> (module Types.Solver
+          with type state = M.arr
+           and type f = M.arr -> float -> M.arr
            and type step_output = M.arr * float * float * bool
-           and type output = M.arr * M.arr)
+           and type solve_output = M.arr * M.arr)
 
   val rk45
     :  tol:float
     -> dtmax:float
-    -> (module SolverT
-          with type s = M.arr
-           and type t = M.arr
+    -> (module Solver
+          with type state = M.arr
+           and type f = M.arr -> float -> M.arr
            and type step_output = M.arr * float * float * bool
-           and type output = M.arr * M.arr)
+           and type solve_output = M.arr * M.arr)
 
   (* ----- helper functions ----- *)
 

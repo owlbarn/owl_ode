@@ -11,20 +11,22 @@ val cvode
   :  stiff:bool
   -> relative_tol:float
   -> abs_tol:float
-  -> (module Owl_ode.Types.SolverT
-        with type s = Owl.Mat.mat
-         and type t = Owl.Mat.mat
+  -> (module Owl_ode.Types.Solver
+        with type state = Owl.Mat.mat
+         and type f = Owl.Mat.mat -> float -> Owl.Mat.mat
          and type step_output = Owl.Mat.mat * float
-         and type output = Owl.Mat.mat * Owl.Mat.mat)
+         and type solve_output = Owl.Mat.mat * Owl.Mat.mat)
 
 module Owl_Cvode :
-  Owl_ode.Types.SolverT
-  with type s = Owl.Mat.mat
-   and type t = Owl.Mat.mat
-   and type output = Owl.Mat.mat * Owl.Mat.mat
+  Owl_ode.Types.Solver
+  with type state = Owl.Mat.mat
+   and type f = Owl.Mat.mat -> float -> Owl.Mat.mat
+   and type step_output = Owl.Mat.mat * float
+   and type solve_output = Owl.Mat.mat * Owl.Mat.mat
 
 module Owl_Cvode_Stiff :
-  Owl_ode.Types.SolverT
-  with type s = Owl.Mat.mat
-   and type t = Owl.Mat.mat
-   and type output = Owl.Mat.mat * Owl.Mat.mat
+  Owl_ode.Types.Solver
+  with type state = Owl.Mat.mat
+   and type f = Owl.Mat.mat -> float -> Owl.Mat.mat
+   and type step_output = Owl.Mat.mat * float
+   and type solve_output = Owl.Mat.mat * Owl.Mat.mat

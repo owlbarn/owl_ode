@@ -54,19 +54,19 @@ module Make (M : Owl_types_ndarray_algodiff.Sig with type elt = float) = struct
 
   let euler =
     (module struct
-      type s = M.arr
-      type t = M.arr
+      type state = M.arr
+      type f = M.arr -> float -> M.arr
       type step_output = M.arr * float
-      type output = M.arr * M.arr
+      type solve_output = M.arr * M.arr
 
       let step = euler_s
       let solve = prepare step
     end
-    : SolverT
-      with type s = M.arr
-       and type t = M.arr
+    : Solver
+      with type state = M.arr
+       and type f = M.arr -> float -> M.arr
        and type step_output = M.arr * float
-       and type output = M.arr * M.arr)
+       and type solve_output = M.arr * M.arr)
 
 
   let midpoint_s (f : f_t) ~dt y0 t0 =
@@ -79,19 +79,19 @@ module Make (M : Owl_types_ndarray_algodiff.Sig with type elt = float) = struct
 
   let midpoint =
     (module struct
-      type s = M.arr
-      type t = M.arr
+      type state = M.arr
+      type f = M.arr -> float -> M.arr
       type step_output = M.arr * float
-      type output = M.arr * M.arr
+      type solve_output = M.arr * M.arr
 
       let step = midpoint_s
       let solve = prepare step
     end
-    : SolverT
-      with type s = M.arr
-       and type t = M.arr
+    : Solver
+      with type state = M.arr
+       and type f = M.arr -> float -> M.arr
        and type step_output = M.arr * float
-       and type output = M.arr * M.arr)
+       and type solve_output = M.arr * M.arr)
 
 
   let rk4_s (f : f_t) ~dt y0 t0 =
@@ -107,19 +107,19 @@ module Make (M : Owl_types_ndarray_algodiff.Sig with type elt = float) = struct
 
   let rk4 =
     (module struct
-      type s = M.arr
-      type t = M.arr
+      type state = M.arr
+      type f = M.arr -> float -> M.arr
       type step_output = M.arr * float
-      type output = M.arr * M.arr
+      type solve_output = M.arr * M.arr
 
       let step = rk4_s
       let solve = prepare step
     end
-    : SolverT
-      with type s = M.arr
-       and type t = M.arr
+    : Solver
+      with type state = M.arr
+       and type f = M.arr -> float -> M.arr
        and type step_output = M.arr * float
-       and type output = M.arr * M.arr)
+       and type solve_output = M.arr * M.arr)
 
 
   let rk23_s ~tol ~dtmax f =
@@ -159,19 +159,19 @@ module Make (M : Owl_types_ndarray_algodiff.Sig with type elt = float) = struct
 
   let rk23 ~tol ~dtmax =
     (module struct
-      type s = M.arr
-      type t = M.arr
+      type state = M.arr
+      type f = M.arr -> float -> M.arr
       type step_output = M.arr * float * float * bool
-      type output = M.arr * M.arr
+      type solve_output = M.arr * M.arr
 
       let step = rk23_s ~tol ~dtmax
       let solve = adaptive_prepare (rk23_s ~tol)
     end
-    : SolverT
-      with type s = M.arr
-       and type t = M.arr
+    : Solver
+      with type state = M.arr
+       and type f = M.arr -> float -> M.arr
        and type step_output = M.arr * float * float * bool
-       and type output = M.arr * M.arr)
+       and type solve_output = M.arr * M.arr)
 
 
   let rk45_s ~tol ~dtmax f =
@@ -276,19 +276,19 @@ module Make (M : Owl_types_ndarray_algodiff.Sig with type elt = float) = struct
 
   let rk45 ~tol ~dtmax =
     (module struct
-      type s = M.arr
-      type t = M.arr
+      type state = M.arr
+      type f = M.arr -> float -> M.arr
       type step_output = M.arr * float * float * bool
-      type output = M.arr * M.arr
+      type solve_output = M.arr * M.arr
 
       let step = rk45_s ~tol ~dtmax
       let solve = adaptive_prepare (rk45_s ~tol)
     end
-    : SolverT
-      with type s = M.arr
-       and type t = M.arr
+    : Solver
+      with type state = M.arr
+       and type f = M.arr -> float -> M.arr
        and type step_output = M.arr * float * float * bool
-       and type output = M.arr * M.arr)
+       and type solve_output = M.arr * M.arr)
 
 
   (* ----- helper functions ----- *)

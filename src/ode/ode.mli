@@ -13,16 +13,16 @@
     output of type step_output.
 *)
 val step
-  :  (module Types.SolverT
-        with type output = 'a
-         and type s = 'b
-         and type step_output = 'c
-         and type t = 'd)
-  -> ('b -> float -> 'd)
+  :  (module Types.Solver
+        with type f = 'a
+         and type solve_output = 'b
+         and type state = 'c
+         and type step_output = 'd)
+  -> 'a
   -> dt:float
-  -> 'b
-  -> float
   -> 'c
+  -> float
+  -> 'd
 
 (** [odeint (module Solver) f y0 timespec ()] numerically integrates
     an initial value problem for a system of ODEs given an initial value:
@@ -38,24 +38,24 @@ val step
     The goal is to find y(t) approximately satisfying the differential
     equations, given an initial value y(t₀)=y₀. The time t₀ is passed as
     part of the timespec, that includes also the final integration time
-    and a time step. Refer to {!Owl_ode.Types.tspec_t} for further
+    and a time step. Refer to {!Owl_ode.Types.tspec} for further
     information.
 
     The solver has to be passed as a first-class module and have a common
-    type, {!Owl_ode.Types.SolverT}. This is useful to write new custom
+    type, {!Owl_ode.Types.Solver}. This is useful to write new custom
     solvers or extend and customise the provided ones.
  
-    Refer to the documentation of the {!Owl_ode.Types.SolverT} type 
+    Refer to the documentation of the {!Owl_ode.Types.Solver} type 
     for further information.
 *)
 val odeint
-  :  (module Types.SolverT
-        with type output = 'a
-         and type s = 'b
-         and type step_output = 'c
-         and type t = 'd)
-  -> ('b -> float -> 'd)
-  -> 'b
-  -> Types.tspec_t
-  -> unit
+  :  (module Types.Solver
+        with type f = 'a
+         and type solve_output = 'b
+         and type state = 'c
+         and type step_output = 'd)
   -> 'a
+  -> 'c
+  -> Types.tspec
+  -> unit
+  -> 'b

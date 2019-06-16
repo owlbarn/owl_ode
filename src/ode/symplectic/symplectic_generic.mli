@@ -34,44 +34,44 @@ module Make (M : Owl_types_ndarray_algodiff.Sig with type elt = float) : sig
     :  ('a -> dt:float -> M.arr * M.arr -> float -> (M.arr * M.arr) * float)
     -> 'a
     -> M.arr * M.arr
-    -> tspec_t
+    -> tspec
     -> unit
     -> M.arr * M.arr * M.arr
 
   val symplectic_euler
-    : (module Types.SolverT
-         with type s = M.arr * M.arr
-          and type t = M.arr
+    : (module Types.Solver
+         with type state = M.arr * M.arr
+          and type f = M.arr * M.arr -> float -> M.arr
           and type step_output = (M.arr * M.arr) * float
-          and type output = M.arr * M.arr * M.arr)
+          and type solve_output = M.arr * M.arr * M.arr)
 
   val leapfrog
-    : (module Types.SolverT
-         with type s = M.arr * M.arr
-          and type t = M.arr
+    : (module Types.Solver
+         with type state = M.arr * M.arr
+          and type f = M.arr * M.arr -> float -> M.arr
           and type step_output = (M.arr * M.arr) * float
-          and type output = M.arr * M.arr * M.arr)
+          and type solve_output = M.arr * M.arr * M.arr)
 
   val pseudoleapfrog
-    : (module Types.SolverT
-         with type s = M.arr * M.arr
-          and type t = M.arr
+    : (module Types.Solver
+         with type state = M.arr * M.arr
+          and type f = M.arr * M.arr -> float -> M.arr
           and type step_output = (M.arr * M.arr) * float
-          and type output = M.arr * M.arr * M.arr)
+          and type solve_output = M.arr * M.arr * M.arr)
 
   val ruth3
-    : (module Types.SolverT
-         with type s = M.arr * M.arr
-          and type t = M.arr
+    : (module Types.Solver
+         with type state = M.arr * M.arr
+          and type f = M.arr * M.arr -> float -> M.arr
           and type step_output = (M.arr * M.arr) * float
-          and type output = M.arr * M.arr * M.arr)
+          and type solve_output = M.arr * M.arr * M.arr)
 
   val ruth4
-    : (module Types.SolverT
-         with type s = M.arr * M.arr
-          and type t = M.arr
+    : (module Types.Solver
+         with type state = M.arr * M.arr
+          and type f = M.arr * M.arr -> float -> M.arr
           and type step_output = (M.arr * M.arr) * float
-          and type output = M.arr * M.arr * M.arr)
+          and type solve_output = M.arr * M.arr * M.arr)
 
   (* ----- helper functions ----- *)
 
