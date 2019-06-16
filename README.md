@@ -98,12 +98,11 @@ Here, we use the `cvode` function construct a solver module `Custom_Owl_Cvode`. 
 val custom_cvode : (module SolverT with 
                      type s = Mat.mat
                      and type t = Mat.mat
+                     and type step_output = Mat.mat * float
                      and type output = Mat.mat * Mat.mat)
 ```
 
 Similar helper functions like `cvode` have been also defined for native and symplectic solvers.
-
-
 
  
 ## Supported Solvers
