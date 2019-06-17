@@ -13,39 +13,49 @@ include Symplectic_generic.Make (Owl_dense_ndarray.S)
 module Symplectic_Euler = struct
   type s = mat * mat
   type t = mat
+  type step_output = (mat * mat) * float
   type output = mat * mat * mat
 
-  let solve = prepare symplectic_euler_s
+  let step = symplectic_euler_s
+  let solve = prepare step
 end
 
 module PseudoLeapfrog = struct
   type s = mat * mat
   type t = mat
+  type step_output = (mat * mat) * float
   type output = mat * mat * mat
 
-  let solve = prepare pseudoleapfrog_s
+  let step = pseudoleapfrog_s
+  let solve = prepare step
 end
 
 module Leapfrog = struct
   type s = mat * mat
   type t = mat
+  type step_output = (mat * mat) * float
   type output = mat * mat * mat
 
-  let solve = prepare leapfrog_s
+  let step = leapfrog_s
+  let solve = prepare step
 end
 
 module Ruth3 = struct
   type s = mat * mat
   type t = mat
+  type step_output = (mat * mat) * float
   type output = mat * mat * mat
 
-  let solve = prepare ruth3_s
+  let step = ruth3_s
+  let solve = prepare step
 end
 
 module Ruth4 = struct
   type s = mat * mat
   type t = mat
+  type step_output = (mat * mat) * float
   type output = mat * mat * mat
 
-  let solve = prepare ruth4_s
+  let step = ruth4_s
+  let solve = prepare step
 end

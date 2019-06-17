@@ -16,43 +16,40 @@ Consider the problem of integrating a linear dymaical system that evolves accord
 dx/dt = f(x,t) = Ax      x(t0) = x0,
 ``` 
 
-where `x` is the state of the system, `dx/dt` is the time derivative of the state, and `t` is time. 
-
-We begin by defining `f(x,t)` (and use as `A` the matrix `[[1,-1; 2,-3]]`):
+where `x` is the state of the system, `dx/dt` is the time derivative of the state, and `t` is time.
+Our system `A` is the matrix `[[1,-1; 2,-3]]` and the system's initial state `x0` is at `[[-1]; [1]]`. 
+We want to integrate for 2 seconds with a step size of 1 millisecond. Here is how you would solve this 
+problem using OwlDE:
 
 ```ocaml
+(* f(x,t) *)
 let f x t = 
    let a = [|[|1.; -1.|];
              [|2.; -3.|]|]
            |> Owl.Mat.of_arrays in
    Owl.Mat.(a *@ x)
-```
 
-Next, we specify the temporal details of the problem:
-
-```ocaml
+(* temporal specification:
+   construct a record using the constructor T1 and 
+   includes information of start time, duration, 
+   and step size.*)
 let tspec = Owl_ode.Types.(T1 {t0 = 0.; duration = 2.; dt=1E-3})
-```
 
-Here, we construct a record using the constructor `T1`, which includes information of start time `t0`, duration `duration`, and step size `dt`.
-
-We then provide the initial state of the dynamical system `x0` (in this example `x0 = [-1; 1]`: 
-
-```ocaml
+(* initial state of the system *)
 let x0 = Mat.of_array [|-1.; 1.|] 2 1
-```
 
-and putting everything together, we call:
-```ocaml
+(* putting everything together *)
 let ts, xs = Owl_ode.odeint (module Owl_ode.Native.D.RK4) f x0 tspec () 
+
 (* or equivalently *)
-let ts, xs = Owl_ode.odeint (Owl_ode.Native.D.rk4) f x0 tspec ()
+let ts, xs = Owl_ode.odeint Owl_ode.Native.D.rk4 f x0 tspec ()
 ```
 
-The results of `odeint` in this example are two matrices `ts` and `xs`, which contain the times `t`s and states `x(t)`s in their respective columns. Column 0 of `xs` contains x(t0) and column `2000` contains `x(t0 +. duration)`.
+The results of `odeint` in this example are two matrices `xs` and `ts`, which contain the value of the state `x` at each time `t`. More specifically, column 0 of the matrix `xs` contains x(t0), while column `2000` contains `x(t0 +. duration)`.
 
+Here, we integrated the dynamical system with `Native.D.RK4`, a fixed-step, double-precision Runge-Kutta solver. 
 
-Here, we integrated the dynamical system with `Native.D.RK4`, a fixed-step, double-precision Runge-Kutta solver. In Owl Ode, We support a number of natively-implemented double-precision solvers in `Native.D` and single-precision ones in `Native.S`.
+In Owl Ode, We support a number of natively-implemented double-precision solvers in `Native.D` and single-precision ones in `Native.S`.
 
 The simple example above illustrates the basic components of defining and solving an ode problem using Owl Ode.
 The main function `Owl_ode.odeint` takes as its arguments:
@@ -87,35 +84,25 @@ We also support temporal integration of matrices.  That is, cases in which the s
 
 ### Custom Solvers
 
-We can define new solver module by creating a module of type `SolverT`. For example, to create a custom Cvode solver that has a relative tolerance of 1E-7 as opposed to the default 1E-4, we can construct the following module:
+We can define new solver module by creating a module of type `SolverT`. For example, to create a custom Cvode solver that has a relative tolerance of 1E-7 as opposed to the default 1E-4, we can define and use `custom_cvode` as follows:
 
 ```ocaml
-module Custom_Owl_Cvode = (val Owl_ode_sundials.cvode ~stiff:false ~relative_tol:1E-7 ~abs_tol:1E-4 :
-                              Types.SolverT with
-                               type s = Mat.mat
-                               and type t = Mat.mat
-                               and type output = Mat.mat * Mat.mat)
+let custom_cvode = Owl_ode_sundials.cvode ~stiff:false ~relative_tol:1E-7 ~abs_tol:1E-4 
 (* usage *)
-let ts, xs = Owl_ode.odeint (module Custom_Owl_Cvode) f x0 tspec ()
+let ts, xs = Owl_ode.odeint custom_cvode f x0 tspec ()
 ```
 
-Here, we use the `cvode` function conveniently defined in `src/sundials/owl_ode_sundials.ml` to construct a solver module `Custom_Owl_Cvode`. This function takes the parameters (`stiff`, `relative_tol`, and `abs_tol`) and returns a solver module of type `SolverT`. In defining this module, we also need to provide three types:
-
-- `type s` is the type of state and thus also the initial condition (e.g. `x0`) provided to `odeint`.
-
-- `type t` is type of the output of the evolution function `f:s->float->t`. (e.g. in the case of sympletic solvers, `type s = (Mat.mat, Mat.mat)` and `type t = Mat.mat`.)
-
-- `type output` defines the output of `odeint`. In the case of sympletc solvers, `type output= Mat.mat * Mat.mat * Mat.mat`, which corresponds to matrices that contain the time, position, and momentum coordinates of the integration (see `examples/dampled.ml`).
-
-These types only have to be provided when we want to construct a solver module. For using with `odeint`, we can simply do
+Here, we use the `cvode` function construct a solver module `Custom_Owl_Cvode`. This function is conveniently defined in `src/sundials/owl_ode_sundials.ml`. It takes the parameters (`stiff`, `relative_tol`, and `abs_tol`) and returns a solver module of type 
 
 ```ocaml
-let ts, xs = Owl_ode.odeint (Owl_ode_sundials.cvode ~stiff:false ~relative_tol:1E-7 ~abs_tol:1E-4) f x0 tspec ()
+val custom_cvode : (module SolverT with 
+                     type s = Mat.mat
+                     and type t = Mat.mat
+                     and type step_output = Mat.mat * float
+                     and type output = Mat.mat * Mat.mat)
 ```
 
 Similar helper functions like `cvode` have been also defined for native and symplectic solvers.
-
-
 
  
 ## Supported Solvers

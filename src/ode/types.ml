@@ -62,6 +62,13 @@ module type SolverT = sig
       [type t = Owl.Mat.mat]. *)
   type t
 
+  (** [step_output] defines the type of the output of {!Owl_ode.Ode.step}.
+      For example, in the case of native adaptive solvers,
+      [type output = Owl.Mat.(mat * float * float * bool)], corresponds
+      to matrices and floats that contain respectively the y1,
+      t1, dt, and whether this step was valid *)
+  type step_output
+
   (** [output] defines the type of the output of {!Owl_ode.Ode.odeint}.
       For example, in the case of sympletc solvers,
       [type output = Owl.Mat.(mat * mat * mat)], corresponds
@@ -69,6 +76,11 @@ module type SolverT = sig
       position, and momentum coordinates of the
       integrated solution *)
   type output
+
+  (** [step f dt y0 t0 ()] solves for one step given dt, y0, t0
+      and the evolution function. Several such functions have already been
+      implemented in this library and can be used as reference. *)
+  val step : (s -> float -> t) -> dt:float -> s -> float -> step_output
 
   (** [solve f y0 tspec ()] solves the initial value problem
 
