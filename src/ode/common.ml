@@ -60,7 +60,7 @@ module Make (M : Owl_types_ndarray_algodiff.Sig with type elt = float) = struct
 
 
   let symplectic_integrate ~step ~tspan:(t0, t1) ~dt x0 p0 =
-    if M.shape x0 <> M.shape p0 then raise Owl_exception.DIFFERENT_SHAPE;
+    if M.shape x0 <> M.shape p0 then raise Owl_exception.(DIFFERENT_SHAPE ((M.shape x0), (M.shape p0)));
     let state_t, n = get_state_t x0 in
     let n_steps = steps t0 t1 dt in
     let xs, ps =

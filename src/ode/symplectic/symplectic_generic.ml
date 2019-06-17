@@ -27,7 +27,7 @@ module Make (M : Owl_types_ndarray_algodiff.Sig with type elt = float) = struct
       match tspec with
       | T1 { t0; duration; dt } -> (t0, t0 +. duration), dt
       | T2 { tspan; dt } -> tspan, dt
-      | T3 _ -> raise Owl_exception.NOT_IMPLEMENTED
+      | T3 _ -> raise Owl_exception.(NOT_IMPLEMENTED "T3 not implemented")
     in
     let step = step ~f ~dt in
     C.symplectic_integrate ~step ~tspan ~dt x0 p0
@@ -197,8 +197,8 @@ let leapfrog_implicit ~f y0 (t0, t1) dt =
     in
     let xs = unpack xs in
     let ps = unpack ps in
-    if M.numel xs.(0) <> dim1 * dim2 then raise Owl_exception.DIFFERENT_SHAPE;
-    if M.numel ps.(0) <> dim1 * dim2 then raise Owl_exception.DIFFERENT_SHAPE;
+    if M.numel xs.(0) <> dim1 * dim2 then raise Owl_exception.(DIFFERENT_SHAPE  ([|M.numel xs.(0)|], [|dim1 * dim2|]));
+    if M.numel ps.(0) <> dim1 * dim2 then raise Owl_exception.(DIFFERENT_SHAPE  ([|M.numel ps.(0)|], [|dim1 * dim2|]));
     ( Array.map (fun x -> M.reshape x [| dim1; dim2 |]) xs
     , Array.map (fun p -> M.reshape p [| dim1; dim2 |]) ps )
 end

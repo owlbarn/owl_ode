@@ -28,7 +28,7 @@ module Make (M : Owl_types_ndarray_algodiff.Sig with type elt = float) = struct
       match tspec with
       | T1 { t0; duration; dt } -> (t0, t0 +. duration), dt
       | T2 { tspan; dt } -> tspan, dt
-      | T3 _ -> raise Owl_exception.NOT_IMPLEMENTED
+      | T3 _ -> raise Owl_exception.(NOT_IMPLEMENTED "T3 not implemented")
     in
     let step = step ~f ~dt in
     C.integrate ~step ~tspan ~dt y0
@@ -39,7 +39,7 @@ module Make (M : Owl_types_ndarray_algodiff.Sig with type elt = float) = struct
       match tspec with
       | T1 { t0; duration; dt } -> (t0, t0 +. duration), dt
       | T2 { tspan; dt } -> tspan, dt
-      | T3 _ -> raise Owl_exception.NOT_IMPLEMENTED
+      | T3 _ -> raise Owl_exception.(NOT_IMPLEMENTED "T3 not implemented")
     in
     let dtmax = (t1 -. t0) /. 128.0 in
     let step = step ~dtmax f in
@@ -287,6 +287,6 @@ module Make (M : Owl_types_ndarray_algodiff.Sig with type elt = float) = struct
       else raise Owl_exception.INDEX_OUT_OF_BOUND
     in
     let ys = unpack ys in
-    if M.numel ys.(0) <> dim1 * dim2 then raise Owl_exception.DIFFERENT_SHAPE;
+    if M.numel ys.(0) <> dim1 * dim2 then raise Owl_exception.(DIFFERENT_SHAPE ([|M.numel ys.(0)|], [|dim1 * dim2|]));
     Array.map (fun y -> M.reshape y [| dim1; dim2 |]) ys
 end

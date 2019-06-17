@@ -14,7 +14,7 @@ let integrate step f y0 tspec () =
     match tspec with
     | T1 { t0; duration; dt } -> (t0, t0 +. duration), dt
     | T2 { tspan; dt } -> tspan, dt
-    | T3 _ -> raise Owl_exception.NOT_IMPLEMENTED
+    | T3 _ -> raise Owl_exception.(NOT_IMPLEMENTED "T3 not implemented")
   in
   (* TODO: Maybe this kind of checks should go to Common -- with an odeint equivalent
        and be used everywhere. We will just pass the step function to be used in
