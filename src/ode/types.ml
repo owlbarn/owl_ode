@@ -10,7 +10,7 @@
     Owl_ode ODEs integrators. *)
 
 (** Time specification for the ODE solvers. *)
-type tspec_t =
+type tspec =
   | T1 of { t0 : float; duration : float; dt : float }
       (** The [T1] constructor allow to specify the initial
       and final integration time, in the sense that the
@@ -30,7 +30,7 @@ type tspec_t =
       and may change or disappear in the future. *)
 
 (** Any solver compatible with {!Owl_ode.Ode.odeint}
-    has to comply with the SolverT type. You can use this
+    has to comply with the Solver type. You can use this
     to define completely new solvers, as done in the
     owl-ode-sundials or ocaml-cviode libraries, or
     to customize pre-existing solvers (see the
@@ -50,17 +50,16 @@ type tspec_t =
     {!Owl_ode.Symplectic_generic} can also be used in conjunction
     with jsoo, although how to do that is currently undocumented. 
 *)
-module type SolverT = sig
-  (** [s] is the type of the state (and thus also of
+module type Solver = sig
+  (** [state] is the type of the state (and thus also of
        the initial condition) provided to {!Owl_ode.Ode.odeint}.
        For example {!Owl.Mat.mat}. *)
-  type s
+  type state
 
-  (** [t] is type of the output of the evolution function
-      [f: s-> float ->t]. For example, in the case of 
-      sympletic solvers, [type s = Owl.Mat.(mat*mat)] and
-      [type t = Owl.Mat.mat]. *)
-  type t
+  (** [f] is type of the evolution function. For example, in the case of 
+      sympletic solvers, [type state = Owl.Mat.(mat*mat)] and
+      [type f = state -> float -> Owl.Mat.mat]. *)
+  type f
 
   (** [step_output] defines the type of the output of {!Owl_ode.Ode.step}.
       For example, in the case of native adaptive solvers,
@@ -69,18 +68,18 @@ module type SolverT = sig
       t1, dt, and whether this step was valid *)
   type step_output
 
-  (** [output] defines the type of the output of {!Owl_ode.Ode.odeint}.
+  (** [solve_output] defines the type of the output of {!Owl_ode.Ode.odeint}.
       For example, in the case of sympletc solvers,
       [type output = Owl.Mat.(mat * mat * mat)], corresponds
       to matrices that contain respectively the time,
       position, and momentum coordinates of the
       integrated solution *)
-  type output
+  type solve_output
 
   (** [step f dt y0 t0 ()] solves for one step given dt, y0, t0
       and the evolution function. Several such functions have already been
       implemented in this library and can be used as reference. *)
-  val step : (s -> float -> t) -> dt:float -> s -> float -> step_output
+  val step : f -> dt:float -> state -> float -> step_output
 
   (** [solve f y0 tspec ()] solves the initial value problem
 
@@ -91,5 +90,5 @@ module type SolverT = sig
       temporal specification tspec, and returns the desired outputs
       of type output. Several such functions have already been
       implemented in this library and can be used as reference. *)
-  val solve : (s -> float -> t) -> s -> tspec_t -> unit -> output
+  val solve : f -> state -> tspec -> unit -> solve_output
 end

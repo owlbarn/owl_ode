@@ -10,14 +10,14 @@ open Types
 
 let step
     (type a b c d)
-    (module Solver : SolverT
-      with type output = a
-       and type s = b
-       and type step_output = c
-       and type t = d)
-    (f : b -> float -> d)
+    (module Solver : Solver
+      with type f = a
+       and type solve_output = b
+       and type state = c
+       and type step_output = d)
+    (f : a)
     ~(dt : float)
-    (y0 : b)
+    (y0 : c)
     (t0 : float)
   =
   Solver.step f ~dt y0 t0
@@ -25,13 +25,13 @@ let step
 
 let odeint
     (type a b c d)
-    (module Solver : SolverT
-      with type output = a
-       and type s = b
-       and type step_output = c
-       and type t = d)
-    (f : b -> float -> d)
-    (y0 : b)
-    (tspec : tspec_t)
+    (module Solver : Solver
+      with type f = a
+       and type solve_output = b
+       and type state = c
+       and type step_output = d)
+    (f : a)
+    (y0 : c)
+    (tspec : tspec)
   =
   Solver.solve f y0 tspec

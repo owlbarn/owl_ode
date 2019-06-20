@@ -9,79 +9,79 @@
 type mat = Owl_dense_matrix_d.mat
 
 module Euler :
-  Types.SolverT
-  with type s = mat
-   and type t = mat
+  Types.Solver
+  with type state = mat
+   and type f = mat -> float -> mat
    and type step_output = mat * float
-   and type output = mat * mat
+   and type solve_output = mat * mat
 
 module Midpoint :
-  Types.SolverT
-  with type s = mat
-   and type t = mat
+  Types.Solver
+  with type state = mat
+   and type f = mat -> float -> mat
    and type step_output = mat * float
-   and type output = mat * mat
+   and type solve_output = mat * mat
 
 module RK4 :
-  Types.SolverT
-  with type s = mat
-   and type t = mat
+  Types.Solver
+  with type state = mat
+   and type f = mat -> float -> mat
    and type step_output = mat * float
-   and type output = mat * mat
+   and type solve_output = mat * mat
 
 (** Default tol = 1e-7 *)
 module RK23 :
-  Types.SolverT
-  with type s = mat
-   and type t = mat
+  Types.Solver
+  with type state = mat
+   and type f = mat -> float -> mat
    and type step_output = mat * float * float * bool
-   and type output = mat * mat
+   and type solve_output = mat * mat
 
 module RK45 :
-  Types.SolverT
-  with type s = mat
-   and type t = mat
+  Types.Solver
+  with type state = mat
+   and type f = mat -> float -> mat
    and type step_output = mat * float * float * bool
-   and type output = mat * mat
+   and type solve_output = mat * mat
 
 val euler
-  : (module Types.SolverT
-       with type s = mat
-        and type t = mat
+  : (module Types.Solver
+       with type state = mat
+        and type f = mat -> float -> mat
         and type step_output = mat * float
-        and type output = mat * mat)
+        and type solve_output = mat * mat)
 
 val midpoint
-  : (module Types.SolverT
-       with type s = mat
-        and type t = mat
+  : (module Types.Solver
+       with type state = mat
+        and type f = mat -> float -> mat
         and type step_output = mat * float
-        and type output = mat * mat)
+        and type solve_output = mat * mat)
 
 val rk4
-  : (module Types.SolverT
-       with type s = mat
-        and type t = mat
+  : (module Types.Solver
+       with type state = mat
+        and type f = mat -> float -> mat
         and type step_output = mat * float
-        and type output = mat * mat)
+        and type solve_output = mat * mat)
 
 val rk23
   :  tol:float
   -> dtmax:float
-  -> (module Types.SolverT
-        with type s = mat
-         and type t = mat
+  -> (module Types.Solver
+        with type state = mat
+         and type f = mat -> float -> mat
          and type step_output = mat * float * float * bool
-         and type output = mat * mat)
+         and type solve_output = mat * mat)
 
 val rk45
   :  tol:float
   -> dtmax:float
-  -> (module Types.SolverT
-        with type s = mat
-         and type t = mat
+  -> (module Types.Solver
+        with type state = mat
+         and type f = mat -> float -> mat
          and type step_output = mat * float * float * bool
-         and type output = mat * mat)
+         and type solve_output = mat * mat)
 
 (* ----- helper function ----- *)
 

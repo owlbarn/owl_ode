@@ -54,7 +54,7 @@ In Owl Ode, We support a number of natively-implemented double-precision solvers
 The simple example above illustrates the basic components of defining and solving an ode problem using Owl Ode.
 The main function `Owl_ode.odeint` takes as its arguments:
 
-- a solver module of type `SolverT`, 
+- a solver module of type `Solver`, 
 - a function `f` that evolves the state,
 - an initial state `x0`, and
 - temporal spsecification `tspec`.
@@ -84,7 +84,7 @@ We also support temporal integration of matrices.  That is, cases in which the s
 
 ### Custom Solvers
 
-We can define new solver module by creating a module of type `SolverT`. For example, to create a custom Cvode solver that has a relative tolerance of 1E-7 as opposed to the default 1E-4, we can define and use `custom_cvode` as follows:
+We can define new solver module by creating a module of type `Solver`. For example, to create a custom Cvode solver that has a relative tolerance of 1E-7 as opposed to the default 1E-4, we can define and use `custom_cvode` as follows:
 
 ```ocaml
 let custom_cvode = Owl_ode_sundials.cvode ~stiff:false ~relative_tol:1E-7 ~abs_tol:1E-4 
@@ -95,11 +95,11 @@ let ts, xs = Owl_ode.odeint custom_cvode f x0 tspec ()
 Here, we use the `cvode` function construct a solver module `Custom_Owl_Cvode`. This function is conveniently defined in `src/sundials/owl_ode_sundials.ml`. It takes the parameters (`stiff`, `relative_tol`, and `abs_tol`) and returns a solver module of type 
 
 ```ocaml
-val custom_cvode : (module SolverT with 
-                     type s = Mat.mat
-                     and type t = Mat.mat
+val custom_cvode : (module Solver with 
+                     type state = Mat.mat
+                     and type f = Mat.mat -> float -> Mat.mat
                      and type step_output = Mat.mat * float
-                     and type output = Mat.mat * Mat.mat)
+                     and type solve_output = Mat.mat * Mat.mat)
 ```
 
 Similar helper functions like `cvode` have been also defined for native and symplectic solvers.

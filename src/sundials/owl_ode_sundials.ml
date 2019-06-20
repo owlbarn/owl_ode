@@ -110,26 +110,26 @@ let cvode_s'
 
 let cvode ~stiff ~relative_tol ~abs_tol =
   (module struct
-    type s = Mat.mat
-    type t = Mat.mat
+    type state = Mat.mat
+    type f = Mat.mat -> float -> Mat.mat
     type step_output = Mat.mat * float
-    type output = Mat.mat * Mat.mat
+    type solve_output = Mat.mat * Mat.mat
 
     let step = cvode_s ~stiff ~relative_tol ~abs_tol
     let solve = integrate (cvode_s' ~stiff ~relative_tol ~abs_tol)
   end
-  : SolverT
-    with type s = Owl.Mat.mat
-     and type t = Owl.Mat.mat
+  : Solver
+    with type state = Owl.Mat.mat
+     and type f = Owl.Mat.mat -> float -> Owl.Mat.mat
      and type step_output = Owl.Mat.mat * float
-     and type output = Owl.Mat.mat * Owl.Mat.mat)
+     and type solve_output = Owl.Mat.mat * Owl.Mat.mat)
 
 
 module Owl_Cvode = struct
-  type s = Mat.mat
-  type t = Mat.mat
+  type state = Mat.mat
+  type f = Mat.mat -> float -> Mat.mat
   type step_output = Mat.mat * float
-  type output = Mat.mat * Mat.mat
+  type solve_output = Mat.mat * Mat.mat
 
   let stiff = false
   let relative_tol = 1E-4
@@ -139,10 +139,10 @@ module Owl_Cvode = struct
 end
 
 module Owl_Cvode_Stiff = struct
-  type s = Mat.mat
-  type t = Mat.mat
+  type state = Mat.mat
+  type f = Mat.mat -> float -> Mat.mat
   type step_output = Mat.mat * float
-  type output = Mat.mat * Mat.mat
+  type solve_output = Mat.mat * Mat.mat
 
   let stiff = true
   let relative_tol = 1E-4

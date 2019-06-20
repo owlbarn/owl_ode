@@ -42,19 +42,19 @@ module Make (M : Owl_types_ndarray_algodiff.Sig with type elt = float) = struct
 
   let symplectic_euler =
     (module struct
-      type s = M.arr * M.arr
-      type t = M.arr
+      type state = M.arr * M.arr
+      type f = M.arr * M.arr -> float -> M.arr
       type step_output = (M.arr * M.arr) * float
-      type output = M.arr * M.arr * M.arr
+      type solve_output = M.arr * M.arr * M.arr
 
       let step = symplectic_euler_s
       let solve = prepare step
     end
-    : SolverT
-      with type s = M.arr * M.arr
-       and type t = M.arr
+    : Solver
+      with type state = M.arr * M.arr
+       and type f = M.arr * M.arr -> float -> M.arr
        and type step_output = (M.arr * M.arr) * float
-       and type output = M.arr * M.arr * M.arr)
+       and type solve_output = M.arr * M.arr * M.arr)
 
 
   let leapfrog_s (f : f_t) ~dt (xs, ps) t0 =
@@ -68,19 +68,19 @@ module Make (M : Owl_types_ndarray_algodiff.Sig with type elt = float) = struct
 
   let leapfrog =
     (module struct
-      type s = M.arr * M.arr
-      type t = M.arr
+      type state = M.arr * M.arr
+      type f = M.arr * M.arr -> float -> M.arr
       type step_output = (M.arr * M.arr) * float
-      type output = M.arr * M.arr * M.arr
+      type solve_output = M.arr * M.arr * M.arr
 
       let step = leapfrog_s
       let solve = prepare step
     end
-    : SolverT
-      with type s = M.arr * M.arr
-       and type t = M.arr
+    : Solver
+      with type state = M.arr * M.arr
+       and type f = M.arr * M.arr -> float -> M.arr
        and type step_output = (M.arr * M.arr) * float
-       and type output = M.arr * M.arr * M.arr)
+       and type solve_output = M.arr * M.arr * M.arr)
 
 
   (* For the values used in the implementations below
@@ -115,57 +115,57 @@ module Make (M : Owl_types_ndarray_algodiff.Sig with type elt = float) = struct
 
   let pseudoleapfrog =
     (module struct
-      type s = M.arr * M.arr
-      type t = M.arr
+      type state = M.arr * M.arr
+      type f = M.arr * M.arr -> float -> M.arr
       type step_output = (M.arr * M.arr) * float
-      type output = M.arr * M.arr * M.arr
+      type solve_output = M.arr * M.arr * M.arr
 
       let step = pseudoleapfrog_s
       let solve = prepare step
     end
-    : SolverT
-      with type s = M.arr * M.arr
-       and type t = M.arr
+    : Solver
+      with type state = M.arr * M.arr
+       and type f = M.arr * M.arr -> float -> M.arr
        and type step_output = (M.arr * M.arr) * float
-       and type output = M.arr * M.arr * M.arr)
+       and type solve_output = M.arr * M.arr * M.arr)
 
 
   let ruth3_s f ~dt = symint ~coeffs:ruth3_c f ~dt
 
   let ruth3 =
     (module struct
-      type s = M.arr * M.arr
-      type t = M.arr
+      type state = M.arr * M.arr
+      type f = M.arr * M.arr -> float -> M.arr
       type step_output = (M.arr * M.arr) * float
-      type output = M.arr * M.arr * M.arr
+      type solve_output = M.arr * M.arr * M.arr
 
       let step = ruth3_s
       let solve = prepare step
     end
-    : SolverT
-      with type s = M.arr * M.arr
-       and type t = M.arr
+    : Solver
+      with type state = M.arr * M.arr
+       and type f = M.arr * M.arr -> float -> M.arr
        and type step_output = (M.arr * M.arr) * float
-       and type output = M.arr * M.arr * M.arr)
+       and type solve_output = M.arr * M.arr * M.arr)
 
 
   let ruth4_s f ~dt = symint ~coeffs:ruth4_c f ~dt
 
   let ruth4 =
     (module struct
-      type s = M.arr * M.arr
-      type t = M.arr
+      type state = M.arr * M.arr
+      type f = M.arr * M.arr -> float -> M.arr
       type step_output = (M.arr * M.arr) * float
-      type output = M.arr * M.arr * M.arr
+      type solve_output = M.arr * M.arr * M.arr
 
       let step = ruth4_s
       let solve = prepare step
     end
-    : SolverT
-      with type s = M.arr * M.arr
-       and type t = M.arr
+    : Solver
+      with type state = M.arr * M.arr
+       and type f = M.arr * M.arr -> float -> M.arr
        and type step_output = (M.arr * M.arr) * float
-       and type output = M.arr * M.arr * M.arr)
+       and type solve_output = M.arr * M.arr * M.arr)
 
 
   (*
