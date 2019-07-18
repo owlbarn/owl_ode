@@ -19,3 +19,8 @@
  (action
   (run ./van_der_pol.exe))
  (package owl-ode-sundials))
+
+(env
+ (_
+  (env-vars
+   (QT_QPA_PLATFORM offscreen))))
