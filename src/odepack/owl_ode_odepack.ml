@@ -20,18 +20,49 @@ let fwrap dims (f : Owl.Mat.mat -> float -> Owl.Mat.mat)
   Bigarray.Array1.blit temp y'
 
 
-let integrate step f y0 tspec () =
+let lsoda_i ~relative_tol ~abs_tol f y0 tspec () =
   let (t0, t1), dt =
     match tspec with
     | T1 { t0; duration; dt } -> (t0, t0 +. duration), dt
     | T2 { tspan; dt } -> tspan, dt
     | T3 _ -> raise Owl_exception.(NOT_IMPLEMENTED "T3 not implemented")
   in
-  let step = step f ~dt y0 t0 t1 in
-  (* TODO: Maybe this kind of checks should go to Common -- with an odeint equivalent
-       and be used everywhere. We will just pass the step function to be used in
-       the integration loop: that one will take the ~f parameter. *)
-  C.integrate ~step ~dt ~tspan:(t0, t1) y0
+  let state_t, n = C.get_state_t y0 in
+  let n_steps = C.steps t0 t1 dt in
+  let ys =
+    match state_t with
+    | Row -> Mat.empty n_steps n
+    | Col -> Mat.empty n n_steps
+    | Matrix -> Mat.empty n_steps n
+  in
+  let ts = ref [] in
+  let t = ref t0 in
+  let y = ref y0 in
+  let dim1, dim2 = Mat.shape y0 in
+  let y0 = Bigarray.Array1.change_layout (wrap @@ Mat.copy y0) Bigarray.fortran_layout in
+  let ode = Odepack.lsoda ~rtol:relative_tol ~atol:abs_tol (fwrap (dim1, dim2) f) y0 t0 t0 in
+  let step ode t =
+    let () = Odepack.advance ~time:t ode in
+    let y' = Odepack.vec ode in
+    let t' = Odepack.time ode in
+    unwrap (dim1, dim2) (Bigarray.Array1.change_layout y' Bigarray.c_layout), t'
+  in  
+  for i = 0 to pred n_steps do
+    if i > 0
+    then (
+      let y', t' = step ode (!t+.dt) in
+      y := y';
+      t := t');
+    (match state_t with
+    | Row -> Mat.set_slice [ [ i ]; [] ] ys !y
+    | Col -> Mat.set_slice [ []; [ i ] ] ys !y
+    | Matrix -> Mat.set_slice [ [ i ]; [] ] ys Mat.(reshape !y [| 1; -1 |]));
+    ts := !t :: !ts
+  done;
+  let ts = [| !ts |> List.rev |> Array.of_list |] |> Mat.of_arrays in
+  match state_t with
+  | Row | Matrix -> Mat.(transpose ts), ys
+  | Col -> ts, ys
 
 
 let lsoda_s ~relative_tol ~abs_tol (f : Mat.mat -> float -> Mat.mat) ~dt y0 t0
@@ -39,34 +70,13 @@ let lsoda_s ~relative_tol ~abs_tol (f : Mat.mat -> float -> Mat.mat) ~dt y0 t0
   =
   let dim1, dim2 = Mat.shape y0 in
   let t1 = t0 +. dt in
-  let until t1 =
-    let y0 = Bigarray.Array1.change_layout (wrap y0) Bigarray.fortran_layout in
-    let y' =
-      Odepack.(
-        vec @@ lsoda ~rtol:relative_tol ~atol:abs_tol (fwrap (dim1, dim2) f) y0 t0 t1)
-    in
-    (*Mat.copy @@ *)
-    unwrap (dim1, dim2) (Bigarray.Array1.change_layout y' Bigarray.c_layout)
+  let y0 = Bigarray.Array1.change_layout (wrap y0) Bigarray.fortran_layout in
+  let y' =
+    Odepack.(
+      vec @@ lsoda ~rtol:relative_tol ~atol:abs_tol (fwrap (dim1, dim2) f) y0 t0 t1)
   in
-  until t1, t1
-
-
-let lsoda_s' ~relative_tol ~abs_tol (f : Mat.mat -> float -> Mat.mat) ~dt y0 t0 _tstop
-    : Mat.mat -> float -> Mat.mat * float
-  =
- fun _y t ->
-  let dim1, dim2 = Mat.shape y0 in
-  let tout = t +. dt in
-  let until tout =
-    let y0 = Bigarray.Array1.change_layout (wrap y0) Bigarray.fortran_layout in
-    let y' =
-      Odepack.(
-        vec @@ lsoda ~rtol:relative_tol ~atol:abs_tol (fwrap (dim1, dim2) f) y0 t0 tout)
-    in
-    (*Mat.copy @@ *)
-    unwrap (dim1, dim2) (Bigarray.Array1.change_layout y' Bigarray.c_layout)
-  in
-  until tout, tout
+  (*Mat.copy @@ *)
+  unwrap (dim1, dim2) (Bigarray.Array1.change_layout y' Bigarray.c_layout), t1
 
 
 let lsoda ~relative_tol ~abs_tol =
@@ -77,7 +87,7 @@ let lsoda ~relative_tol ~abs_tol =
     type solve_output = Mat.mat * Mat.mat
 
     let step = lsoda_s ~relative_tol ~abs_tol
-    let solve = integrate (lsoda_s' ~relative_tol ~abs_tol)
+    let solve = lsoda_i ~relative_tol ~abs_tol
   end : Solver
     with type state = Owl.Mat.mat
      and type f = Owl.Mat.mat -> float -> Owl.Mat.mat
@@ -94,5 +104,5 @@ module Owl_Lsoda = struct
   let relative_tol = 1E-6
   let abs_tol = 1E-6
   let step = lsoda_s ~relative_tol ~abs_tol
-  let solve = integrate (lsoda_s' ~relative_tol ~abs_tol)
+  let solve = lsoda_i ~relative_tol ~abs_tol
 end
