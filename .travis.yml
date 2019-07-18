@@ -9,4 +9,6 @@ env:
   - PINS="owl-ode.0.1.0:. owl-ode-sundials:."
   matrix:
   - PACKAGE="owl-ode" DISTRO="debian-stable" OCAML_VERSION="4.07"
+  - PACKAGE="owl-ode" DISTRO="debian-stable" OCAML_VERSION="4.08"
+  - PACKAGE="owl-ode-odepack" DISTRO="fedora" OCAML_VERSION="4.07"
   - PACKAGE="owl-ode-sundials" DISTRO="debian-stable" OCAML_VERSION="4.07"
