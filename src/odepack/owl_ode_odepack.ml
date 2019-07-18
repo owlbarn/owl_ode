@@ -40,17 +40,19 @@ let lsoda_i ~relative_tol ~abs_tol f y0 tspec () =
   let y = ref y0 in
   let dim1, dim2 = Mat.shape y0 in
   let y0 = Bigarray.Array1.change_layout (wrap @@ Mat.copy y0) Bigarray.fortran_layout in
-  let ode = Odepack.lsoda ~rtol:relative_tol ~atol:abs_tol (fwrap (dim1, dim2) f) y0 t0 t0 in
+  let ode =
+    Odepack.lsoda ~rtol:relative_tol ~atol:abs_tol (fwrap (dim1, dim2) f) y0 t0 t0
+  in
   let step ode t =
     let () = Odepack.advance ~time:t ode in
     let y' = Odepack.vec ode in
     let t' = Odepack.time ode in
     unwrap (dim1, dim2) (Bigarray.Array1.change_layout y' Bigarray.c_layout), t'
-  in  
+  in
   for i = 0 to pred n_steps do
     if i > 0
     then (
-      let y', t' = step ode (!t+.dt) in
+      let y', t' = step ode (!t +. dt) in
       y := y';
       t := t');
     (match state_t with
