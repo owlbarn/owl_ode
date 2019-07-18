@@ -10,38 +10,38 @@ type mat = Owl_dense_matrix_d.mat
 
 module Symplectic_Euler :
   Types.Solver
-  with type state = mat * mat
-   and type f = mat * mat -> float -> mat
-   and type step_output = (mat * mat) * float
-   and type solve_output = mat * mat * mat
+    with type state = mat * mat
+     and type f = mat * mat -> float -> mat
+     and type step_output = (mat * mat) * float
+     and type solve_output = mat * mat * mat
 
 module PseudoLeapfrog :
   Types.Solver
-  with type state = mat * mat
-   and type f = mat * mat -> float -> mat
-   and type step_output = (mat * mat) * float
-   and type solve_output = mat * mat * mat
+    with type state = mat * mat
+     and type f = mat * mat -> float -> mat
+     and type step_output = (mat * mat) * float
+     and type solve_output = mat * mat * mat
 
 module Leapfrog :
   Types.Solver
-  with type state = mat * mat
-   and type f = mat * mat -> float -> mat
-   and type step_output = (mat * mat) * float
-   and type solve_output = mat * mat * mat
+    with type state = mat * mat
+     and type f = mat * mat -> float -> mat
+     and type step_output = (mat * mat) * float
+     and type solve_output = mat * mat * mat
 
 module Ruth3 :
   Types.Solver
-  with type state = mat * mat
-   and type f = mat * mat -> float -> mat
-   and type step_output = (mat * mat) * float
-   and type solve_output = mat * mat * mat
+    with type state = mat * mat
+     and type f = mat * mat -> float -> mat
+     and type step_output = (mat * mat) * float
+     and type solve_output = mat * mat * mat
 
 module Ruth4 :
   Types.Solver
-  with type state = mat * mat
-   and type f = mat * mat -> float -> mat
-   and type step_output = (mat * mat) * float
-   and type solve_output = mat * mat * mat
+    with type state = mat * mat
+     and type f = mat * mat -> float -> mat
+     and type step_output = (mat * mat) * float
+     and type solve_output = mat * mat * mat
 
 val symplectic_euler
   : (module Types.Solver

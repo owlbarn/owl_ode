@@ -1,0 +1,4 @@
+(library
+ (name owl_ode_odepack)
+ (public_name owl-ode-odepack)
+ (libraries bal bigarray owl owl-ode odepack))
