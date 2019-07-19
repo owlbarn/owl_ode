@@ -24,24 +24,22 @@ let print_dim x =
 (* use Ode provided cvode integrator *)
 let () =
   let tspec = T1 { t0 = 0.0; dt = 1E-2; duration = 30.0 } in
-  let ts, ys = Ode.odeint (module Owl_ode_sundials.Owl_Cvode) f y0 tspec () in
+  let ts, ys = Ode.odeint (module Owl_ode_odepack.Lsoda) f y0 tspec () in
   (* save ts and ys *)
-  Mat.save_txt Mat.(ts @|| ys) "van_der_pol_dynamics.txt"
+  Mat.save_txt Mat.(ts @|| ys) "van_der_pol_dynamics_o.txt"
 
 
 (*(* create our own cvode integrator *)*)
 let () =
   let tspec = T1 { t0 = 0.0; dt = 1E-2; duration = 30.0 } in
-  let custom_cvode =
-    Owl_ode_sundials.cvode ~stiff:false ~relative_tol:1E-3 ~abs_tol:1E-8
-  in
+  let custom_cvode = Owl_ode_odepack.lsoda ~relative_tol:1E-3 ~abs_tol:1E-8 in
   let ts, ys = Ode.odeint custom_cvode f y0 tspec () in
   (* save ts and ys *)
-  Mat.save_txt Mat.(ts @|| ys) "van_der_pol_dynamics_custom.txt";
+  Mat.save_txt Mat.(ts @|| ys) "van_der_pol_dynamics_custom_o.txt";
   let t', ys' = Ode.odeint (module Native.D.RK4) f y0 tspec () in
   let t'', ys'' = Ode.odeint (module Native.D.RK45) f y0 tspec () in
   Printf.printf "RK4: %d; RK45: %d;\n%!" (Mat.row_num t') (Mat.row_num t'');
-  let fname = "vdp.png" in
+  let fname = "vdp_odepack.png" in
   let h = Plot.create ~n:1 ~m:2 fname in
   let open Plot in
   set_foreground_color h 0 0 0;
@@ -51,7 +49,7 @@ let () =
   plot ~h ~spec:[ RGB (0, 0, 255); LineStyle 1 ] (Mat.col ys 0) (Mat.col ys 1);
   plot ~h ~spec:[ RGB (0, 255, 0); LineStyle 1 ] (Mat.col ys' 0) (Mat.col ys' 1);
   plot ~h ~spec:[ RGB (255, 0, 0); LineStyle 1 ] (Mat.col ys'' 0) (Mat.col ys'' 1);
-  legend_on h ~position:NorthEast [| "CVode"; "RK4"; "RK45" |];
+  legend_on h ~position:NorthEast [| "LSODA"; "RK4"; "RK45" |];
   subplot h 1 0;
   plot ~h ~spec:[ RGB (0, 0, 255); LineStyle 1 ] ts Mat.(col ys 1);
   plot ~h ~spec:[ RGB (0, 0, 255); LineStyle 3 ] ts Mat.(col ys 0);
@@ -59,5 +57,5 @@ let () =
   plot ~h ~spec:[ RGB (0, 255, 0); LineStyle 3 ] t' (Mat.col ys' 0);
   plot ~h ~spec:[ RGB (255, 0, 0); LineStyle 1 ] t'' (Mat.col ys'' 1);
   plot ~h ~spec:[ RGB (255, 0, 0); LineStyle 3 ] t'' (Mat.col ys'' 0);
-  legend_on h ~position:NorthEast [| "CVode"; "CVode"; "RK4"; "RK4"; "RK45"; "RK45" |];
+  legend_on h ~position:NorthEast [| "LSODA"; "LSOAD"; "RK4"; "RK4"; "RK45"; "RK45" |];
   output h

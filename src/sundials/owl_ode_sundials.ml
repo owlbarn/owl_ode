@@ -51,13 +51,7 @@ let make_cvode_session
   , (dim1, dim2) )
 
 
-let cvode_s ~stiff
-            ~relative_tol
-            ~abs_tol
-            (f : Mat.mat -> float -> Mat.mat)
-            ~dt
-            y0
-            t0 =
+let cvode_s ~stiff ~relative_tol ~abs_tol (f : Mat.mat -> float -> Mat.mat) ~dt y0 t0 =
   let session, yvec, y, (dim1, dim2) =
     make_cvode_session ~stiff ~relative_tol ~abs_tol f y0 t0
   in
@@ -117,8 +111,7 @@ let cvode ~stiff ~relative_tol ~abs_tol =
 
     let step = cvode_s ~stiff ~relative_tol ~abs_tol
     let solve = integrate (cvode_s' ~stiff ~relative_tol ~abs_tol)
-  end
-  : Solver
+  end : Solver
     with type state = Owl.Mat.mat
      and type f = Owl.Mat.mat -> float -> Owl.Mat.mat
      and type step_output = Owl.Mat.mat * float

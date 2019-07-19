@@ -6,19 +6,32 @@
 (alias
  (name runtest)
  (action
-  (run ./damped.exe))
+  (progn
+   (run ./damped.exe)
+   (run ./custom_rk45.exe)))
  (package owl-ode))
 
 (executable
- (name van_der_pol)
+ (name van_der_pol_sundials)
  (libraries owl owl-ode owl-ode-sundials owl-plplot)
- (modules van_der_pol))
+ (modules van_der_pol_sundials))
 
 (alias
  (name runtest)
  (action
-  (run ./van_der_pol.exe))
+  (run ./van_der_pol_sundials.exe))
  (package owl-ode-sundials))
+
+(executable
+ (name van_der_pol_odepack)
+ (libraries owl owl-ode owl-ode-odepack owl-plplot)
+ (modules van_der_pol_odepack))
+
+(alias
+ (name runtest)
+ (action
+  (run ./van_der_pol_odepack.exe))
+ (package owl-ode-odepack))
 
 (env
  (_

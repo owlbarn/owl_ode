@@ -49,8 +49,7 @@ module Make (M : Owl_types_ndarray_algodiff.Sig with type elt = float) = struct
 
       let step = symplectic_euler_s
       let solve = prepare step
-    end
-    : Solver
+    end : Solver
       with type state = M.arr * M.arr
        and type f = M.arr * M.arr -> float -> M.arr
        and type step_output = (M.arr * M.arr) * float
@@ -75,8 +74,7 @@ module Make (M : Owl_types_ndarray_algodiff.Sig with type elt = float) = struct
 
       let step = leapfrog_s
       let solve = prepare step
-    end
-    : Solver
+    end : Solver
       with type state = M.arr * M.arr
        and type f = M.arr * M.arr -> float -> M.arr
        and type step_output = (M.arr * M.arr) * float
@@ -122,8 +120,7 @@ module Make (M : Owl_types_ndarray_algodiff.Sig with type elt = float) = struct
 
       let step = pseudoleapfrog_s
       let solve = prepare step
-    end
-    : Solver
+    end : Solver
       with type state = M.arr * M.arr
        and type f = M.arr * M.arr -> float -> M.arr
        and type step_output = (M.arr * M.arr) * float
@@ -141,8 +138,7 @@ module Make (M : Owl_types_ndarray_algodiff.Sig with type elt = float) = struct
 
       let step = ruth3_s
       let solve = prepare step
-    end
-    : Solver
+    end : Solver
       with type state = M.arr * M.arr
        and type f = M.arr * M.arr -> float -> M.arr
        and type step_output = (M.arr * M.arr) * float
@@ -160,8 +156,7 @@ module Make (M : Owl_types_ndarray_algodiff.Sig with type elt = float) = struct
 
       let step = ruth4_s
       let solve = prepare step
-    end
-    : Solver
+    end : Solver
       with type state = M.arr * M.arr
        and type f = M.arr * M.arr -> float -> M.arr
        and type step_output = (M.arr * M.arr) * float

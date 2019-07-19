@@ -16,6 +16,6 @@ depends: [
   "dune" {>= "1.5.0"}
   "owl-ode" {>="0.1.0"}
   "owl-plplot" {with-test}
-  "sundialsml"
+  "odepack"
 ]
 synopsis: "Owl's ODE solvers, interface with SundialsML"

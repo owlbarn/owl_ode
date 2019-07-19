@@ -23,10 +23,7 @@ let print_dim x =
 (* use Ode provided cvode integrator *)
 let () =
   let tspec = T1 { t0 = 0.0; dt = 1E-2; duration = 30.0 } in
-  let ts, ys = Ode.odeint (Native.D.rk45 ~tol:1E-9) f y0 tspec () in
+  let custom_rk45 = Native.D.rk45 ~tol:1E-9 ~dtmax:10.0 in
+  let ts, ys = Ode.odeint custom_rk45 f y0 tspec () in
   (* save ts and ys *)
   Mat.save_txt Mat.(ts @|| ys) "custom_rk45.txt"
-
-
-(* Equivalent you can define the solver as follows *)
-let custom_rk45 = Native.D.rk45 ~tol:1E-9

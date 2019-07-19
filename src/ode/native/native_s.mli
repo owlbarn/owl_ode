@@ -10,39 +10,39 @@ type mat = Owl_dense_matrix_s.mat
 
 module Euler :
   Types.Solver
-  with type state = mat
-   and type f = mat -> float -> mat
-   and type step_output = mat * float
-   and type solve_output = mat * mat
+    with type state = mat
+     and type f = mat -> float -> mat
+     and type step_output = mat * float
+     and type solve_output = mat * mat
 
 module Midpoint :
   Types.Solver
-  with type state = mat
-   and type f = mat -> float -> mat
-   and type step_output = mat * float
-   and type solve_output = mat * mat
+    with type state = mat
+     and type f = mat -> float -> mat
+     and type step_output = mat * float
+     and type solve_output = mat * mat
 
 module RK4 :
   Types.Solver
-  with type state = mat
-   and type f = mat -> float -> mat
-   and type step_output = mat * float
-   and type solve_output = mat * mat
+    with type state = mat
+     and type f = mat -> float -> mat
+     and type step_output = mat * float
+     and type solve_output = mat * mat
 
 (** Default tol = 1e-7 *)
 module RK23 :
   Types.Solver
-  with type state = mat
-   and type f = mat -> float -> mat
-   and type step_output = mat * float * float * bool
-   and type solve_output = mat * mat
+    with type state = mat
+     and type f = mat -> float -> mat
+     and type step_output = mat * float * float * bool
+     and type solve_output = mat * mat
 
 module RK45 :
   Types.Solver
-  with type state = mat
-   and type f = mat -> float -> mat
-   and type step_output = mat * float * float * bool
-   and type solve_output = mat * mat
+    with type state = mat
+     and type f = mat -> float -> mat
+     and type step_output = mat * float * float * bool
+     and type solve_output = mat * mat
 
 val euler
   : (module Types.Solver

@@ -11,14 +11,21 @@
 
 (** Time specification for the ODE solvers. *)
 type tspec =
-  | T1 of { t0 : float; duration : float; dt : float }
+  | T1 of
+      { t0 : float
+      ; duration : float
+      ; dt : float
+      }
       (** The [T1] constructor allow to specify the initial
       and final integration time, in the sense that the
       solver starts with t=t0 and integrates until it
       reaches t=t0+duration, and the timestep dt. 
       This last parameter is ignored by the adaptive
       methods. *)
-  | T2 of { tspan : float * float; dt : float }
+  | T2 of
+      { tspan : float * float
+      ; dt : float
+      }
       (** The [T2] constructor allow to specify a tuple 
       (t0, tf) of the initial and final integration
       time, in the sense that the solver starts with

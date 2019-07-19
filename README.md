@@ -148,11 +148,13 @@ Of course such an interface could provide additional purely OCaml functionalitie
 
 - [x] standard fixed-step ode solvers, like Euler, Midpoint, Runge-Kutta 4
 
-- [ ] standard adaptive solvers, say rk2(3), and rk4(5) or [Tsit5](http://users.ntua.gr/tsitoura/RK54_new_v2.pdf) (in progress)
+- [x] standard adaptive solvers, say rk2(3), and rk4(5) or [Tsit5](http://users.ntua.gr/tsitoura/RK54_new_v2.pdf) (in progress, missing Tsit5)
 
 - [x] symplectic ode solvers, like Störmer-Verlet, Forest-Ruth or Yoshida
 
 - [ ] sundialsml interface (already partially implemented)
+
+- [x] odepack interface (already partially implemented, currently not fully configurable/controllable)
 
 and implementations leveraging Owl's specific capabilities, like an implementation of the Taylor integrator built upon Algodiff.
 Albeit relatively old and standard, a good starting point could be the two references from [TaylorSeries.jl](https://github.com/JuliaDiff/TaylorSeries.jl), namely:
