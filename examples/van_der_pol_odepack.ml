@@ -24,7 +24,7 @@ let print_dim x =
 (* use Ode provided cvode integrator *)
 let () =
   let tspec = T1 { t0 = 0.0; dt = 1E-2; duration = 30.0 } in
-  let ts, ys = Ode.odeint (module Owl_ode_odepack.Owl_Lsoda) f y0 tspec () in
+  let ts, ys = Ode.odeint (module Owl_ode_odepack.Lsoda) f y0 tspec () in
   (* save ts and ys *)
   Mat.save_txt Mat.(ts @|| ys) "van_der_pol_dynamics_o.txt"
 

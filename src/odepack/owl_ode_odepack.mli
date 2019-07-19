@@ -34,7 +34,7 @@ val lsoda
          and type step_output = Owl.Mat.mat * float
          and type solve_output = Owl.Mat.mat * Owl.Mat.mat)
 
-module Owl_Lsoda :
+module Lsoda :
   Owl_ode.Types.Solver
     with type state = Owl.Mat.mat
      and type f = Owl.Mat.mat -> float -> Owl.Mat.mat

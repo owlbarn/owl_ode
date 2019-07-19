@@ -97,7 +97,7 @@ let lsoda ~relative_tol ~abs_tol =
      and type solve_output = Owl.Mat.mat * Owl.Mat.mat)
 
 
-module Owl_Lsoda = struct
+module Lsoda = struct
   type state = Mat.mat
   type f = Mat.mat -> float -> Mat.mat
   type step_output = Mat.mat * float
