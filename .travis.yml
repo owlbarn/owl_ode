@@ -12,3 +12,7 @@ env:
   - PACKAGE="owl-ode" DISTRO="debian-stable" OCAML_VERSION="4.08"
   - PACKAGE="owl-ode-odepack" DISTRO="debian-stable" OCAML_VERSION="4.07"
   - PACKAGE="owl-ode-sundials" DISTRO="debian-stable" OCAML_VERSION="4.07"
+
+  fast_finish: true
+  allow_failures:
+    - env: PACKAGE="owl-ode-sundials" DISTRO="debian-stable" OCAML_VERSION="4.07"
