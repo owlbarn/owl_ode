@@ -18,4 +18,4 @@ depends: [
   "owl-plplot" {with-test}
   "odepack"
 ]
-synopsis: "Owl's ODE solvers, interface with SundialsML"
+synopsis: "Owl's ODE solvers, interface with ODEPACK"
