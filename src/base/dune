@@ -1,0 +1,8 @@
+(copy_files# native/*)
+
+(copy_files# symplectic/*)
+
+(library
+ (name owl_ode_base)
+ (public_name owl-ode-base)
+ (libraries owl-base))

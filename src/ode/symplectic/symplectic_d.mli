@@ -6,6 +6,7 @@
  * Copyright (c) 2019 Marcello Seri <m.seri@rug.nl>
  *)
 
+module Types = Owl_ode_base.Types
 type mat = Owl_dense_matrix_d.mat
 
 module Symplectic_Euler :

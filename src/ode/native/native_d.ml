@@ -6,9 +6,10 @@
  * Copyright (c) 2019 Marcello Seri <m.seri@rug.nl>
  *)
 
+module Types = Owl_ode_base.Types
 type mat = Owl_dense_matrix_d.mat
 
-include Native_generic.Make (Owl_dense_ndarray.D)
+include Owl_ode_base.Native_generic.Make (Owl_dense_ndarray.D)
 
 module Euler = struct
   type state = mat
