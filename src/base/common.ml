@@ -13,9 +13,7 @@
 
 module Make (M : Owl_types_ndarray_algodiff.Sig with type elt = float) = struct
   let steps t0 t1 dt =
-    (* NOTE: switched Float.floor to Maths.floor;
-     * Float module seems not to be only supported in ocaml 4.07.0 *)
-    (t1 -. t0) /. dt |> Owl_base.Maths.floor |> int_of_float |> succ
+    (t1 -. t0) /. dt |> floor |> int_of_float |> succ
 
 
   type state_type =
