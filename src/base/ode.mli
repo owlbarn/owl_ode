@@ -38,14 +38,14 @@ val step
     The goal is to find y(t) approximately satisfying the differential
     equations, given an initial value y(t₀)=y₀. The time t₀ is passed as
     part of the timespec, that includes also the final integration time
-    and a time step. Refer to {!Owl_ode.Types.tspec} for further
+    and a time step. Refer to {!Owl_ode_base.Types.tspec} for further
     information.
 
     The solver has to be passed as a first-class module and have a common
-    type, {!Owl_ode.Types.Solver}. This is useful to write new custom
+    type, {!Owl_ode_base.Types.Solver}. This is useful to write new custom
     solvers or extend and customise the provided ones.
  
-    Refer to the documentation of the {!Owl_ode.Types.Solver} type 
+    Refer to the documentation of the {!Owl_ode_base.Types.Solver} type 
     for further information.
 *)
 val odeint

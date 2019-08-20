@@ -7,6 +7,7 @@
  *)
 
 module Types = Owl_ode_base.Types
+
 type mat = Owl_dense_matrix_s.mat
 
 module Euler :

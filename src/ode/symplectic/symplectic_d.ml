@@ -7,6 +7,7 @@
  *)
 
 module Types = Owl_ode_base.Types
+
 type mat = Owl_dense_matrix_d.mat
 
 include Owl_ode_base.Symplectic_generic.Make (Owl_dense_ndarray.D)

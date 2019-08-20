@@ -12,9 +12,7 @@
 (* TODO: find a better place to place this module *)
 
 module Make (M : Owl_types_ndarray_algodiff.Sig with type elt = float) = struct
-  let steps t0 t1 dt =
-    (t1 -. t0) /. dt |> floor |> int_of_float |> succ
-
+  let steps t0 t1 dt = (t1 -. t0) /. dt |> floor |> int_of_float |> succ
 
   type state_type =
     | Row

@@ -29,6 +29,9 @@ A tutorial is available at the {{:tutorial.html} Tutorial} page.
 The entry point of this library is the module:
 {!module-Owl_ode.Ode}.
 
+This library builds on top of the {!module-Owl_ode_base} library,
+which provides the generic, functorised, underlying implementation.
+
 {2 Some important modules}
 
 {!modules: Owl_ode.Ode Owl_ode.Types Owl_ode.Native Owl_ode.Symplectic}

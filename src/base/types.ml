@@ -36,30 +36,30 @@ type tspec =
       (** The [T3] constructor is currently unsupported
       and may change or disappear in the future. *)
 
-(** Any solver compatible with {!Owl_ode.Ode.odeint}
+(** Any solver compatible with {!Owl_ode_base.Ode.odeint}
     has to comply with the Solver type. You can use this
     to define completely new solvers, as done in the
-    owl-ode-sundials or ocaml-cviode libraries, or
-    to customize pre-existing solvers (see the
-    van_der_pol example for one such cases). 
+    owl-ode-sundials, owl-ode-odepack or ocaml-cviode
+    libraries, or to customize pre-existing solvers (see
+    the van_der_pol example for one such cases). 
 
-    The native ocaml solvers provided by Owl_ode in both single and
-    double precision can be found in {!Owl_ode.Native}, respectively
-    in the {!Owl_ode.Native.S} and {!Owl_ode.Native.D} modules. These
+    The native ocaml solvers provided by {!Owl_ode_base} in both single and
+    double precision can be found in {!Owl_ode_base.Native}, respectively
+    in the {!Owl_ode_base.Native.S} and {!Owl_ode_base.Native.D} modules. These
     provide multiple single-step and adaptive implementations.
 
     Symplectic solvers for separable Hamiltonian systems are also
-    available and can be found in {!Owl_ode.Symplectic.S} and
-    {!Owl_ode.Symplectic.D}. Refer to the damped oscillator for an
+    available and can be found in {!Owl_ode_base.Symplectic.S} and
+    {!Owl_ode_base.Symplectic.D}. Refer to the damped oscillator for an
     example of use.
 
-    The generic solvers in {!Owl_ode.Native_generic} and in
-    {!Owl_ode.Symplectic_generic} can also be used in conjunction
+    The generic solvers in {!Owl_ode_base.Native_generic} and in
+    {!Owl_ode_base.Symplectic_generic} can also be used in conjunction
     with jsoo, although how to do that is currently undocumented. 
 *)
 module type Solver = sig
   (** [state] is the type of the state (and thus also of
-       the initial condition) provided to {!Owl_ode.Ode.odeint}.
+       the initial condition) provided to {!Owl_ode_base.Ode.odeint}.
        For example {!Owl.Mat.mat}. *)
   type state
 

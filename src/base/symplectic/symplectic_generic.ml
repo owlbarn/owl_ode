@@ -103,7 +103,7 @@ module Make (M : Owl_types_ndarray_algodiff.Sig with type elt = float) = struct
   let ruth3_c = [ 2.0 /. 3.0, 7.0 /. 24.0; -2.0 /. 3.0, 0.75; 1.0, -1.0 /. 24.0 ]
 
   let ruth4_c =
-    let c = 2.0**(1.0 /. 3.0) in
+    let c = 2.0 ** (1.0 /. 3.0) in
     [ 0.5, 0.0; 0.5 *. (1.0 -. c), 1.0; 0.5 *. (1.0 -. c), -.c; 0.5, 1.0 ]
     |> List.map (fun (v1, v2) -> v1 /. (2.0 -. c), v2 /. (2.0 -. c))
 
