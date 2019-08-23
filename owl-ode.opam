@@ -19,3 +19,8 @@ depends: [
   "alcotest" {with-test}
 ]
 synopsis: "Owl's ODE solvers"
+description: """OwlDE: ODE Integration library
+
+The main library contains solvers using the faster BLAS/LAPACK 
+Owl interface.
+"""

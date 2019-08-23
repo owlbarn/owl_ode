@@ -19,3 +19,8 @@ depends: [
   "odepack"
 ]
 synopsis: "Owl's ODE solvers, interface with ODEPACK"
+description: """OwlDE: ODE Integration library
+
+The ODEPACK library provides bindings to ODEPACK via OCaml's
+ODEPACK library.
+"""

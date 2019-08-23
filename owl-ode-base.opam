@@ -16,3 +16,7 @@ depends: [
   "owl-base" {>= "0.6.0"}
 ]
 synopsis: "Owl's ODE solvers"
+description: """OwlDE: ODE Integration library
+
+The base library contains pure OCaml code and supports compilation with js_of_ocaml
+"""

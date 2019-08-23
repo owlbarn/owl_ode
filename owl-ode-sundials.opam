@@ -19,3 +19,8 @@ depends: [
   "sundialsml"
 ]
 synopsis: "Owl's ODE solvers, interface with SundialsML"
+description: """OwlDE: ODE Integration library
+
+The sundials library provides bindings to sundials via OCaml's
+sundialsml library.
+"""
