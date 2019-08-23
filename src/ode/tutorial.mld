@@ -21,13 +21,13 @@ We begin by defining a function \(f(y, t)\) that corresponds to
 the RHS of the differential equation
 {[
     let f y t = 
-    let a = [|[|1.; -1.|];
+        let a = [|[|1.; -1.|];
                 [|2.; -3.|]|]
             |> Owl.Mat.of_arrays
     in
     Owl.Mat.(a *@ y)
 ]}
-and the initial condition $y0$
+and the initial condition \(y0\)
 {[
     let y0 = Mat.of_array [|-1.; 1.|] 2 1
 ]}
@@ -45,7 +45,9 @@ numerical solution, and a step size dt.
 
 Finally we can call
 {[
-    let ts, ys = Owl_ode.odeint (module Owl_ode.Native.D.RK4) f y0 tspec () 
+    let ts, ys = Owl_ode.(
+        odeint Native.D.rk4 f y0 tspec ()
+    )
 ]}
 to get an array with the approximate value of the vector y
 at the times ts. As you can see from the snippet above, you
