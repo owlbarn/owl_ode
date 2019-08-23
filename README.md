@@ -135,12 +135,21 @@ example usage: `Owl_ode.Native.D.Symplectic_Euler`, `Owl_ode.Symplectic.S.Symple
 - Owl_Cvode (Adams)
 - Owl_Cvode_Stiff (BDF)
 
-### ODEPACK
-- LSODA (automatic switching to stiff/non-stiff algorithms)
-
 example usage: `Owl_ode_sundials.Owl_Cvode`
 
 We only support double-precisions Sundials solvers. 
+
+### ODEPACK
+- LSODA (automatic switching to stiff/non-stiff algorithms)
+
+We only support double-precision Odepack solvers.
+
+## JavaScript and Mirage backends
+
+The `owl-ode-base` contains implementations that are purely written in OCaml.
+As such, they are compatible for use in Mirage OS or in conjunction with `js_of_ocaml`, where C library linking is not supported.
+
+You can see an example of this here: http://www.mseri.me/owlde-demo-icfp2019/ (source code: https://github.com/mseri/owlde-demo-icfp2019)
 
 ## NOTES
 
