@@ -67,13 +67,19 @@ For symplectic ode problems, the state of the system is a tuple `(x,p):mat * mat
 
 ### Sundials Cvode
 
-We have implemented a thin wrapper over Sundials Cvode (via [sundialsml's](https://github.com/inria-parkas/sundialsml) own wrapper). To use Cvode, one can use 
+We have implemented a thin wrapper over Sundials Cvode (via [sundialsml](https://github.com/inria-parkas/sundialsml) wrapper). To use Cvode, one can use 
 
 - `Owl_ode_sundials.Owl_Cvode` or 
 - `Owl_ode_sundials.Owl_Cvode_Stiff`. 
 
 Currently, we only support double-precision Sundials solvers. To use Sundials in Owl Ode, one needs to install `Sundials` and `sundialsml` (see [sundialsml](https://github.com/inria-parkas/sundialsml) for instructions). 
 
+Note that the sundials formula on osx installs a too recent version of sundials. You can use the custom formula https://gist.github.com/mseri/60d26461b764e77b45d82ad7f0b0d7de to install the correct one.
+
+### ODEPACK Lsoda
+
+We have implemented a thin wrapper over ODEPACK (via the [odepack](https://github.com/Chris00/ocaml-odepack) OCaml library).
+Currently only `Owl_ode_odepack.lsoda` is provided, with configurable absolute and relative tolerances.
 
 ### Automatic inference of state dimensionality
 All the provided solvers automatically infer the dimensionality of the state from the initial state.
@@ -129,6 +135,9 @@ example usage: `Owl_ode.Native.D.Symplectic_Euler`, `Owl_ode.Symplectic.S.Symple
 - Owl_Cvode (Adams)
 - Owl_Cvode_Stiff (BDF)
 
+### ODEPACK
+- LSODA (automatic switching to stiff/non-stiff algorithms)
+
 example usage: `Owl_ode_sundials.Owl_Cvode`
 
 We only support double-precisions Sundials solvers. 
@@ -152,16 +161,18 @@ Of course such an interface could provide additional purely OCaml functionalitie
 
 - [x] symplectic ode solvers, like Störmer-Verlet, Forest-Ruth or Yoshida
 
-- [ ] sundialsml interface (already partially implemented)
+- [x] sundialsml interface (already partially implemented)
 
-- [x] odepack interface (already partially implemented, currently not fully configurable/controllable)
+- [x] odepack interface (already partially implemented, currently not fully configurable/controllable) and 
 
-and implementations leveraging Owl's specific capabilities, like an implementation of the Taylor integrator built upon Algodiff.
-Albeit relatively old and standard, a good starting point could be the two references from [TaylorSeries.jl](https://github.com/JuliaDiff/TaylorSeries.jl), namely:
+- [ ] implementations leveraging Owl's specific capabilities, e.g. for a Taylor integrator built upon Algodiff.
 
-- W. Tucker, Validated numerics: A short introduction to rigorous computations, Princeton University Press (2011).
+   Albeit relatively old and standard, a good starting point could be the two references from [TaylorSeries.jl](https://github.com/JuliaDiff/TaylorSeries.jl), namely:
 
-- A. Haro, Automatic differentiation methods in computational dynamical systems: Invariant manifolds and normal forms of vector fields at fixed points, preprint.
+   - W. Tucker, Validated numerics: A short introduction to rigorous computations, Princeton University Press (2011).
+
+   - A. Haro, Automatic differentiation methods in computational dynamical systems: Invariant manifolds and normal forms of vector fields at fixed points, preprint.
+
 
 Some important points to address for this are:
 
