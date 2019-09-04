@@ -95,7 +95,7 @@ We can define new solver module by creating a module of type `Solver`. For examp
 ```ocaml
 let custom_cvode = Owl_ode_sundials.cvode ~stiff:false ~relative_tol:1E-7 ~abs_tol:1E-4 
 (* usage *)
-let ts, xs = Owl_ode.odeint custom_cvode f x0 tspec ()
+let ts, xs = Owl_ode.Ode.odeint custom_cvode f x0 tspec ()
 ```
 
 Here, we use the `cvode` function construct a solver module `Custom_Owl_Cvode`. This function is conveniently defined in `src/sundials/owl_ode_sundials.ml`. It takes the parameters (`stiff`, `relative_tol`, and `abs_tol`) and returns a solver module of type 
