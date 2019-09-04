@@ -39,10 +39,10 @@ let tspec = Owl_ode.Types.(T1 {t0 = 0.; duration = 2.; dt=1E-3})
 let x0 = Mat.of_array [|-1.; 1.|] 2 1
 
 (* putting everything together *)
-let ts, xs = Owl_ode.odeint (module Owl_ode.Native.D.RK4) f x0 tspec () 
+let ts, xs = Owl_ode.Ode.odeint (module Owl_ode.Native.D.RK4) f x0 tspec () 
 
 (* or equivalently *)
-let ts, xs = Owl_ode.odeint Owl_ode.Native.D.rk4 f x0 tspec ()
+let ts, xs = Owl_ode.Ode.odeint Owl_ode.Native.D.rk4 f x0 tspec ()
 ```
 
 The results of `odeint` in this example are two matrices `xs` and `ts`, which contain the value of the state `x` at each time `t`. More specifically, column 0 of the matrix `xs` contains x(t0), while column `2000` contains `x(t0 +. duration)`.
