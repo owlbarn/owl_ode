@@ -196,12 +196,9 @@ Some important points to address for this are:
 - ...
 
 
-It would be interesting to design an interface that allows to implement the [Neural ODE](https://arxiv.org/abs/1806.07366) idea in a natural way also in Owl.
-
+OwlDE can be used to implement the [Neural ODE](https://arxiv.org/abs/1806.07366) idea in Owl: see https://github.com/tachukao/adjoint_ode/
 
 ## Further comments
-
-We could provide two interfaces, one takes a stepper function and performs just a step, and can be iterated manually (like `odeint` in the current sundials implementation, or the integrators in the current ocaml implementation), and a lower level one mimicking sundials and odepack, that only performs each integration step separately.
 
 We currently cannot have implicit methods for the lack of vector-valued root finding functions. We should add implementations for those, and then introduce some implicit methods (e.g. the implicit Störmer-Verlet is much more robust and works nicely for non-separable Hamiltonians). At least we can use Sundials for now `:-)`
 
