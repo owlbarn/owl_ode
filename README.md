@@ -2,6 +2,8 @@
 
 Please refer to the [Project Page](http://ocaml.xyz/project/proposal.html#project-13-ordinary-differential-equation-solver) for details.
 
+The library is published on the opam repository and can be installed with `opam install owl-ode`. The bindings for SUNDIALS and ODEPACK can be installed separately in the same fashion. 
+
 You can run the current examples with `dune exec examples/van_der_pol.exe`,  `dune exec examples/damped.exe`.
 
 The documentation is accessible at [ocaml.xyz/owl\_ode/owl-ode](http://ocaml.xyz/owl_ode/owl-ode/) and [ocaml.xyz/apidoc/ode.html](http://ocaml.xyz/apidoc/ode.html).
