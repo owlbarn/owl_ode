@@ -24,7 +24,7 @@ bibliography: paper.bib
 # Summary
 
 After only three years of intensive development and continuous optimisation, `Owl` has emerged in the `OCaml` ecosystem as a versatile and powerful scientific programming library, competitive with mainstream libraries such as `SciPy` and `NumPy`.
-What sets `Owl` apart is that it brings under one umbrella the flexibility of a dynamical language and the power and safety of the `OCaml` type system `[@Wang:2017]`.
+What sets `Owl` apart is that it brings under one umbrella the flexibility of a dynamical language and the power and safety of the `OCaml` type system [@Wang:2017].
 
 Today, `Owl` can be used to solve a wide range of scientific problems: it provides efficient types for handling multidimensional arrays and linear algebra operations built on top of `BLAS` and `LAPACK`; it supports machine learning applications with a powerful computational graph engine and automatic differentiation pipeline.
 To improve efficiency, `Owl` allows offloading computations to distributed systems and GPUs.
@@ -82,8 +82,8 @@ let ts, xs = Ode.odeint Native.D.rk4 f x0 tspec ()
 The tight integration with the `OCaml` and `Owl` ecosystem allows us also to benefit from some of their strenghts.
 The strong static type system made refactoring and code analysis an immediate task, and greatly reduced the necessary test surface.
 The powerful functorised `ndarray` subsystem exposed by `Owl` made the library trivially extensible also in somewhat unexpected directions.
-Indeed, it is possible to take the integrators exposed by `OwlDE` and use them to reproduce the work of `[@NODE:2018; @ANODE:2019]` without the need to rewrite any of the core functions, as done in [`adjoint_ode`](https://github.com/tachukao/adjoint_ode/).
-Similarly, it is possible to extend the range of integrators and introduce new ones rather seamlessly, as done in [`cviode`](https://github.com/mseri/ocaml-cviode), an implementation of the integrators introduced in `[@VBS:2019]`.
+Indeed, it is possible to take the integrators exposed by `OwlDE` and use them to reproduce the work of [@NODE:2018, @ANODE:2019] without the need to rewrite any of the core functions, as done in [`adjoint_ode`](https://github.com/tachukao/adjoint_ode/).
+Similarly, it is possible to extend the range of integrators and introduce new ones rather seamlessly, as done in [`cviode`](https://github.com/mseri/ocaml-cviode), an implementation of the integrators introduced in [@VBS:2019].
 
 One further strength of this library, comes from its native `OCaml` component, which can be compiled to `JavaScript` and used for interactive simulations in the browser, as demoed during the `OCaml` Workshop at ICFP 2019 in Berlin.
 The demo and the usage instructions are freely available at [`owlde-demo-icfp2019`](https://github.com/mseri/owlde-demo-icfp2019).
@@ -98,3 +98,5 @@ We look forward to developing `OwlDE` and `Owl` further with inputs from the `OC
 # Acknowledgements
 
 The authors would like to thank Liang Wang, Guillaume Hennequin, the Cambridge OCaml Labs and all the contributors to `Owl` and `Owl_ode` for their support and help throughout the development of the project.
+
+# References
