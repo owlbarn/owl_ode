@@ -2,22 +2,29 @@
 
 Please refer to the relevant [`owl` projects page](https://ocaml.xyz/project/finished.html#ordinary-differential-equation-solver) for more details.
 
-The library is published on the opam repository and can be installed with `opam install owl-ode`. The bindings for SUNDIALS and ODEPACK can be installed separately in the same fashion: `opam install owl-ode-sundials` and `opam install owl-ode-odepack` respectively.
+The library is published on the opam repository and can be installed with `opam`:
+```
+opam install owl-ode
+```
+
+The bindings for SUNDIALS and ODEPACK can be installed separately in the same fashion: `opam install owl-ode-sundials` and `opam install owl-ode-odepack` respectively.
 
 You can run the current examples as follows
 ```
-# owl-ode main library
+# owl-ode
 dune exec examples/damped.exe
 dune exec examples/custom_rk45.exe
+
 # owl-ode-sundials
 dune exec examples/van_der_pol_sundials.exe
+
 # owl-ode-odepack
 dune exec examples/van_der_pol_odepack.exe
 ```
 provided that you have installed the relevant libraries and their external dependencies (e.g. openblas, sundials).
-In most cases, the external dependencies can be installed from `opam` itself by running `opam depext owl-ode owl-ode-odepack owl-ode-sundials` before attempting the installation of the ocaml libraries.
+In most cases, you can leverage `opam` itself to install the necessary external dependencies by running `opam depext owl-ode owl-ode-odepack owl-ode-sundials` before attempting the installation of the ocaml libraries.
 
-In case of linking issues, please refer to `owl`'s troubleshooting section of the readme (especially if you are running a variant of `ubuntu`): https://github.com/owlbarn/owl/blob/master/README.md#troubleshooting
+In case of linking issues, please refer to `owl`'s README (especially if you are running a variant of `ubuntu`): https://github.com/owlbarn/owl/blob/master/README.md#troubleshooting
 
 The documentation for the library is accessible at [ocaml.xyz/owl\_ode/owl-ode](http://ocaml.xyz/owl_ode/owl-ode/).
 
