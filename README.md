@@ -14,7 +14,7 @@ dune exec examples/van_der_pol_sundials.exe
 # owl-ode-odepack
 dune exec examples/van_der_pol_odepack.exe
 ```
-provided that you have installed the relevant libraries.
+provided that you have installed the relevant libraries and their external dependencies (e.g. openblas, sundials).
 In most cases, the external dependencies can be installed from `opam` itself by running `opam depext owl-ode owl-ode-odepack owl-ode-sundials` before attempting the installation of the ocaml libraries.
 
 In case of linking issues, please refer to `owl`'s troubleshooting section of the readme (especially if you are running a variant of `ubuntu`): https://github.com/owlbarn/owl/blob/master/README.md#troubleshooting
