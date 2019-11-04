@@ -53,7 +53,7 @@ to get an array with the approximate value of the vector y
 at the times ts. As you can see from the snippet above, you
 have to specify the algorithm used for the integration by 
 providing its module in the function call. Here, we integrated
-the dynamical system with {!Owl_ode.Native.D.RK4}, a fixed-step
+the dynamical system with {!Owl_ode.Native.D.rk4}, a fixed-step
 double-precision Runge-Kutta solver. In Owl_ode, we provide
 a number of ocaml-based double-precision solvers in the
 {!Owl_ode.Native.D} modeuoe and single-precision ones in
