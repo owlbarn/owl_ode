@@ -26,7 +26,7 @@ In most cases, you can leverage `opam` itself to install the necessary external 
 
 In case of linking issues, please refer to `owl`'s README (especially if you are running a variant of `ubuntu`): https://github.com/owlbarn/owl/blob/master/README.md#troubleshooting
 
-See also the [SUNDIALS section of this README](https://github.com/owlbarn/owl_ode/blob/master/README.md#sundials-cvode) if you need sundials on macosx.
+See also the [SUNDIALS section of this README](https://github.com/owlbarn/owl_ode/blob/master/README.md#sundials-cvode) if you need sundials on macosx, and to https://github.com/inria-parkas/sundialsml for more general issues with sundials.
 
 The documentation for the library is accessible at [ocaml.xyz/owl\_ode/owl-ode](http://ocaml.xyz/owl_ode/owl-ode/).
 
