@@ -1,12 +1,25 @@
 # OwlDE - Ordinary Differential Equation Solvers [![Build Status](https://travis-ci.org/owlbarn/owl_ode.svg?branch=master)](https://travis-ci.org/owlbarn/owl_ode)
 
-Please refer to the [Project Page](http://ocaml.xyz/project/proposal.html#project-13-ordinary-differential-equation-solver) for details.
+Please refer to the relevant [`owl` projects page](https://ocaml.xyz/project/finished.html#ordinary-differential-equation-solver) for more details.
 
-The library is published on the opam repository and can be installed with `opam install owl-ode`. The bindings for SUNDIALS and ODEPACK can be installed separately in the same fashion. 
+The library is published on the opam repository and can be installed with `opam install owl-ode`. The bindings for SUNDIALS and ODEPACK can be installed separately in the same fashion: `opam install owl-ode-sundials` and `opam install owl-ode-odepack` respectively.
 
-You can run the current examples with `dune exec examples/van_der_pol.exe`,  `dune exec examples/damped.exe`.
+You can run the current examples as follows
+```
+# owl-ode main library
+dune exec examples/damped.exe
+dune exec examples/custom_rk45.exe
+# owl-ode-sundials
+dune exec examples/van_der_pol_sundials.exe
+# owl-ode-odepack
+dune exec examples/van_der_pol_odepack.exe
+```
+provided that you have installed the relevant libraries.
+In most cases, the external dependencies can be installed from `opam` itself by running `opam depext owl-ode owl-ode-odepack owl-ode-sundials` before attempting the installation of the ocaml libraries.
 
-The documentation is accessible at [ocaml.xyz/owl\_ode/owl-ode](http://ocaml.xyz/owl_ode/owl-ode/) and [ocaml.xyz/apidoc/ode.html](http://ocaml.xyz/apidoc/ode.html).
+In case of linking issues, please refer to `owl`'s troubleshooting section of the readme (especially if you are running a variant of `ubuntu`): https://github.com/owlbarn/owl/blob/master/README.md#troubleshooting
+
+The documentation for the library is accessible at [ocaml.xyz/owl\_ode/owl-ode](http://ocaml.xyz/owl_ode/owl-ode/).
 
 ## Tutorial
 
@@ -193,12 +206,11 @@ Some important points to address for this are:
 
 - [X] ease of use (compared to JuliaDiffEq and Scipy)
 
-- [ ] make the native implementations robust (right now they are naive OCaml implementations)
+- [ ] make the native implementations more robust (right now they are naive OCaml implementations)
 
 - ...
 
-
-OwlDE can be used to implement the [Neural ODE](https://arxiv.org/abs/1806.07366) idea in Owl: see https://github.com/tachukao/adjoint_ode/
+OwlDE can be used to implement the [Neural ODE](https://arxiv.org/abs/1806.07366) idea in Owl: see https://github.com/tachukao/adjoint_ode/ and https://github.com/mseri/owlde-demo-icfp2019
 
 ## Further comments
 
