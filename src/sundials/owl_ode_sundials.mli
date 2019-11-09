@@ -3,8 +3,7 @@ val wrap
   -> (float, Bigarray.float64_elt, Bigarray.c_layout) Bigarray.Array1.t
 
 val unwrap
-  :  int * int
-  -> (float, Bigarray.float64_elt, Bigarray.c_layout) Bigarray.Array1.t
+  :  (float, Bigarray.float64_elt, Bigarray.c_layout) Bigarray.Array1.t
   -> Owl.Mat.mat
 
 val cvode

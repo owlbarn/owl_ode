@@ -3,11 +3,8 @@ open Bigarray
 open Owl_ode.Types
 module C = Owl_ode.Common.Make (Owl_dense_ndarray.D)
 
-let wrap x = reshape_1 x Mat.(numel x)
-
-let unwrap (dim1, dim2) x =
-  genarray_of_array2 (reshape_2 (genarray_of_array1 x) dim1 dim2)
-
+let wrap x = reshape_1 x Arr.(numel x)
+let unwrap x = genarray_of_array2 (reshape_2 (genarray_of_array1 x) 1 (Array1.dim x))
 
 let integrate step f y0 tspec () =
   let (t0, t1), dt =
@@ -27,17 +24,16 @@ let make_cvode_session
     ~stiff
     ~relative_tol
     ~abs_tol
-    (f : Mat.mat -> float -> Mat.mat)
+    (f : Arr.arr -> float -> Arr.arr)
     y0
     t0
   =
   let tolerances = Cvode.(SStolerances (relative_tol, abs_tol)) in
   (* make a copy of y0 so we don't overwrite it*)
-  let y0 = Mat.copy y0 in
+  let y0 = Arr.copy y0 in
   (* rhs function that sundials understands *)
-  let dim1, dim2 = Mat.shape y0 in
   let f_wrapped t y yd =
-    let y = unwrap (dim1, dim2) y in
+    let y = unwrap y in
     let dy = f y t in
     Array1.blit (wrap dy) yd
   in
@@ -47,23 +43,21 @@ let make_cvode_session
     | false -> Cvode.(init Adams Functional tolerances f_wrapped t0 yvec)
     | true -> Cvode.(init BDF Functional tolerances f_wrapped t0 yvec))
   , yvec
-  , y
-  , (dim1, dim2) )
+  , y )
 
 
 let cvode_s ~stiff ~relative_tol ~abs_tol (f : Mat.mat -> float -> Mat.mat) ~dt y0 t0 =
-  let session, yvec, y, (dim1, dim2) =
-    make_cvode_session ~stiff ~relative_tol ~abs_tol f y0 t0
-  in
+  let s = Arr.shape y0 in
+  let session, yvec, y = make_cvode_session ~stiff ~relative_tol ~abs_tol f y0 t0 in
   let t1 = t0 +. dt in
   let rec until t1 =
     let t', r = Cvode.solve_normal session t1 yvec in
     match r with
     | Success ->
-      let y' = Mat.copy (unwrap (dim1, dim2) y) in
+      let y' = Arr.copy (Arr.reshape (unwrap y) s) in
       y', t'
     | StopTimeReached ->
-      let y' = Mat.copy (unwrap (dim1, dim2) y) in
+      let y' = Arr.copy (Arr.reshape (unwrap y) s) in
       y', t'
     | RootsFound -> until t1
   in
@@ -76,15 +70,14 @@ let cvode_s'
     ~stiff
     ~relative_tol
     ~abs_tol
-    (f : Mat.mat -> float -> Mat.mat)
+    (f : Arr.arr -> float -> Arr.arr)
     ~dt
     y0
     t0
     tstop
   =
-  let session, yvec, y, (dim1, dim2) =
-    make_cvode_session ~stiff ~relative_tol ~abs_tol f y0 t0
-  in
+  let s = Arr.shape y0 in
+  let session, yvec, y = make_cvode_session ~stiff ~relative_tol ~abs_tol f y0 t0 in
   Cvode.set_stop_time session tstop;
   fun _y t ->
     let tout = t +. dt in
@@ -92,10 +85,10 @@ let cvode_s'
       let t', r = Cvode.solve_normal session tout yvec in
       match r with
       | Success ->
-        let y' = Mat.copy (unwrap (dim1, dim2) y) in
+        let y' = Arr.copy (Arr.reshape (unwrap y) s) in
         y', t'
       | StopTimeReached ->
-        let y' = Mat.copy (unwrap (dim1, dim2) y) in
+        let y' = Mat.copy (Arr.reshape (unwrap y) s) in
         y', t'
       | RootsFound -> until tout
     in
