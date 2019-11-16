@@ -31,9 +31,11 @@ let make_cvode_session
   let tolerances = Cvode.(SStolerances (relative_tol, abs_tol)) in
   (* make a copy of y0 so we don't overwrite it*)
   let y0 = Arr.copy y0 in
+  let s = Arr.shape y0 in
   (* rhs function that sundials understands *)
   let f_wrapped t y yd =
     let y = unwrap y in
+    let y = Arr.reshape y s in
     let dy = f y t in
     Array1.blit (wrap dy) yd
   in
@@ -46,7 +48,7 @@ let make_cvode_session
   , y )
 
 
-let cvode_s ~stiff ~relative_tol ~abs_tol (f : Mat.mat -> float -> Mat.mat) ~dt y0 t0 =
+let cvode_s ~stiff ~relative_tol ~abs_tol (f : Arr.arr -> float -> Arr.arr) ~dt y0 t0 =
   let s = Arr.shape y0 in
   let session, yvec, y = make_cvode_session ~stiff ~relative_tol ~abs_tol f y0 t0 in
   let t1 = t0 +. dt in
@@ -97,25 +99,25 @@ let cvode_s'
 
 let cvode ~stiff ~relative_tol ~abs_tol =
   (module struct
-    type state = Mat.mat
-    type f = Mat.mat -> float -> Mat.mat
-    type step_output = Mat.mat * float
-    type solve_output = Mat.mat * Mat.mat
+    type state = Arr.arr
+    type f = Arr.arr -> float -> Arr.arr
+    type step_output = Arr.arr * float
+    type solve_output = Arr.arr * Arr.arr
 
     let step = cvode_s ~stiff ~relative_tol ~abs_tol
     let solve = integrate (cvode_s' ~stiff ~relative_tol ~abs_tol)
   end : Solver
-    with type state = Owl.Mat.mat
-     and type f = Owl.Mat.mat -> float -> Owl.Mat.mat
-     and type step_output = Owl.Mat.mat * float
-     and type solve_output = Owl.Mat.mat * Owl.Mat.mat)
+    with type state = Arr.arr
+     and type f = Arr.arr -> float -> Arr.arr
+     and type step_output = Arr.arr * float
+     and type solve_output = Arr.arr * Arr.arr)
 
 
 module Owl_Cvode = struct
-  type state = Mat.mat
-  type f = Mat.mat -> float -> Mat.mat
-  type step_output = Mat.mat * float
-  type solve_output = Mat.mat * Mat.mat
+  type state = Arr.arr
+  type f = Arr.arr -> float -> Arr.arr
+  type step_output = Arr.arr * float
+  type solve_output = Arr.arr * Arr.arr
 
   let stiff = false
   let relative_tol = 1E-4
@@ -125,10 +127,10 @@ module Owl_Cvode = struct
 end
 
 module Owl_Cvode_Stiff = struct
-  type state = Mat.mat
-  type f = Mat.mat -> float -> Mat.mat
-  type step_output = Mat.mat * float
-  type solve_output = Mat.mat * Mat.mat
+  type state = Arr.arr
+  type f = Arr.arr -> float -> Arr.arr
+  type step_output = Arr.arr * float
+  type solve_output = Arr.arr * Arr.arr
 
   let stiff = true
   let relative_tol = 1E-4
