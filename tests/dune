@@ -1,9 +1,6 @@
-(executable
+(test
+ (package owl-ode)
  (name tests)
- (libraries alcotest owl owl-ode))
-
-(alias
- (name runtest)
+ (libraries alcotest owl owl-ode)
  (action
-  (run ./tests.exe))
- (package owl-ode))
+  (run %{test})))
