@@ -79,7 +79,7 @@ let x0 = Mat.of_array [|-1.; 1.|] 2 1
 let ts, xs = Ode.odeint Native.D.rk4 f x0 tspec ()
 ```
 
-The tight integration with the `OCaml` and `Owl` ecosystem allows us also to benefit from some of their strenghts.
+The tight integration with the `OCaml` and `Owl` ecosystem allows us also to benefit from some of their strengths.
 The strong static type system made refactoring and code analysis an immediate task, and greatly reduced the necessary test surface.
 The powerful functorised `ndarray` subsystem exposed by `Owl` made the library trivially extensible also in somewhat unexpected directions.
 Indeed, it is possible to take the integrators exposed by `OwlDE` and use them to reproduce the work of [@NODE:2018] without the need to rewrite any of the core functions, as done in [`adjoint_ode`](https://github.com/tachukao/adjoint_ode/).
