@@ -82,7 +82,7 @@ let ts, xs = Ode.odeint Native.D.rk4 f x0 tspec ()
 The tight integration with the `OCaml` and `Owl` ecosystem allows us also to benefit from some of their strengths.
 The strong static type system made refactoring and code analysis an immediate task, and greatly reduced the necessary test surface.
 The powerful functorised `ndarray` subsystem exposed by `Owl` made the library trivially extensible also in somewhat unexpected directions.
-Indeed, it is possible to take the integrators exposed by `OwlDE` and use them to reproduce the work of [@NODE:2018] without the need to rewrite any of the core functions, as done in [`adjoint_ode`](https://github.com/tachukao/adjoint_ode/).
+Indeed, it is possible to take the integrators exposed by `OwlDE` and use them to reproduce the work of [@NODE:2018] without the need to rewrite any of the core functions, as done in [`adjoint_ode`](https://github.com/tachukao/adjoint_ode).
 Similarly, it is possible to extend the range of integrators and introduce new ones rather seamlessly, as done in [`cviode`](https://github.com/mseri/ocaml-cviode), an implementation of the integrators introduced in [@VBS:2019].
 
 One further strength of this library, comes from its native `OCaml` component, which can be compiled to `JavaScript` and used for interactive simulations in the browser, as demoed during the `OCaml` Workshop at ICFP 2019 in Berlin.
