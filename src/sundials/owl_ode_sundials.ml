@@ -3,11 +3,8 @@ open Bigarray
 open Owl_ode.Types
 module C = Owl_ode.Common.Make (Owl_dense_ndarray.D)
 
-let wrap x = reshape_1 x Mat.(numel x)
-
-let unwrap (dim1, dim2) x =
-  genarray_of_array2 (reshape_2 (genarray_of_array1 x) dim1 dim2)
-
+let wrap x = reshape_1 x Arr.(numel x)
+let unwrap x = genarray_of_array2 (reshape_2 (genarray_of_array1 x) 1 (Array1.dim x))
 
 let integrate step f y0 tspec () =
   let (t0, t1), dt =
@@ -27,17 +24,18 @@ let make_cvode_session
     ~stiff
     ~relative_tol
     ~abs_tol
-    (f : Mat.mat -> float -> Mat.mat)
+    (f : Arr.arr -> float -> Arr.arr)
     y0
     t0
   =
   let tolerances = Cvode.(SStolerances (relative_tol, abs_tol)) in
   (* make a copy of y0 so we don't overwrite it*)
-  let y0 = Mat.copy y0 in
+  let y0 = Arr.copy y0 in
+  let s = Arr.shape y0 in
   (* rhs function that sundials understands *)
-  let dim1, dim2 = Mat.shape y0 in
   let f_wrapped t y yd =
-    let y = unwrap (dim1, dim2) y in
+    let y = unwrap y in
+    let y = Arr.reshape y s in
     let dy = f y t in
     Array1.blit (wrap dy) yd
   in
@@ -47,23 +45,21 @@ let make_cvode_session
     | false -> Cvode.(init Adams Functional tolerances f_wrapped t0 yvec)
     | true -> Cvode.(init BDF Functional tolerances f_wrapped t0 yvec))
   , yvec
-  , y
-  , (dim1, dim2) )
+  , y )
 
 
-let cvode_s ~stiff ~relative_tol ~abs_tol (f : Mat.mat -> float -> Mat.mat) ~dt y0 t0 =
-  let session, yvec, y, (dim1, dim2) =
-    make_cvode_session ~stiff ~relative_tol ~abs_tol f y0 t0
-  in
+let cvode_s ~stiff ~relative_tol ~abs_tol (f : Arr.arr -> float -> Arr.arr) ~dt y0 t0 =
+  let s = Arr.shape y0 in
+  let session, yvec, y = make_cvode_session ~stiff ~relative_tol ~abs_tol f y0 t0 in
   let t1 = t0 +. dt in
   let rec until t1 =
     let t', r = Cvode.solve_normal session t1 yvec in
     match r with
     | Success ->
-      let y' = Mat.copy (unwrap (dim1, dim2) y) in
+      let y' = Arr.copy (Arr.reshape (unwrap y) s) in
       y', t'
     | StopTimeReached ->
-      let y' = Mat.copy (unwrap (dim1, dim2) y) in
+      let y' = Arr.copy (Arr.reshape (unwrap y) s) in
       y', t'
     | RootsFound -> until t1
   in
@@ -76,15 +72,14 @@ let cvode_s'
     ~stiff
     ~relative_tol
     ~abs_tol
-    (f : Mat.mat -> float -> Mat.mat)
+    (f : Arr.arr -> float -> Arr.arr)
     ~dt
     y0
     t0
     tstop
   =
-  let session, yvec, y, (dim1, dim2) =
-    make_cvode_session ~stiff ~relative_tol ~abs_tol f y0 t0
-  in
+  let s = Arr.shape y0 in
+  let session, yvec, y = make_cvode_session ~stiff ~relative_tol ~abs_tol f y0 t0 in
   Cvode.set_stop_time session tstop;
   fun _y t ->
     let tout = t +. dt in
@@ -92,10 +87,10 @@ let cvode_s'
       let t', r = Cvode.solve_normal session tout yvec in
       match r with
       | Success ->
-        let y' = Mat.copy (unwrap (dim1, dim2) y) in
+        let y' = Arr.copy (Arr.reshape (unwrap y) s) in
         y', t'
       | StopTimeReached ->
-        let y' = Mat.copy (unwrap (dim1, dim2) y) in
+        let y' = Mat.copy (Arr.reshape (unwrap y) s) in
         y', t'
       | RootsFound -> until tout
     in
@@ -104,25 +99,25 @@ let cvode_s'
 
 let cvode ~stiff ~relative_tol ~abs_tol =
   (module struct
-    type state = Mat.mat
-    type f = Mat.mat -> float -> Mat.mat
-    type step_output = Mat.mat * float
-    type solve_output = Mat.mat * Mat.mat
+    type state = Arr.arr
+    type f = Arr.arr -> float -> Arr.arr
+    type step_output = Arr.arr * float
+    type solve_output = Arr.arr * Arr.arr
 
     let step = cvode_s ~stiff ~relative_tol ~abs_tol
     let solve = integrate (cvode_s' ~stiff ~relative_tol ~abs_tol)
   end : Solver
-    with type state = Owl.Mat.mat
-     and type f = Owl.Mat.mat -> float -> Owl.Mat.mat
-     and type step_output = Owl.Mat.mat * float
-     and type solve_output = Owl.Mat.mat * Owl.Mat.mat)
+    with type state = Arr.arr
+     and type f = Arr.arr -> float -> Arr.arr
+     and type step_output = Arr.arr * float
+     and type solve_output = Arr.arr * Arr.arr)
 
 
 module Owl_Cvode = struct
-  type state = Mat.mat
-  type f = Mat.mat -> float -> Mat.mat
-  type step_output = Mat.mat * float
-  type solve_output = Mat.mat * Mat.mat
+  type state = Arr.arr
+  type f = Arr.arr -> float -> Arr.arr
+  type step_output = Arr.arr * float
+  type solve_output = Arr.arr * Arr.arr
 
   let stiff = false
   let relative_tol = 1E-4
@@ -132,10 +127,10 @@ module Owl_Cvode = struct
 end
 
 module Owl_Cvode_Stiff = struct
-  type state = Mat.mat
-  type f = Mat.mat -> float -> Mat.mat
-  type step_output = Mat.mat * float
-  type solve_output = Mat.mat * Mat.mat
+  type state = Arr.arr
+  type f = Arr.arr -> float -> Arr.arr
+  type step_output = Arr.arr * float
+  type solve_output = Arr.arr * Arr.arr
 
   let stiff = true
   let relative_tol = 1E-4

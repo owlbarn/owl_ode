@@ -15,24 +15,24 @@ module Make (M : Owl_types_ndarray_algodiff.Sig with type elt = float) = struct
   let steps t0 t1 dt = (t1 -. t0) /. dt |> floor |> int_of_float |> succ
 
   type state_type =
-    | Row
-    | Col
-    | Matrix
+    | Row of int
+    | Col of int
+    | Arr of int array
 
   let get_state_t y0 =
     let dims = M.shape y0 in
     let dim1, dim2 = dims.(0), dims.(1) in
-    if dim1 = 1 then Row, dim2 else if dim2 = 1 then Col, dim1 else Matrix, dim1 * dim2
+    if dim1 = 1 then Row dim2 else if dim2 = 1 then Col dim1 else Arr dims
 
 
   let integrate ~step ~tspan:(t0, t1) ~dt y0 =
-    let state_t, n = get_state_t y0 in
     let n_steps = steps t0 t1 dt in
+    let state_t = get_state_t y0 in
     let ys =
       match state_t with
-      | Row -> M.empty [| n_steps; n |]
-      | Col -> M.empty [| n; n_steps |]
-      | Matrix -> M.empty [| n_steps; n |]
+      | Row n -> M.empty [| n_steps; n |]
+      | Col n -> M.empty [| n; n_steps |]
+      | Arr s -> M.empty (Array.append [| n_steps |] s)
     in
     let ts = ref [] in
     let t = ref t0 in
@@ -43,28 +43,29 @@ module Make (M : Owl_types_ndarray_algodiff.Sig with type elt = float) = struct
         let y', t' = step !y !t in
         y := y';
         t := t');
-      (match state_t with
-      | Row -> M.set_slice [ [ i ]; [] ] ys !y
-      | Col -> M.set_slice [ []; [ i ] ] ys !y
-      | Matrix -> M.set_slice [ [ i ]; [] ] ys M.(reshape !y [| 1; -1 |]));
-      ts := !t :: !ts
+      ts := !t :: !ts;
+      match state_t with
+      | Row _ -> M.set_slice [ [ i ]; [] ] ys !y
+      | Col _ -> M.set_slice [ []; [ i ] ] ys !y
+      | Arr _ -> M.set_slice [ [ i ]; [] ] ys !y
     done;
     let ts = [| !ts |> List.rev |> Array.of_list |] |> M.of_arrays in
     match state_t with
-    | Row | Matrix -> M.(transpose ts), ys
-    | Col -> ts, ys
+    | Row _ | Arr _ -> M.(transpose ts), ys
+    | Col _ -> ts, ys
 
 
   let symplectic_integrate ~step ~tspan:(t0, t1) ~dt (x0, p0) =
     if M.shape x0 <> M.shape p0
     then raise Owl_exception.(DIFFERENT_SHAPE (M.shape x0, M.shape p0));
-    let state_t, n = get_state_t x0 in
+    let state_t = get_state_t x0 in
     let n_steps = steps t0 t1 dt in
     let xs, ps =
       match state_t with
-      | Row -> M.empty [| n_steps; n |], M.empty [| n_steps; n |]
-      | Col -> M.empty [| n; n_steps |], M.empty [| n; n_steps |]
-      | Matrix -> M.empty [| n_steps; n |], M.empty [| n_steps; n |]
+      | Row n -> M.empty [| n_steps; n |], M.empty [| n_steps; n |]
+      | Col n -> M.empty [| n; n_steps |], M.empty [| n; n_steps |]
+      | Arr s ->
+        M.empty Array.(append [| n_steps |] s), M.empty Array.(append [| n_steps |] s)
     in
     let ts = ref [] in
     let t = ref t0 in
@@ -77,26 +78,26 @@ module Make (M : Owl_types_ndarray_algodiff.Sig with type elt = float) = struct
         x := x';
         p := p';
         t := t');
-      (match state_t with
-      | Row ->
+      ts := !t :: !ts;
+      match state_t with
+      | Row _ ->
         M.set_slice [ [ i ]; [] ] xs !x;
         M.set_slice [ [ i ]; [] ] ps !p
-      | Col ->
+      | Col _ ->
         M.set_slice [ []; [ i ] ] xs !x;
         M.set_slice [ []; [ i ] ] ps !p
-      | Matrix ->
-        M.set_slice [ [ i ]; [] ] xs M.(reshape !x [| 1; -1 |]);
-        M.set_slice [ [ i ]; [] ] ps M.(reshape !p [| 1; -1 |]));
-      ts := !t :: !ts
+      | Arr _ ->
+        M.set_slice [ [ i ]; [] ] xs !x;
+        M.set_slice [ [ i ]; [] ] ps !p
     done;
     let ts = [| !ts |> List.rev |> Array.of_list |] |> M.of_arrays in
     match state_t with
-    | Row | Matrix -> M.transpose ts, xs, ps
-    | Col -> ts, xs, ps
+    | Row _ | Arr _ -> M.transpose ts, xs, ps
+    | Col _ -> ts, xs, ps
 
 
   let adaptive_integrate ~step ~tspan:(t0, t1) ~dtmax y0 =
-    let state_t, _ = get_state_t y0 in
+    let state_t = get_state_t y0 in
     let dt = dtmax /. 4.0 in
     let rec go (ts, ys) (t0 : float) y0 dt =
       if t0 >= t1
@@ -114,17 +115,16 @@ module Make (M : Owl_types_ndarray_algodiff.Sig with type elt = float) = struct
     let ts = [| ts |> List.rev |> Array.of_list |] |> M.of_arrays in
     let ys =
       match state_t with
-      | Row -> ys |> List.rev |> Array.of_list |> M.of_rows
-      (* TODO: add of_cols to types_ndarray_basic *)
-      | Col -> ys |> List.rev |> Array.of_list |> M.of_cols
-      | Matrix ->
+      | Row _ -> ys |> List.rev |> Array.of_list |> M.of_rows
+      | Col _ -> ys |> List.rev |> Array.of_list |> M.of_cols
+      | Arr s ->
         ys
         |> List.rev
         |> Array.of_list
-        |> Array.map (fun y -> M.reshape y [| 1; -1 |])
-        |> M.of_rows
+        |> Array.map (fun y -> M.expand y (succ Array.(length s)))
+        |> M.concatenate ~axis:0
     in
     match state_t with
-    | Row | Matrix -> M.transpose ts, ys
-    | Col -> ts, ys
+    | Row _ | Arr _ -> M.transpose ts, ys
+    | Col _ -> ts, ys
 end

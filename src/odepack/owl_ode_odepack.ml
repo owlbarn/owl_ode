@@ -27,13 +27,13 @@ let lsoda_i ~relative_tol ~abs_tol f y0 tspec () =
     | T2 { tspan; dt } -> tspan, dt
     | T3 _ -> raise Owl_exception.(NOT_IMPLEMENTED "T3 not implemented")
   in
-  let state_t, n = C.get_state_t y0 in
+  let state_t = C.get_state_t y0 in
   let n_steps = C.steps t0 t1 dt in
   let ys =
     match state_t with
-    | Row -> Mat.empty n_steps n
-    | Col -> Mat.empty n n_steps
-    | Matrix -> Mat.empty n_steps n
+    | Row n -> Mat.empty n_steps n
+    | Col n -> Mat.empty n n_steps
+    | Arr s -> Arr.empty Array.(append [| n_steps |] s)
   in
   let ts = ref [] in
   let t = ref t0 in
@@ -55,16 +55,16 @@ let lsoda_i ~relative_tol ~abs_tol f y0 tspec () =
       let y', t' = step ode (!t +. dt) in
       y := y';
       t := t');
-    (match state_t with
-    | Row -> Mat.set_slice [ [ i ]; [] ] ys !y
-    | Col -> Mat.set_slice [ []; [ i ] ] ys !y
-    | Matrix -> Mat.set_slice [ [ i ]; [] ] ys Mat.(reshape !y [| 1; -1 |]));
-    ts := !t :: !ts
+    ts := !t :: !ts;
+    match state_t with
+    | Row _ -> Mat.set_slice [ [ i ]; [] ] ys !y
+    | Col _ -> Mat.set_slice [ []; [ i ] ] ys !y
+    | Arr _ -> Arr.set_slice [ [ i ]; [] ] ys !y
   done;
   let ts = [| !ts |> List.rev |> Array.of_list |] |> Mat.of_arrays in
   match state_t with
-  | Row | Matrix -> Mat.(transpose ts), ys
-  | Col -> ts, ys
+  | Row _ | Arr _ -> Mat.(transpose ts), ys
+  | Col _ -> ts, ys
 
 
 let lsoda_s ~relative_tol ~abs_tol (f : Mat.mat -> float -> Mat.mat) ~dt y0 t0
