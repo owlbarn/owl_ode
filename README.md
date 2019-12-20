@@ -1,4 +1,4 @@
-# OwlDE - Ordinary Differential Equation Solvers [![Build Status](https://travis-ci.org/owlbarn/owl_ode.svg?branch=master)](https://travis-ci.org/owlbarn/owl_ode)
+# OwlDE - Ordinary Differential Equation Solvers [![DOI](https://joss.theoj.org/papers/10.21105/joss.01812/status.svg)](https://doi.org/10.21105/joss.01812) [![Build Status](https://travis-ci.org/owlbarn/owl_ode.svg?branch=master)](https://travis-ci.org/owlbarn/owl_ode)
 
 Please refer to the relevant [`owl` projects page](https://ocaml.xyz/project/finished.html#ordinary-differential-equation-solver) for more details.
 
