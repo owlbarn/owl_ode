@@ -10,7 +10,7 @@ module Types = Owl_ode_base.Types
 
 type mat = Owl_dense_matrix_s.mat
 
-include Owl_ode_base.Native_generic.Make (Owl_dense_ndarray.S)
+include Owl_ode_base.Native_generic.Make (Owl_algodiff_primal_ops.S)
 
 module Euler = struct
   type state = mat

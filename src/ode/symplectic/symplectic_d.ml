@@ -10,7 +10,7 @@ module Types = Owl_ode_base.Types
 
 type mat = Owl_dense_matrix_d.mat
 
-include Owl_ode_base.Symplectic_generic.Make (Owl_dense_ndarray.D)
+include Owl_ode_base.Symplectic_generic.Make (Owl_algodiff_primal_ops.D)
 
 module Symplectic_Euler = struct
   type state = mat * mat

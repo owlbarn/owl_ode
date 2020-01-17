@@ -1,7 +1,7 @@
 open Owl
 open Bigarray
 open Owl_ode.Types
-module C = Owl_ode.Common.Make (Owl_dense_ndarray.D)
+module C = Owl_ode.Common.Make (Owl_algodiff_primal_ops.D)
 
 let wrap x = reshape_1 x Arr.(numel x)
 let unwrap x = genarray_of_array2 (reshape_2 (genarray_of_array1 x) 1 (Array1.dim x))
