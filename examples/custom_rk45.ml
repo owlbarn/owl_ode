@@ -26,4 +26,4 @@ let () =
   let custom_rk45 = Native.D.rk45 ~tol:1E-9 ~dtmax:10.0 in
   let ts, ys = Ode.odeint custom_rk45 f y0 tspec () in
   (* save ts and ys *)
-  Mat.save_txt Mat.(ts @|| ys) "custom_rk45.txt"
+  Mat.save_txt Mat.(ts @|| ys) ~out:"custom_rk45.txt"
