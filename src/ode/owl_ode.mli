@@ -12,7 +12,6 @@ module Ode : module type of Owl_ode_base.Ode
 module Native : module type of Native
 module Symplectic : module type of Symplectic
 
-
 (** The Types module provides some common types for 
     Owl_ode ODEs integrators. It is included in this module for convenience.
     *)
