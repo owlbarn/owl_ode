@@ -1,3 +1,7 @@
+# v0.4.0 (10.10.2020)
+
+- Add support for owl 0.10.0
+
 # v0.3.0 (3.02.2020)
 
 - Update to support owl 0.8.0
