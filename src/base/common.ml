@@ -12,6 +12,12 @@
 (* TODO: find a better place to place this module *)
 
 module Make (M : Owl_types_ndarray_algodiff.Sig with type elt = float) = struct
+  let print_dim x =
+    let shp = M.shape x in
+    Array.iter Printf.(printf "%i ") shp;
+    Printf.printf "\n%!"
+
+
   let steps t0 t1 dt = (t1 -. t0) /. dt |> floor |> int_of_float |> succ
 
   type state_type =
@@ -47,7 +53,9 @@ module Make (M : Owl_types_ndarray_algodiff.Sig with type elt = float) = struct
       match state_t with
       | Row _ -> M.set_slice [ [ i ]; [] ] ys !y
       | Col _ -> M.set_slice [ []; [ i ] ] ys !y
-      | Arr _ -> M.set_slice [ [ i ]; [] ] ys !y
+      | Arr _ ->
+        let y = M.expand !y (Array.(length M.(shape !y)) + 1) in
+        M.set_slice [ [ i ] ] ys y
     done;
     let ts = [| !ts |> List.rev |> Array.of_list |] |> M.of_arrays in
     match state_t with
@@ -87,8 +95,10 @@ module Make (M : Owl_types_ndarray_algodiff.Sig with type elt = float) = struct
         M.set_slice [ []; [ i ] ] xs !x;
         M.set_slice [ []; [ i ] ] ps !p
       | Arr _ ->
-        M.set_slice [ [ i ]; [] ] xs !x;
-        M.set_slice [ [ i ]; [] ] ps !p
+        let x = M.expand !x (Array.(length M.(shape !x)) + 1) in
+        let p = M.expand !p (Array.(length M.(shape !p)) + 1) in
+        M.set_slice [ [ i ]; [] ] xs x;
+        M.set_slice [ [ i ]; [] ] ps p
     done;
     let ts = [| !ts |> List.rev |> Array.of_list |] |> M.of_arrays in
     match state_t with
