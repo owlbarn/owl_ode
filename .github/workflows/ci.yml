@@ -1,0 +1,52 @@
+name: Main workflow
+
+on:
+  - pull_request
+  - push
+
+jobs:
+  build:
+    strategy:
+      fail-fast: false
+      matrix:
+        os:
+          - macos-latest
+          - ubuntu-latest
+          # - windows-latest
+        ocaml-version:
+          - 4.12.x
+          - 4.11.x
+          - 4.10.x
+
+    runs-on: ${{ matrix.os }}
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Use OCaml ${{ matrix.ocaml-version }}
+        uses: avsm/setup-ocaml@v1
+        with:
+          ocaml-version: ${{ matrix.ocaml-version }}
+
+      - run: |
+          opam pin add owl-ode-base.dev . --no-action
+          opam pin add owl-ode.dev . --no-action
+          opam pin add owl-ode-odepack.dev . --no-action
+
+      - run: opam depext --yes --with-test owl-ode-base owl-ode owl-ode-odepack
+
+      - run: |
+          opam install owl-ode-base --deps-only --with-test
+          opam exec -- dune build -p owl-ode-base
+          opam exec -- dune runtest -p owl-ode-base
+
+      - run: |
+          opam install owl-ode --deps-only --with-test
+          opam exec -- dune build -p owl-ode
+          opam exec -- dune runtest -p owl-ode
+
+      - run: |
+          opam install owl-ode-odepack --deps-only --with-test
+          opam exec -- dune build -p owl-ode-odepack
+          opam exec -- dune runtest -p owl-ode-odepack
