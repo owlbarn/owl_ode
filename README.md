@@ -1,5 +1,26 @@
 # OwlDE - Ordinary Differential Equation Solvers [![DOI](https://joss.theoj.org/papers/10.21105/joss.01812/status.svg)](https://doi.org/10.21105/joss.01812) [![Build Status](https://travis-ci.org/owlbarn/owl_ode.svg?branch=master)](https://travis-ci.org/owlbarn/owl_ode)
 
+## Table of contents
+
+* [Tutorial](#tutorial)
+   + [Overview](#overview)
+   + [Sundials Cvode](#sundials-cvode)
+   + [ODEPACK Lsoda](#odepack-lsoda)
+   + [Automatic inference of state dimensionality](#automatic-inference-of-state-dimensionality)
+   + [Custom Solvers](#custom-solvers)
+* [Supported Solvers](#supported-solvers)
+   + [Native](#native)
+   + [Symplectic](#symplectic)
+   + [Sundials](#sundials)
+   + [ODEPACK](#odepack)
+* [JavaScript and Mirage backends](#javascript-and-mirage-backends)
+* [Citing](#citing)
+* [Notes](#notes)
+* [Further comments](#further-comments)
+* [Contributing](#contributing)
+
+## Tutorial
+
 Please refer to the relevant [`owl` projects page](https://ocaml.xyz/project/finished.html#ordinary-differential-equation-solver) for more details.
 
 The library is published on the opam repository and can be installed with `opam`:
@@ -29,8 +50,6 @@ In case of linking issues, please refer to `owl`'s README (especially if you are
 See also the [SUNDIALS section of this README](https://github.com/owlbarn/owl_ode/blob/master/README.md#sundials-cvode) if you need sundials on macosx, and to https://github.com/inria-parkas/sundialsml for more general issues with sundials.
 
 The documentation for the library is accessible at [ocaml.xyz/owl\_ode/owl-ode](http://ocaml.xyz/owl_ode/owl-ode/).
-
-## Tutorial
 
 ### Overview
 
@@ -198,7 +217,7 @@ or if you use BibTeX:
 }
 ```
 
-## NOTES
+## Notes
 
 The main idea is develop a uniform interface to integrate ODE solvers (and in the future finite element methods) into Owl.
 Currently there are three options available, providing incompatible underlying representations:
