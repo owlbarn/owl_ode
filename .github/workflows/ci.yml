@@ -36,7 +36,13 @@ jobs:
           opam pin add owl-ode.dev . --no-action
           opam pin add owl-ode-odepack.dev . --no-action
 
-      - run: opam depext --yes --with-test owl-ode-base owl-ode owl-ode-odepack
+      - run: |
+          brew list
+          opam depext --yes --with-test owl-ode-base owl-ode owl-ode-odepack
+          brew list
+          ls /usr/local/bin
+          gfortran --version
+          which gfortran
 
       - run: |
           opam install owl-ode-base --deps-only --with-test
