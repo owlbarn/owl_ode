@@ -175,6 +175,29 @@ As such, they are compatible for use in Mirage OS or in conjunction with `js_of_
 
 You can see an example of this here: http://www.mseri.me/owlde-demo-icfp2019/ (source code: https://github.com/mseri/owlde-demo-icfp2019)
 
+## Citing
+
+If you have used this package for research that resulted in a publication, please be kind enough to cite the software paper associated with DynamicalBilliards. The DOI is https://doi.org/10.21105/joss.01812 and you can cite as:
+
+> Seri et al., (2019). OwlDE: making ODEs first-class Owl citizens. Journal of Open Source Software, 4(44), 1812, https://doi.org/10.21105/joss.01812
+
+or if you use BibTeX:
+
+```bibtex
+@article{Seri2019,
+  doi = {10.21105/joss.01812},
+  url = {https://doi.org/10.21105/joss.01812},
+  year = {2019},
+  publisher = {The Open Journal},
+  volume = {4},
+  number = {44},
+  pages = {1812},
+  author = {Marcello Seri and Ta-Chu Kao},
+  title = {OwlDE: making ODEs first-class `Owl` citizens},
+  journal = {Journal of Open Source Software}
+}
+```
+
 ## NOTES
 
 The main idea is develop a uniform interface to integrate ODE solvers (and in the future finite element methods) into Owl.
