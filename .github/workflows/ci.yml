@@ -24,17 +24,14 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v2
 
-      - name: Use OCaml ${{ matrix.ocaml-version }}
-        uses: actions-ml/setup-ocaml@master
+      - name: Use OCaml ${{ matrix.ocaml-compiler }}
+        uses: avsm/setup-ocaml@v2
         with:
-          ocaml-version: ${{ matrix.ocaml-version }}
-          opam-depext: false
-          opam-pin: false
-
-      - run: |
-          opam pin add owl-ode-base.dev . --no-action
-          opam pin add owl-ode.dev . --no-action
-          opam pin add owl-ode-odepack.dev . --no-action
+          ocaml-compiler: ${{ matrix.ocaml-compiler }}
+          dune-cache: true
+          opam-local-packages: |
+            *.opam
+            !owl-ode-sundials.opam
 
       - run: |
           brew list
@@ -43,19 +40,4 @@ jobs:
           ls /usr/local/bin
           gfortran --version
           which gfortran
-
-      - run: |
-          opam install owl-ode-base --deps-only --with-test
-          opam exec -- dune build -p owl-ode-base
-          opam exec -- dune runtest -p owl-ode-base
-
-      - run: |
-          opam install owl-ode --deps-only --with-test
-          opam exec -- dune build -p owl-ode
-          opam exec -- dune runtest -p owl-ode
-
-      - run: |
-          # there seems to be sandboxing issues with conf-gfortran
-          opam install owl-ode odepack
-          opam exec -- dune build -p owl-ode-odepack
-          opam exec -- dune runtest -p owl-ode-odepack
+  
