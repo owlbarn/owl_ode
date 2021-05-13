@@ -52,6 +52,6 @@ jobs:
           opam exec -- dune runtest -p owl-ode
   
       - run: |
-           opam install owl-ode-odepack --yes --deos-only --with-test
+           opam install owl-ode-odepack --yes --deps-only --with-test
            opam exec -- dune build -p owl-ode-odepack 
            opam exec -- dune runtest -p owl-ode-odepack
