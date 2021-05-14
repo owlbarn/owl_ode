@@ -35,6 +35,8 @@ jobs:
 
       - run: cp ".github/sandbox_exec.sh" "$HOME/.opam/opam-init/hooks/sandbox.sh"
         if: ${{ matrix.os == 'macos-latest' }}
+
+      - run: opam depext owl-ode-base owl-ode owl-ode-odepack --with-test
     
       - run: |
           opam install owl-ode-base --yes --deps-only --with-test
