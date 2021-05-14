@@ -28,7 +28,7 @@ jobs:
         uses: avsm/setup-ocaml@v2
         with:
           ocaml-compiler: ${{ matrix.ocaml-compiler }}
-          dune-cache: true
+          dune-cache: false
           opam-local-packages: |
             *.opam
             !owl-ode-sundials.opam
