@@ -28,18 +28,13 @@ jobs:
         uses: avsm/setup-ocaml@v2
         with:
           ocaml-compiler: ${{ matrix.ocaml-compiler }}
-          dune-cache: false
+          dune-cache: true
           opam-local-packages: |
             *.opam
             !owl-ode-sundials.opam
 
-      - run: |
-          brew list
-          opam depext --yes --with-test owl-ode-base owl-ode owl-ode-odepack
-          brew list
-          ls /usr/local/bin
-          gfortran --version
-          which gfortran
+      - run: cp ".github/sandbox_exec.sh" "$HOME/.opam/opam-init/hooks/sandbox.sh"
+        if: ${{ matrix.os == 'macos-latest' }}
     
       - run: |
           opam install owl-ode-base --yes --deps-only --with-test
