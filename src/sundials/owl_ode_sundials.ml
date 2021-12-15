@@ -42,8 +42,8 @@ let make_cvode_session
   let y = wrap y0 in
   let yvec = Nvector_serial.wrap y in
   ( (match stiff with
-    | false -> Cvode.(init Adams Functional tolerances f_wrapped t0 yvec)
-    | true -> Cvode.(init BDF Functional tolerances f_wrapped t0 yvec))
+    | false -> Cvode.(init Adams ~nlsolver:(Sundials_NonlinearSolver.FixedPoint.make yvec) tolerances f_wrapped t0 yvec)
+    | true -> Cvode.(init BDF ~nlsolver:(Sundials_NonlinearSolver.FixedPoint.make yvec) tolerances f_wrapped t0 yvec))
   , yvec
   , y )
 
