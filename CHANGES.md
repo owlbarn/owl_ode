@@ -1,3 +1,7 @@
+# v0.5.0 (15.12.2021)
+
+- Port to latest sundialsml
+
 # v0.4.0 (10.10.2020)
 
 - Add support for owl 0.10.0
